@@ -1,0 +1,19 @@
+npm i -S react-dom
+npm i -D webpack     //
+sudo npm i -g webpack
+npm i -D babel-core
+npm i -D babel-loader
+npm i -D babel-preset-react
+npm i -D babel-preset-es2015 //ES2015 == ES6
+
+
+npm install --save draft-js react react-dom
+
+
+./Download/mongodb/bin/mongod  //start mongodb
+./Download/mongodb/bin/mongo   //mongo shell
+nodemon 
+webpack -w  //dynamically fetch updates from REACT
+
+
+
