@@ -14,4 +14,8 @@ router.get('/createcomment', function(req, res, next){
 	res.render('createcomment', null);
 });
 
+router.get('/create-form-section', function(req, res, next){
+	res.render('create-form-section', null);
+});
+
 module.exports = router;
