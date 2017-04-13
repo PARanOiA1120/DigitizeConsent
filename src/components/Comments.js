@@ -25,16 +25,32 @@ class Comments extends Component {
 	updateUsername(event){
 		console.log('updateUsername: ' + event.target.value)
 
-		let updatedUsername = Object.assign({}, this.state.comment)
-		updatedUsername['username'] = event.target.value
+		let updatedComment = Object.assign({}, this.state.comment)
+		updatedComment['username'] = event.target.value
 		
 		this.setState({
-			comment: updatedUsername
+			comment: updatedComment
 		})
 	}
 
-	updateComment(event){
-		console.log('updateComment: ' + event.target.value)
+	updateBody(event){
+		console.log('updateBody: ' + event.target.value)
+
+		let updatedComment = Object.assign({}, this.state.comment)
+		updatedComment['body'] = event.target.value
+		
+		this.setState({
+			comment: updatedComment
+		})
+	}
+
+	updateTimestamp(event){
+		let updatedComment = Object.assign({}, this.state.comment)
+		updatedComment['timestamp'] = event.target.value
+		
+		this.setState({
+			comment: updatedComment
+		})
 	}
 
 
@@ -53,7 +69,8 @@ class Comments extends Component {
 					</ul>
 
 					<input onChange={this.updateUsername.bind(this)} className="form-control" type="text" placeholder="Username" /><br />
-					<input onChange={this.updateComment.bind(this)} className="form-control" type="text" placeholder="Comment" /><br />
+					<input onChange={this.updateBody.bind(this)} className="form-control" type="text" placeholder="Comment" /><br />
+					<input onChange={this.updateTimestamp.bind(this)} className="form-control" type="text" placeholder="Timestamp" /><br />
 					<button onClick={this.submitComment.bind(this)} className="btn btn-info">Submit Comment</button>
 				</div>
 			</div>

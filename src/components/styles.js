@@ -5,7 +5,9 @@ export default {
 	form: {
 		container: {
 			width: 100+'%',
-			height: 80+'%',
+			height: 100+'%',
+			padding: 0,
+			margin: 0,
 			position:'relative'
 		},
 		header: {
@@ -14,14 +16,16 @@ export default {
 			textAlign: 'center',
 			marginTop: 0
 		},
-		editor: {
-			width:49+'%',
-		},
 		leftpanel: {
-			width:49 + '%',
-			marginRight: 1+'%',
-			height: 500,
-			borderRight:'2px inset lightgrey'
+			width:50 + '%',
+			padding:5,
+			height: 100+'%',
+			float: 'left',
+		},
+		rightpanel: {
+			width:50 + '%',
+			height: 100+'%',
+			float: 'right',
 		}
 
 	},

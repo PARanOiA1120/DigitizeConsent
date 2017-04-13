@@ -8,3 +8,11 @@ Consent form digitization for human subjects research as required by IRB
 
 - React, Express, Mongodb and all other required packages are outlined in the ```package.json```, and you can simply run ```npm install``` to install those packages.   
 
+## Instruction to Run
+- Start Mongodb
+  - Go to the Mongodb installation path, ```[MongoPath]/mongodb/bin/```. 
+  - Run mongod: ```./mongod```.
+- Start React server
+  - In the project root directory, run ```nodemon```.
+- Start webpack: ```webpack +w```.
+
