@@ -16,7 +16,7 @@ class NavBar extends Component {
 
 	render(){
 		return(
-			<nav className="navbar navbar-default" style={{width:100+'%', background:'#f9f9f9', fontSize:14, fontWeight:500}}>
+			<nav className="navbar navbar-default" style={styles.navBar}>
 				<div className="container-fluid">
 					<div className="navbar-header">
       					<button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">

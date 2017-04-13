@@ -31,8 +31,9 @@ class MyEditor extends Component {
                   onChange={this.onChange}
                   modules={modules}
                   formats={formats}
-                  rows='100'>
-        <div className="my-editing-area" style={{height:400}}></div>
+                  rows='100'
+                  style={{width:96+'%', background:'white', marginLeft:'auto', marginRight:'auto'}}>
+        <div className="my-editing-area" style={{height: 'calc(100vh - 52px - 25vh)'}}></div>
       </ReactQuill>
     )
   }

@@ -3648,32 +3648,43 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = {
 	universal: {},
+	navBar: {
+		width: 100 + '%',
+		padding: 0,
+		margin: 0,
+		background: '#f9f9f9',
+		fontSize: 14,
+		fontWeight: 500
+	},
 	form: {
 		container: {
 			width: 100 + '%',
-			height: 100 + '%',
+			height: 'calc(100vh - 52px)',
 			padding: 0,
-			margin: 0,
-			position: 'relative'
+			margin: 0
 		},
 		header: {
 			fontFamily: "'Arial', serif",
 			fontWeight: 'bold',
 			textAlign: 'center',
-			marginTop: 0
+			marginTop: 20
 		},
 		leftpanel: {
 			width: 50 + '%',
 			padding: 5,
 			height: 100 + '%',
-			float: 'left'
+			float: 'left',
+			background: 'linen'
 		},
 		rightpanel: {
 			width: 50 + '%',
 			height: 100 + '%',
-			float: 'right'
+			float: 'right',
+			background: 'lightsteelblue'
+		},
+		button: {
+			margin: '20px 45%'
 		}
-
 	},
 	comment: {
 		commentsBox: {
@@ -22329,7 +22340,19 @@ var ConsentForm = function (_Component) {
 						'h4',
 						{ style: formStyle.header },
 						'Managing Form Sections'
-					)
+					),
+					_react2.default.createElement('hr', { style: { borderColor: 'lightgrey', width: 95 + '%' } }),
+					_react2.default.createElement(
+						'div',
+						{ className: 'form-group', style: { width: 95 + '%', marginLeft: 'auto', marginRight: 'auto' } },
+						_react2.default.createElement(
+							'label',
+							{ 'for': 'section', style: { float: 'left', marginRight: 2 + '%' } },
+							'Select section to add:'
+						),
+						_react2.default.createElement('select', { className: 'form-control', id: 'section', style: { width: 70 + '%' } })
+					),
+					_react2.default.createElement('hr', { style: { borderColor: 'lightgrey', width: 95 + '%' } })
 				),
 				_react2.default.createElement(
 					'div',
@@ -22339,7 +22362,12 @@ var ConsentForm = function (_Component) {
 						{ style: formStyle.header },
 						'Formatting Consent Form'
 					),
-					_react2.default.createElement(_Editor2.default, null)
+					_react2.default.createElement(_Editor2.default, null),
+					_react2.default.createElement(
+						'button',
+						{ className: 'btn btn-primary', style: formStyle.button },
+						' Generate PDF '
+					)
 				)
 			);
 		}
@@ -22476,7 +22504,7 @@ var NavBar = function (_Component) {
 		value: function render() {
 			return _react2.default.createElement(
 				'nav',
-				{ className: 'navbar navbar-default', style: { width: 100 + '%', background: '#f9f9f9', fontSize: 14, fontWeight: 500 } },
+				{ className: 'navbar navbar-default', style: _styles2.default.navBar },
 				_react2.default.createElement(
 					'div',
 					{ className: 'container-fluid' },
@@ -22866,8 +22894,9 @@ var MyEditor = function (_Component) {
           onChange: this.onChange,
           modules: modules,
           formats: formats,
-          rows: '100' },
-        _react2.default.createElement('div', { className: 'my-editing-area', style: { height: 400 } })
+          rows: '100',
+          style: { width: 96 + '%', background: 'white', marginLeft: 'auto', marginRight: 'auto' } },
+        _react2.default.createElement('div', { className: 'my-editing-area', style: { height: 'calc(100vh - 52px - 25vh)' } })
       );
     }
   }]);

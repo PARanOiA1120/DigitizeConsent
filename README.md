@@ -6,6 +6,10 @@ Consent form digitization for human subjects research as required by IRB
   - Run the command ```node -v``` to check if ```node``` has already been installed. 
   - If not, go to this link https://nodejs.org/en/download/ to get the latest version of ```node```.
 
+- Install ```webpack``` and ```nodemon```
+  - Install ```webpack``` globally: ```npm install -g webpack```.
+  - Install ```nodemon``` globally: ```npm install -g nodemon```.
+
 - React, Express, Mongodb and all other required packages are outlined in the ```package.json```, and you can simply run ```npm install``` to install those packages.   
 
 ## Instruction to Run
@@ -14,5 +18,5 @@ Consent form digitization for human subjects research as required by IRB
   - Run mongod: ```./mongod```.
 - Start React server
   - In the project root directory, run ```nodemon```.
-- Start webpack: ```webpack +w```.
+- Start webpack: ```webpack -w```.
 
