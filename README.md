@@ -14,5 +14,5 @@ Consent form digitization for human subjects research as required by IRB
   - Run mongod: ```./mongod```.
 - Start React server
   - In the project root directory, run ```nodemon```.
-- Start webpack: ```webpack +w```.
+- Start webpack: ```webpack -w```.
 
