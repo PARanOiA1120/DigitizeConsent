@@ -70,9 +70,11 @@ class ConsentForm extends Component {
 		let updatedSectionList = Object.assign([], this.state.selectedSectionList)
 		updatedSectionList[i] = section
 
-		this.setState = {
+		this.setState({
 			selectedSectionList: updatedSectionList
-		}
+		})
+
+		console.log('updated state: ' + JSON.stringify(this.state.selectedSectionList))
 	}
 
 
