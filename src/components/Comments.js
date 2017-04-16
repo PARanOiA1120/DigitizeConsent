@@ -8,18 +8,21 @@ class Comments extends Component {
 		this.state = {
 			comment: {
 				username: '',
-				body: ''
+				body: '',
+				timestamp:''
 			},
-			list: [
-				{body: 'comment 1', username:'dtrump', timestamp: '10:30'},
-				{body: 'comment 2', username:'hclinton', timestamp: '10:40'},
-				{body: 'comment 3', username:'gjohnson', timestamp: '11:00'},
-			]
+			list: []
 		}
 	}
 
 	submitComment(){
 		console.log("submitComment: "+JSON.stringify(this.state.comment))
+		let updatedList = Object.assign([], this.state.list)
+		updatedList.push(this.state.comment)
+
+		this.setState({
+			list:updatedList
+		})
 	}
 
 	updateUsername(event){

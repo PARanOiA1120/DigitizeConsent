@@ -8,9 +8,10 @@ class App extends Component {
 	
 	render(){
 		return (
-			<div>				
+			<div>
 				<NavBar />
-				<ConsentForm />
+				<ConsentForm />				
+				{/*<Home />*/}
 			</div>
 		);
 	}

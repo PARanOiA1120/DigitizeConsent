@@ -1,5 +1,9 @@
 export default {
 	universal: {
+		hr: {
+			borderColor: 'lightgrey', 
+			width:95+'%'
+		}
 
 	},
 	navBar: {
@@ -28,16 +32,39 @@ export default {
 			padding:5,
 			height: 100+'%',
 			float: 'left',
-			background: 'linen'
+			background: 'linen',
+			overflow:'auto'
 		},
 		rightpanel: {
 			width:50 + '%',
 			height: 100+'%',
 			float: 'right',
-			background: 'lightsteelblue'
+			background: 'lightsteelblue',
+			overflow:'auto'
 		},
-		button: {
+		centerButton: {
 			margin:'20px 45%'
+		},
+		formgroup: {
+			width:95+'%', 
+			marginLeft:'auto', 
+			marginRight:'auto',
+		},
+		label: {
+			float:'left', 
+			marginRight:2+'%',
+			fontSize: 16
+		},
+		selectionBox: {
+			width: 50+'%',
+		},
+		textarea: {
+			width: 100 + '%'
+		},
+		list: {
+			listStyle:'none',
+			padding: 0,
+			margin:0
 		}
 	},
 	comment: {
