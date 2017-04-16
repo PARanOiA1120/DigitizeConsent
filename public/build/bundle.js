@@ -43196,27 +43196,33 @@ var Section = function (_Component) {
 		var _this = _possibleConstructorReturn(this, (Section.__proto__ || Object.getPrototypeOf(Section)).call(this));
 
 		_this.state = {
-			content: ''
+			section: {}
 		};
 		return _this;
 	}
 
 	_createClass(Section, [{
-		key: 'componentWillReceiveProps',
-		value: function componentWillReceiveProps(newProps) {
-			console.log('componentWillReceiveProps');
-			this.setState({});
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			this.setState({
+				section: this.props.currentSection
+			});
 		}
 	}, {
-		key: 'updateContent',
-		value: function updateContent(event) {
-			console.log('updateContent: ' + event.target.value);
+		key: 'updateSection',
+		value: function updateSection(event) {
+			var updatedSection = Object.assign({}, this.state.section);
+			updatedSection["content"] = event.target.value;
+
+			this.setState({
+				section: updatedSection
+			});
 		}
 	}, {
 		key: 'render',
 		value: function render() {
 			var formStyle = _styles2.default.form;
-			var section = this.props.currentSection;
+			var section = this.state.section;
 
 			return _react2.default.createElement(
 				'div',
@@ -43231,7 +43237,7 @@ var Section = function (_Component) {
 					),
 					_react2.default.createElement('br', null),
 					_react2.default.createElement('textarea', { rows: '7', style: formStyle.textarea, value: section.content,
-						onChange: this.componentWillReceiveProps.bind(this) })
+						onChange: this.updateSection.bind(this) })
 				),
 				_react2.default.createElement('hr', { style: _styles2.default.universal.hr })
 			);

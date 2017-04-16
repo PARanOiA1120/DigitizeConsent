@@ -5,34 +5,36 @@ import styles from './styles'
 class Section extends Component {
 	constructor(){
 		super()
-
 		this.state = {
-			content: ''
+			section: {}
 		}
 	}
 
-	componentWillReceiveProps(newProps) {
-		console.log('componentWillReceiveProps')
+	componentDidMount(){
 		this.setState({
-			
+			section: this.props.currentSection
 		})
 	}
 
-	updateContent(event){
-		console.log('updateContent: ' + event.target.value)
+	updateSection(event) {
+		let updatedSection = Object.assign({}, this.state.section)
+		updatedSection["content"] = event.target.value
 
+		this.setState({
+			section: updatedSection
+		})
 	}
 
 	render(){
 		const formStyle = styles.form
-		const section = this.props.currentSection
+		const section = this.state.section
 		
 		return (
 			<div>
 				<div className="form-group" style={formStyle.formgroup}>
 					<label style={formStyle.label}>{section.title}</label><br/>
 					<textarea rows="7" style={formStyle.textarea} value={section.content}
-						onChange={this.componentWillReceiveProps.bind(this)}></textarea>
+						onChange={this.updateSection.bind(this)}></textarea>
 				</div>
 				<hr style={styles.universal.hr} />
 			</div>
