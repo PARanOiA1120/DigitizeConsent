@@ -22422,8 +22422,21 @@ var ConsentForm = function (_Component) {
 			});
 		}
 	}, {
+		key: 'updateSection',
+		value: function updateSection(i, section) {
+			console.log('updatedSection: ' + JSON.stringify(section));
+			var updatedSectionList = Object.assign([], this.state.selectedSectionList);
+			updatedSectionList[i] = section;
+
+			this.setState = {
+				selectedSectionList: updatedSectionList
+			};
+		}
+	}, {
 		key: 'render',
 		value: function render() {
+			var _this3 = this;
+
 			var formStyle = _styles2.default.form;
 			var universalStyle = _styles2.default.universal;
 
@@ -22439,7 +22452,7 @@ var ConsentForm = function (_Component) {
 				return _react2.default.createElement(
 					'li',
 					{ key: i },
-					_react2.default.createElement(_formSection2.default, { currentSection: section })
+					_react2.default.createElement(_formSection2.default, { currentSection: section, onChange: _this3.updateSection.bind(_this3, i) })
 				);
 			});
 
@@ -43213,6 +43226,8 @@ var Section = function (_Component) {
 		value: function updateSection(event) {
 			var updatedSection = Object.assign({}, this.state.section);
 			updatedSection["content"] = event.target.value;
+
+			this.props.onChange(updatedSection);
 
 			this.setState({
 				section: updatedSection

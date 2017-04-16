@@ -20,6 +20,8 @@ class Section extends Component {
 		let updatedSection = Object.assign({}, this.state.section)
 		updatedSection["content"] = event.target.value
 
+		this.props.onChange(updatedSection)
+		
 		this.setState({
 			section: updatedSection
 		})

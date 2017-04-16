@@ -65,6 +65,18 @@ class ConsentForm extends Component {
 	}
 
 
+	updateSection(i, section){
+		console.log('updatedSection: ' + JSON.stringify(section))
+		let updatedSectionList = Object.assign([], this.state.selectedSectionList)
+		updatedSectionList[i] = section
+
+		this.setState = {
+			selectedSectionList: updatedSectionList
+		}
+	}
+
+
+
 	render(){
 		const formStyle = styles.form
 		const universalStyle = styles.universal
@@ -77,7 +89,7 @@ class ConsentForm extends Component {
 
 		const sectionList = this.state.selectedSectionList.map((section, i) => {
 			return (
-				<li key={i}><Section currentSection={section}></Section></li>
+				<li key={i}><Section currentSection={section} onChange={this.updateSection.bind(this, i)}></Section></li>
 			)
 		})
 
