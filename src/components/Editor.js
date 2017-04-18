@@ -7,6 +7,26 @@ class MyEditor extends Component {
     this.state = { text: '' }
     this.onChange = (text) => this.setState({text})
   }
+
+
+  componentWillReceiveProps(nextProps){
+    console.log('nextProps: ' + JSON.stringify(nextProps))
+    let sectionList = nextProps.selectedSectionList
+    let full_text = ""
+    for(let section of sectionList){
+      full_text += (section["title"] + '</br>')
+      full_text += (section["content"] + '<br/><br/>')
+    }
+
+    let updatedText = Object.assign("", this.state.text)
+    updatedText = full_text
+
+    console.log('full_text: ' + updatedText)
+
+    this.setState({
+      text: updatedText
+    })
+  }
  
   render() {
     const modules = {
@@ -25,6 +45,7 @@ class MyEditor extends Component {
       'list', 'bullet', 'indent',
       'link', 'image'
     ]
+
     return (
       <ReactQuill theme="snow" 
                   value={this.state.text}

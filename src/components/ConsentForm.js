@@ -11,7 +11,7 @@ class ConsentForm extends Component {
 		this.state = {
 			sectionList: [],
 			selectedSectionList: [],
-			selected: ''
+			selected: '',
 		}
 	}
 
@@ -66,15 +66,13 @@ class ConsentForm extends Component {
 
 
 	updateSection(i, section){
-		console.log('updatedSection: ' + JSON.stringify(section))
 		let updatedSectionList = Object.assign([], this.state.selectedSectionList)
 		updatedSectionList[i] = section
+		// console.log('updatedSection: ' + JSON.stringify(updatedSectionList[i]))
 
 		this.setState({
 			selectedSectionList: updatedSectionList
 		})
-
-		console.log('updated state: ' + JSON.stringify(this.state.selectedSectionList))
 	}
 
 
@@ -122,7 +120,7 @@ class ConsentForm extends Component {
 				
 				<div className="rightpanel" style={formStyle.rightpanel}>
 					<h4 style={formStyle.header}>Formatting Consent Form</h4>
-					<MyEditor />
+					<MyEditor selectedSectionList={this.state.selectedSectionList}></MyEditor>
 					<button className="btn btn-primary" style={formStyle.centerButton}> Generate PDF </button>
 				</div>
 			</div>
