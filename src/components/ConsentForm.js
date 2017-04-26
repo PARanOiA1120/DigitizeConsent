@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import styles from './styles'
-import MyEditor from './Editor'
 import superagent from 'superagent'
-import Section from './formSection'
+import Section from './FormSection'
 var _ = require('lodash')
 
 class ConsentForm extends Component {
@@ -16,7 +15,7 @@ class ConsentForm extends Component {
 	}
 
 	componentDidMount(){
-		console.log('componentDidMount')
+		// console.log('componentDidMount')
 
 		superagent
 		.get('/api/formsection')
@@ -49,11 +48,11 @@ class ConsentForm extends Component {
 	}
 
 	addSection(event){
-		console.log('add section: ' + this.state.selected)
+		// console.log('add section: ' + this.state.selected)
 
 		const index = _.findIndex(this.state.sectionList, ['title', this.state.selected])
 		const selectedSection = this.state.sectionList[index]
-		console.log('selected section: ' + JSON.stringify(selectedSection))
+		console.log('added section: ' + JSON.stringify(selectedSection))
 		
 		let updatedSections = Object.assign([], this.state.selectedSectionList)
 		updatedSections.push(selectedSection)
@@ -68,7 +67,6 @@ class ConsentForm extends Component {
 	updateSection(i, section){
 		let updatedSectionList = Object.assign([], this.state.selectedSectionList)
 		updatedSectionList[i] = section
-		// console.log('updatedSection: ' + JSON.stringify(updatedSectionList[i]))
 
 		this.setState({
 			selectedSectionList: updatedSectionList
@@ -120,7 +118,7 @@ class ConsentForm extends Component {
 				
 				<div className="rightpanel" style={formStyle.rightpanel}>
 					<h4 style={formStyle.header}>Formatting Consent Form</h4>
-					<MyEditor selectedSectionList={this.state.selectedSectionList}></MyEditor>
+					<textarea style={formStyle.textarea} value={this.state.selectedSectionList}></textarea>
 					<button className="btn btn-primary" style={formStyle.centerButton}> Generate PDF </button>
 				</div>
 			</div>

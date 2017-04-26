@@ -59,7 +59,9 @@ export default {
 			width: 50+'%',
 		},
 		textarea: {
-			width: 100 + '%'
+			width: 96 + '%',
+			marginLeft: 2 + '%',
+			height: 'calc(100vh - 52px - 25vh)'
 		},
 		list: {
 			listStyle:'none',

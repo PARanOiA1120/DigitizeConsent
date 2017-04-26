@@ -1,27 +1,57 @@
 import React, { Component } from 'react'
 import ReactQuill, { Quill } from 'react-quill'
 
-class MyEditor extends Component {
+
+class FormSection extends Component {
   constructor(props) {
     super(props)
-    this.state = { text: '' }
-    this.onChange = (text) => this.setState({text})
+    this.state = { 
+      section: {}
+      text: '' 
+    }
+  }
+
+  componentDidMount(){
+    this.setState({
+      section: this.props.currentSection
+    })
   }
 
 
-  componentWillReceiveProps(nextProps){
-    console.log('nextProps: ' + JSON.stringify(nextProps))
-    let sectionList = nextProps.selectedSectionList
-    let full_text = ""
-    for(let section of sectionList){
-      full_text += (section["title"] + '</br>')
-      full_text += (section["content"] + '<br/><br/>')
-    }
 
+  // componentWillReceiveProps(nextProps){
+  //   console.log('nextProps: ' + JSON.stringify(nextProps))
+
+  //   let updatedText = Object.assign("", this.state.text)
+  //   updatedText = nextProps.content
+
+  //   this.setState({
+  //     text: updatedText
+  //   })
+
+
+    // let sectionList = nextProps.selectedSectionList
+    // let full_text = ""
+    // for(let section of sectionList){
+    //   full_text += (section["title"] + '</br>')
+    //   full_text += (section["content"] + '<br/><br/>')
+    // }
+
+    // let updatedText = Object.assign("", this.state.text)
+    // updatedText = full_text
+
+    // console.log('full_text: ' + updatedText)
+
+    // this.setState({
+    //   text: updatedText
+    // })
+  // }
+
+  updateSection(event){
     let updatedText = Object.assign("", this.state.text)
-    updatedText = full_text
+    updatedText = event
 
-    console.log('full_text: ' + updatedText)
+    this.props.onChange(updatedText)
 
     this.setState({
       text: updatedText
@@ -49,7 +79,7 @@ class MyEditor extends Component {
     return (
       <ReactQuill theme="snow" 
                   value={this.state.text}
-                  onChange={this.onChange}
+                  onChange={this.updateSection.bind(this)}
                   modules={modules}
                   formats={formats}
                   rows='100'

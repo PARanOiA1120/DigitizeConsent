@@ -3060,7 +3060,9 @@ exports.default = {
 			width: 50 + '%'
 		},
 		textarea: {
-			width: 100 + '%'
+			width: 96 + '%',
+			marginLeft: 2 + '%',
+			height: 'calc(100vh - 52px - 25vh)'
 		},
 		list: {
 			listStyle: 'none',
@@ -23292,17 +23294,13 @@ var _styles = __webpack_require__(25);
 
 var _styles2 = _interopRequireDefault(_styles);
 
-var _Editor = __webpack_require__(139);
-
-var _Editor2 = _interopRequireDefault(_Editor);
-
 var _superagent = __webpack_require__(132);
 
 var _superagent2 = _interopRequireDefault(_superagent);
 
-var _formSection = __webpack_require__(142);
+var _FormSection = __webpack_require__(346);
 
-var _formSection2 = _interopRequireDefault(_formSection);
+var _FormSection2 = _interopRequireDefault(_FormSection);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -23335,7 +23333,7 @@ var ConsentForm = function (_Component) {
 		value: function componentDidMount() {
 			var _this2 = this;
 
-			console.log('componentDidMount');
+			// console.log('componentDidMount')
 
 			_superagent2.default.get('/api/formsection').query(null).set('Accept', 'application/json').end(function (err, response) {
 				if (err) {
@@ -23366,11 +23364,11 @@ var ConsentForm = function (_Component) {
 	}, {
 		key: 'addSection',
 		value: function addSection(event) {
-			console.log('add section: ' + this.state.selected);
+			// console.log('add section: ' + this.state.selected)
 
 			var index = _.findIndex(this.state.sectionList, ['title', this.state.selected]);
 			var selectedSection = this.state.sectionList[index];
-			console.log('selected section: ' + JSON.stringify(selectedSection));
+			console.log('added section: ' + JSON.stringify(selectedSection));
 
 			var updatedSections = Object.assign([], this.state.selectedSectionList);
 			updatedSections.push(selectedSection);
@@ -23384,7 +23382,6 @@ var ConsentForm = function (_Component) {
 		value: function updateSection(i, section) {
 			var updatedSectionList = Object.assign([], this.state.selectedSectionList);
 			updatedSectionList[i] = section;
-			// console.log('updatedSection: ' + JSON.stringify(updatedSectionList[i]))
 
 			this.setState({
 				selectedSectionList: updatedSectionList
@@ -23410,7 +23407,7 @@ var ConsentForm = function (_Component) {
 				return _react2.default.createElement(
 					'li',
 					{ key: i },
-					_react2.default.createElement(_formSection2.default, { currentSection: section, onChange: _this3.updateSection.bind(_this3, i) })
+					_react2.default.createElement(_FormSection2.default, { currentSection: section, onChange: _this3.updateSection.bind(_this3, i) })
 				);
 			});
 
@@ -23470,7 +23467,7 @@ var ConsentForm = function (_Component) {
 						{ style: formStyle.header },
 						'Formatting Consent Form'
 					),
-					_react2.default.createElement(_Editor2.default, { selectedSectionList: this.state.selectedSectionList }),
+					_react2.default.createElement('textarea', { style: formStyle.textarea, value: this.state.selectedSectionList }),
 					_react2.default.createElement(
 						'button',
 						{ className: 'btn btn-primary', style: formStyle.centerButton },
@@ -23951,119 +23948,7 @@ var Comments = function (_Component) {
 exports.default = Comments;
 
 /***/ }),
-/* 139 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(9);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _reactQuill = __webpack_require__(326);
-
-var _reactQuill2 = _interopRequireDefault(_reactQuill);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var MyEditor = function (_Component) {
-  _inherits(MyEditor, _Component);
-
-  function MyEditor(props) {
-    _classCallCheck(this, MyEditor);
-
-    var _this = _possibleConstructorReturn(this, (MyEditor.__proto__ || Object.getPrototypeOf(MyEditor)).call(this, props));
-
-    _this.state = { text: '' };
-    _this.onChange = function (text) {
-      return _this.setState({ text: text });
-    };
-    return _this;
-  }
-
-  _createClass(MyEditor, [{
-    key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps(nextProps) {
-      console.log('nextProps: ' + JSON.stringify(nextProps));
-      var sectionList = nextProps.selectedSectionList;
-      var full_text = "";
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = sectionList[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var section = _step.value;
-
-          full_text += section["title"] + '</br>';
-          full_text += section["content"] + '<br/><br/>';
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
-
-      var updatedText = Object.assign("", this.state.text);
-      updatedText = full_text;
-
-      console.log('full_text: ' + updatedText);
-
-      this.setState({
-        text: updatedText
-      });
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      var modules = {
-        toolbar: [[{ 'header': [1, 2, false] }], ['bold', 'italic', 'underline', 'strike', 'blockquote'], [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }], ['link', 'image'], ['clean']]
-      };
-
-      var formats = ['header', 'bold', 'italic', 'underline', 'strike', 'blockquote', 'list', 'bullet', 'indent', 'link', 'image'];
-
-      return _react2.default.createElement(
-        _reactQuill2.default,
-        { theme: 'snow',
-          value: this.state.text,
-          onChange: this.onChange,
-          modules: modules,
-          formats: formats,
-          rows: '100',
-          style: { width: 96 + '%', background: 'white', marginLeft: 'auto', marginRight: 'auto' } },
-        _react2.default.createElement('div', { className: 'my-editing-area', style: { height: 'calc(100vh - 52px - 25vh)' } })
-      );
-    }
-  }]);
-
-  return MyEditor;
-}(_react.Component);
-
-exports.default = MyEditor;
-
-/***/ }),
+/* 139 */,
 /* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -24277,99 +24162,7 @@ var Zones = function (_Component) {
 exports.default = Zones;
 
 /***/ }),
-/* 142 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(9);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _styles = __webpack_require__(25);
-
-var _styles2 = _interopRequireDefault(_styles);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Section = function (_Component) {
-	_inherits(Section, _Component);
-
-	function Section() {
-		_classCallCheck(this, Section);
-
-		var _this = _possibleConstructorReturn(this, (Section.__proto__ || Object.getPrototypeOf(Section)).call(this));
-
-		_this.state = {
-			section: {}
-		};
-		return _this;
-	}
-
-	_createClass(Section, [{
-		key: 'componentDidMount',
-		value: function componentDidMount() {
-			this.setState({
-				section: this.props.currentSection
-			});
-		}
-	}, {
-		key: 'updateSection',
-		value: function updateSection(event) {
-			var updatedSection = Object.assign({}, this.state.section);
-			updatedSection["content"] = event.target.value;
-
-			this.props.onChange(updatedSection);
-
-			this.setState({
-				section: updatedSection
-			});
-		}
-	}, {
-		key: 'render',
-		value: function render() {
-			var formStyle = _styles2.default.form;
-			var section = this.state.section;
-
-			return _react2.default.createElement(
-				'div',
-				null,
-				_react2.default.createElement(
-					'div',
-					{ className: 'form-group', style: formStyle.formgroup },
-					_react2.default.createElement(
-						'label',
-						{ style: formStyle.label },
-						section.title
-					),
-					_react2.default.createElement('br', null),
-					_react2.default.createElement('textarea', { rows: '7', style: formStyle.textarea, value: section.content,
-						onChange: this.updateSection.bind(this) })
-				),
-				_react2.default.createElement('hr', { style: _styles2.default.universal.hr })
-			);
-		}
-	}]);
-
-	return Section;
-}(_react.Component);
-
-exports.default = Section;
-
-/***/ }),
+/* 142 */,
 /* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -60397,6 +60190,158 @@ exports.cleanHeader = function(header, shouldStripCookie){
   }
   return header;
 };
+
+/***/ }),
+/* 346 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(9);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactQuill = __webpack_require__(326);
+
+var _reactQuill2 = _interopRequireDefault(_reactQuill);
+
+var _styles = __webpack_require__(25);
+
+var _styles2 = _interopRequireDefault(_styles);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var FormSection = function (_Component) {
+  _inherits(FormSection, _Component);
+
+  function FormSection(props) {
+    _classCallCheck(this, FormSection);
+
+    var _this = _possibleConstructorReturn(this, (FormSection.__proto__ || Object.getPrototypeOf(FormSection)).call(this, props));
+
+    _this.state = {
+      section: {},
+      text: ''
+    };
+
+    _this.onChange = function (text) {
+      _this.setState({
+        text: text
+      });
+      _this.updateSection(text);
+    };
+    return _this;
+  }
+
+  _createClass(FormSection, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.setState({
+        section: this.props.currentSection,
+        text: this.props.currentSection.content
+      });
+
+      console.log('section' + this.state.text);
+    }
+
+    // componentWillReceiveProps(nextProps){
+    //   console.log('nextProps: ' + JSON.stringify(nextProps))
+
+    //   let updatedText = Object.assign("", this.state.text)
+    //   updatedText = nextProps.content
+
+    //   this.setState({
+    //     text: updatedText
+    //   })
+
+
+    // let sectionList = nextProps.selectedSectionList
+    // let full_text = ""
+    // for(let section of sectionList){
+    //   full_text += (section["title"] + '</br>')
+    //   full_text += (section["content"] + '<br/><br/>')
+    // }
+
+    // let updatedText = Object.assign("", this.state.text)
+    // updatedText = full_text
+
+    // console.log('full_text: ' + updatedText)
+
+    // this.setState({
+    //   text: updatedText
+    // })
+    // }
+
+  }, {
+    key: 'updateSection',
+    value: function updateSection(content) {
+      var updatedSection = Object.assign({}, this.state.section);
+      updatedSection["content"] = content;
+
+      this.props.onChange(updatedSection);
+
+      this.setState({
+        section: updatedSection
+      });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var modules = {
+        toolbar: [[{ 'header': [1, 2, false] }], ['bold', 'italic', 'underline', 'strike', 'blockquote'], [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }], ['link', 'image'], ['clean']]
+      };
+
+      var formats = ['header', 'bold', 'italic', 'underline', 'strike', 'blockquote', 'list', 'bullet', 'indent', 'link', 'image'];
+
+      var formStyle = _styles2.default.form;
+
+      return _react2.default.createElement(
+        'div',
+        null,
+        _react2.default.createElement(
+          'div',
+          { className: 'form-group', style: formStyle.formgroup },
+          _react2.default.createElement(
+            'label',
+            { style: formStyle.label },
+            this.state.section.title
+          ),
+          _react2.default.createElement('br', null),
+          _react2.default.createElement('br', null),
+          _react2.default.createElement(
+            _reactQuill2.default,
+            { theme: 'snow',
+              value: this.state.text,
+              onChange: this.onChange,
+              modules: modules,
+              formats: formats,
+              rows: '100',
+              style: { width: 100 + '%', background: 'white', marginLeft: 'auto', marginRight: 'auto' } },
+            _react2.default.createElement('div', { className: 'my-editing-area', style: { height: 'calc(100vh - 52px - 25vh)' } })
+          )
+        ),
+        _react2.default.createElement('hr', { style: _styles2.default.universal.hr })
+      );
+    }
+  }]);
+
+  return FormSection;
+}(_react.Component);
+
+exports.default = FormSection;
 
 /***/ })
 /******/ ]);
