@@ -57,6 +57,8 @@ export default {
 		},
 		selectionBox: {
 			width: 50+'%',
+			float:'left',
+			marginRight: 5+'px'
 		},
 		textarea: {
 			width: 96 + '%',

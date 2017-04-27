@@ -11,6 +11,7 @@ class ConsentForm extends Component {
 			sectionList: [],
 			selectedSectionList: [],
 			selected: '',
+			full_text:''
 		}
 	}
 
@@ -37,8 +38,6 @@ class ConsentForm extends Component {
 	}
 
 	updateSelection(event){
-		console.log('Section selected: ' + event.target.value)
-
 		let updatedSelection = Object.assign('', this.state.selected)
 		updatedSelection = event.target.value
 
@@ -48,11 +47,11 @@ class ConsentForm extends Component {
 	}
 
 	addSection(event){
-		// console.log('add section: ' + this.state.selected)
+		console.log('add section: ' + this.state.selected)
 
 		const index = _.findIndex(this.state.sectionList, ['title', this.state.selected])
 		const selectedSection = this.state.sectionList[index]
-		console.log('added section: ' + JSON.stringify(selectedSection))
+		// console.log('added section: ' + JSON.stringify(selectedSection))
 		
 		let updatedSections = Object.assign([], this.state.selectedSectionList)
 		updatedSections.push(selectedSection)
@@ -60,7 +59,23 @@ class ConsentForm extends Component {
 		this.setState({
 			selectedSectionList: updatedSections
 		})
+
+		this.updateFullText()
+	}
+
+	addRiskSection(title){
+		const index = _.findIndex(this.state.sectionList, ['title', title])
+		const selectedSection = this.state.sectionList[index]
+		// console.log('added section: ' + JSON.stringify(selectedSection))
 		
+		let updatedSections = Object.assign([], this.state.selectedSectionList)
+		updatedSections.push(selectedSection)
+
+		this.setState({
+			selectedSectionList: updatedSections
+		})
+
+		this.updateFullText()	
 	}
 
 
@@ -71,8 +86,26 @@ class ConsentForm extends Component {
 		this.setState({
 			selectedSectionList: updatedSectionList
 		})
+
+		this.updateFullText()
 	}
 
+
+	// the text to display on the right panel
+	updateFullText(){
+		let text = ""
+		for(let section of this.state.selectedSectionList){
+			text += (section["title"] + '</br>')
+			text += (section["content"] + '<br/><br/>')
+		}
+
+		let updatedFullText = Object.assign("", this.state.full_text)
+		updatedFullText = text
+
+		this.setState({
+			full_text: updatedFullText
+		})
+	}
 
 
 	render(){
@@ -87,7 +120,7 @@ class ConsentForm extends Component {
 
 		const sectionList = this.state.selectedSectionList.map((section, i) => {
 			return (
-				<li key={i}><Section currentSection={section} onChange={this.updateSection.bind(this, i)}></Section></li>
+				<li key={i}><Section currentSection={section} addSection={this.addRiskSection.bind(this)} onChange={this.updateSection.bind(this, i)}></Section></li>
 			)
 		})
 
@@ -118,7 +151,7 @@ class ConsentForm extends Component {
 				
 				<div className="rightpanel" style={formStyle.rightpanel}>
 					<h4 style={formStyle.header}>Formatting Consent Form</h4>
-					<textarea style={formStyle.textarea} value={this.state.selectedSectionList}></textarea>
+					<textarea style={formStyle.textarea} value={this.state.full_text}></textarea>
 					<button className="btn btn-primary" style={formStyle.centerButton}> Generate PDF </button>
 				</div>
 			</div>
