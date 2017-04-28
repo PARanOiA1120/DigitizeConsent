@@ -143,7 +143,10 @@ class FormSection extends Component {
             <div className="my-editing-area" style={{height: 200 + 'px'}}></div>
           </ReactQuill>
           <br/>
-          <button className="btn btn-primary" onClick={this.generateRisks.bind(this)}>Generate Risk&Protection</button>
+          
+          {sensors && sensors.length >= 1 && sensors[0] != "" &&
+            <button className="btn btn-primary" onClick={this.generateRisks.bind(this)}>Generate Risk&Protection</button>
+          }
         </div>
         <hr style={styles.universal.hr} />
       </div>

@@ -24211,7 +24211,7 @@ var FormSection = function (_Component) {
             _react2.default.createElement('div', { className: 'my-editing-area', style: { height: 200 + 'px' } })
           ),
           _react2.default.createElement('br', null),
-          _react2.default.createElement(
+          sensors && sensors.length >= 1 && sensors[0] != "" && _react2.default.createElement(
             'button',
             { className: 'btn btn-primary', onClick: this.generateRisks.bind(this) },
             'Generate Risk&Protection'
