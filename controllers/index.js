@@ -1,9 +1,7 @@
-var ZoneController = require('./ZoneController')
-var CommentController = require('./CommentController')
 var FormSectionController = require('./FormSectionController')
+var SensorController = require('./SensorController')
 
 module.exports = {
-	comment: CommentController,
-	zone: ZoneController,
-	formsection: FormSectionController
+	formsection: FormSectionController,
+	sensorcombo: SensorController
 }
