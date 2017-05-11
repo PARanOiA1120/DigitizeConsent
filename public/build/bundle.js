@@ -22346,6 +22346,10 @@ var _ContentPreview = __webpack_require__(135);
 
 var _ContentPreview2 = _interopRequireDefault(_ContentPreview);
 
+var _DownloadPDF = __webpack_require__(410);
+
+var _DownloadPDF2 = _interopRequireDefault(_DownloadPDF);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -22575,11 +22579,7 @@ var ConsentForm = function (_Component) {
 						{ style: formStyle.preview },
 						_react2.default.createElement(_ContentPreview2.default, { content: this.state.full_text })
 					),
-					_react2.default.createElement(
-						'button',
-						{ className: 'btn btn-primary', style: formStyle.centerButton },
-						' Generate PDF '
-					)
+					_react2.default.createElement(_DownloadPDF2.default, { content: this.state.full_text })
 				)
 			);
 		}
@@ -69087,6 +69087,98 @@ function config (name) {
 /***/ (function(module, exports) {
 
 /* (ignored) */
+
+/***/ }),
+/* 410 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(16);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _styles = __webpack_require__(48);
+
+var _styles2 = _interopRequireDefault(_styles);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var DownloadPDF = function (_Component) {
+  _inherits(DownloadPDF, _Component);
+
+  function DownloadPDF(props) {
+    _classCallCheck(this, DownloadPDF);
+
+    var _this = _possibleConstructorReturn(this, (DownloadPDF.__proto__ || Object.getPrototypeOf(DownloadPDF)).call(this, props));
+
+    _this.pdfToHTML = _this.pdfToHTML.bind(_this);
+    return _this;
+  }
+
+  _createClass(DownloadPDF, [{
+    key: 'pdfToHTML',
+    value: function pdfToHTML() {
+      var pdf = new jsPDF('p', 'pt', 'letter');
+      var source = this.props.content;
+      var specialElementHandlers = {
+        '#bypassme': function bypassme(element, renderer) {
+          return true;
+        }
+      };
+
+      var margins = {
+        top: 80,
+        bottom: 60,
+        left: 40,
+        width: 522
+      };
+
+      pdf.fromHTML(source // HTML string or DOM elem ref.
+      , margins.left // x coord
+      , margins.top // y coord
+      , {
+        'width': margins.width // max width of content on PDF
+        , 'elementHandlers': specialElementHandlers
+      }, function (dispose) {
+        // dispose: object with X, Y of the last line add to the PDF
+        // this allow the insertion of new lines after html
+        pdf.save('consent_form.pdf');
+      });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'div',
+        null,
+        _react2.default.createElement(
+          'button',
+          { className: 'btn btn-primary', style: _styles2.default.form.centerButton,
+            onClick: this.pdfToHTML },
+          'Download PDF'
+        )
+      );
+    }
+  }]);
+
+  return DownloadPDF;
+}(_react.Component);
+
+exports.default = DownloadPDF;
 
 /***/ })
 /******/ ]);

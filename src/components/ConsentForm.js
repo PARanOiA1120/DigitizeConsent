@@ -3,6 +3,7 @@ import styles from './styles'
 import superagent from 'superagent'
 import Section from './FormSection'
 import ContentPreview from './ContentPreview'
+import DownloadPDF from './DownloadPDF'
 var _ = require('lodash')
 
 class ConsentForm extends Component {
@@ -155,7 +156,8 @@ class ConsentForm extends Component {
 					<div style={formStyle.preview}>
 						<ContentPreview content={this.state.full_text} />
 					</div>
-					<button className="btn btn-primary" style={formStyle.centerButton}> Generate PDF </button>
+					
+					<DownloadPDF content={this.state.full_text} />
 				</div>
 			</div>
 		);
