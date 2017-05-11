@@ -60,10 +60,13 @@ export default {
 			float:'left',
 			marginRight: 5+'px'
 		},
-		textarea: {
+		preview: {
 			width: 96 + '%',
 			marginLeft: 2 + '%',
-			height: 'calc(100vh - 52px - 25vh)'
+			height: 'calc(100vh - 52px - 25vh)',
+			background:'white',
+			padding:5+'px',
+			overflow:'scroll'
 		},
 		list: {
 			listStyle:'none',

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import styles from './styles'
 import superagent from 'superagent'
 import Section from './FormSection'
+import ContentPreview from './ContentPreview'
 var _ = require('lodash')
 
 class ConsentForm extends Component {
@@ -151,7 +152,9 @@ class ConsentForm extends Component {
 				
 				<div className="rightpanel" style={formStyle.rightpanel}>
 					<h4 style={formStyle.header}>Formatting Consent Form</h4>
-					<textarea style={formStyle.textarea} value={this.state.full_text}></textarea>
+					<div style={formStyle.preview}>
+						<ContentPreview content={this.state.full_text} />
+					</div>
 					<button className="btn btn-primary" style={formStyle.centerButton}> Generate PDF </button>
 				</div>
 			</div>
