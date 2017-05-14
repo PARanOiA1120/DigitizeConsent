@@ -3,15 +3,47 @@ import styles from './styles'
 
 
 class NavBar extends Component {
+	constructor(){
+		super()
+		this.state = {
+			currentTab: ""
+		}
+	}
 
 	toggleConsentForm(event){
 		document.getElementById('consentForm').className = "active";
 		document.getElementById('riskReport').className = "riskReport"; 
+		document.getElementById('addData').className = "addData";
+
+		this.updateTab("consentForm")
 	}
 
 	toggleRiskReport(){
 		document.getElementById('consentForm').className = "consentForm";
 		document.getElementById('riskReport').className = "active"; 
+		document.getElementById('addData').className = "addData";
+
+		this.updateTab("riskReport")
+	}
+
+	toggleAddData(){
+		document.getElementById('consentForm').className = "consentForm";
+		document.getElementById('riskReport').className = "riskReport"; 
+		document.getElementById('addData').className = "active";
+
+		this.updateTab("addData")
+	}
+
+	updateTab(tab){
+		let updatedTab = Object.assign("", this.state.currentTab)
+		updatedTab = tab
+
+		this.props.onChange(updatedTab)
+
+		this.setState ({
+			currentTab: updatedTab
+		})
+
 	}
 
 	render(){
@@ -32,6 +64,7 @@ class NavBar extends Component {
 				      <ul className="nav navbar-nav">
 				        <li className="active" onClick={ this.toggleConsentForm.bind(this)} id="consentForm"><a>Consent Form Generator</a></li>
 				        <li onClick={ this.toggleRiskReport.bind(this)} id="riskReport"><a>Sensor Risk Report</a></li>
+				        <li onClick={ this.toggleAddData.bind(this)} id="addData"><a>Create Data Record</a></li>
 				      </ul>
 				    </div>
 				</div>

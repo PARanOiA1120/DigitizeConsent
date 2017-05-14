@@ -43,7 +43,8 @@ export default {
 			overflow:'auto'
 		},
 		centerButton: {
-			margin:'20px 45%'
+			marginTop: 20,
+			marginLeft:"40%"
 		},
 		formgroup: {
 			width:95+'%', 

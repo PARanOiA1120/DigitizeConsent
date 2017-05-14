@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{{ title }}</title>
+	</head>
+	<body>
+		<h1>Create Device Sensor</h1>
+
+		<form action="/api/devicesensor" method="post">
+			<input type="text" name="title" placeholder="Device"/><br/>
+			<input type="text" name="sensors" placeholder="Sensors"/><br/>
+			<input type="text" name="content" placeholder="Description"/><br/>
+			<input type="submit" value="Create Form Section"/>
+		</form>
+	</body>
+</html>

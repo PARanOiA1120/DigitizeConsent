@@ -20,7 +20,7 @@ class DownloadPDF extends Component {
         top: 80,
         bottom: 60,
         left: 40,
-        width: 522
+        width: 500
     };
 
     pdf.fromHTML (
@@ -43,7 +43,7 @@ class DownloadPDF extends Component {
     return (
       <div>
         <button className="btn btn-primary" style={styles.form.centerButton} 
-        onClick={this.pdfToHTML}>Download PDF</button>
+        onClick={this.pdfToHTML}>Generate PDF</button>
       </div>
     );
   } 
