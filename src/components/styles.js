@@ -74,5 +74,14 @@ export default {
 			padding: 0,
 			margin:0
 		}
+	},
+	schemaform: {
+		form: {
+			width: 70 + '%',
+			marginLeft: 'auto',
+			marginRight: 'auto',
+			marginTop: 50
+		}
+
 	}
 }
