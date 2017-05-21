@@ -34604,7 +34604,8 @@ var CreateDBEntry = function (_Component) {
 
 		_this.state = {
 			collectionList: [{ title: 'Device-Sensor', action: '/api/devicesensor', schema: 'device_sensor_schema' }, { title: 'Sensor-Inference', action: '/api/sensorinference', schema: 'sensor_inference_schema' }],
-			selectedCollection: {}
+			selectedCollection: {},
+			switchToReview: false
 		};
 		return _this;
 	}
@@ -34623,6 +34624,13 @@ var CreateDBEntry = function (_Component) {
 			});
 		}
 	}, {
+		key: 'updateSwitchToReview',
+		value: function updateSwitchToReview(event) {
+			this.setState({
+				switchToReview: !this.state.switchToReview
+			});
+		}
+	}, {
 		key: 'render',
 		value: function render() {
 			var formStyle = _styles2.default.schemaform;
@@ -34637,7 +34645,7 @@ var CreateDBEntry = function (_Component) {
 			return _react2.default.createElement(
 				'div',
 				null,
-				_react2.default.createElement(
+				this.state.switchToReview ? null : _react2.default.createElement(
 					'select',
 					{ className: 'form-control', id: 'db', style: formStyle.selectionBox,
 						onChange: this.updateSelection.bind(this) },
@@ -34648,7 +34656,8 @@ var CreateDBEntry = function (_Component) {
 					),
 					options
 				),
-				this.state.selectedCollection.title && _react2.default.createElement(_JSONSchemaForm2.default, { collection: this.state.selectedCollection })
+				this.state.selectedCollection.title && _react2.default.createElement(_JSONSchemaForm2.default, { collection: this.state.selectedCollection, switchToReview: this.state.switchToReview,
+					onChange: this.updateSwitchToReview.bind(this) })
 			);
 		}
 	}]);
@@ -34702,28 +34711,40 @@ var NavBar = function (_Component) {
 	}
 
 	_createClass(NavBar, [{
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			var url = location.href.substr(location.href.lastIndexOf('/') + 1);
+			if (url == "#addData") {
+				this.toggleAddData();
+			} else if (url == "#searchDB") {
+				this.toggleSearchDB();
+			} else {
+				this.updateTab("consentForm");
+			}
+		}
+	}, {
 		key: 'toggleConsentForm',
-		value: function toggleConsentForm(event) {
+		value: function toggleConsentForm() {
 			document.getElementById('consentForm').className = "active";
-			document.getElementById('riskReport').className = "riskReport";
+			document.getElementById('searchDB').className = "searchDB";
 			document.getElementById('addData').className = "addData";
 
 			this.updateTab("consentForm");
 		}
 	}, {
-		key: 'toggleRiskReport',
-		value: function toggleRiskReport() {
+		key: 'toggleSearchDB',
+		value: function toggleSearchDB() {
 			document.getElementById('consentForm').className = "consentForm";
-			document.getElementById('riskReport').className = "active";
+			document.getElementById('searchDB').className = "active";
 			document.getElementById('addData').className = "addData";
 
-			this.updateTab("riskReport");
+			this.updateTab("searchDB");
 		}
 	}, {
 		key: 'toggleAddData',
 		value: function toggleAddData() {
 			document.getElementById('consentForm').className = "consentForm";
-			document.getElementById('riskReport').className = "riskReport";
+			document.getElementById('searchDB').className = "searchDB";
 			document.getElementById('addData').className = "active";
 
 			this.updateTab("addData");
@@ -34778,7 +34799,7 @@ var NavBar = function (_Component) {
 							{ className: 'nav navbar-nav' },
 							_react2.default.createElement(
 								'li',
-								{ className: 'active', onClick: this.toggleConsentForm.bind(this), id: 'consentForm' },
+								{ onClick: this.toggleConsentForm.bind(this), id: 'consentForm' },
 								_react2.default.createElement(
 									'a',
 									{ href: '/' },
@@ -34796,7 +34817,7 @@ var NavBar = function (_Component) {
 							),
 							_react2.default.createElement(
 								'li',
-								{ onClick: this.toggleRiskReport.bind(this), id: 'riskReport' },
+								{ onClick: this.toggleSearchDB.bind(this), id: 'searchDB' },
 								_react2.default.createElement(
 									'a',
 									{ href: '#searchDB' },
@@ -34867,16 +34888,6 @@ var App = function (_Component) {
 	}
 
 	_createClass(App, [{
-		key: 'componentDidMount',
-		value: function componentDidMount() {
-			var url = location.href.substr(location.href.lastIndexOf('/') + 1);
-			if (url == "#addData") {
-				this.updateTab("addData");
-			} else {
-				this.updateTab("consentForm");
-			}
-		}
-	}, {
 		key: 'updateTab',
 		value: function updateTab(tab) {
 			var updatedTab = Object.assign("", this.state.tab);
@@ -34885,6 +34896,18 @@ var App = function (_Component) {
 			this.setState({
 				tab: updatedTab
 			});
+		}
+	}, {
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			var url = location.href.substr(location.href.lastIndexOf('/') + 1);
+			if (url == "#addData") {
+				this.updateTab("addData");
+			} else if (url == "#searchDB") {
+				this.updateTab("searchDB");
+			} else {
+				this.updateTab("consentForm");
+			}
 		}
 	}, {
 		key: 'render',
@@ -35302,6 +35325,10 @@ var _styles = __webpack_require__(29);
 
 var _styles2 = _interopRequireDefault(_styles);
 
+var _Review = __webpack_require__(459);
+
+var _Review2 = _interopRequireDefault(_Review);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -35316,45 +35343,28 @@ var JSONSchemaForm = function (_Component) {
   function JSONSchemaForm() {
     _classCallCheck(this, JSONSchemaForm);
 
-    return _possibleConstructorReturn(this, (JSONSchemaForm.__proto__ || Object.getPrototypeOf(JSONSchemaForm)).call(this));
+    var _this = _possibleConstructorReturn(this, (JSONSchemaForm.__proto__ || Object.getPrototypeOf(JSONSchemaForm)).call(this));
+
+    _this.state = {
+      switchToReview: false,
+      formData: {}
+    };
+    return _this;
   }
 
   _createClass(JSONSchemaForm, [{
     key: "submit",
     value: function submit(formData) {
-      var _this2 = this;
-
-      console.log("submit: " + JSON.stringify(formData.formData));
-
-      if (this.props.collection.action == '/api/sensorinference') {
-        //get sensorID from device sensor table
-        _superagent2.default.get('/api/devicesensor').query(null).set('Accept', 'application/json').end(function (err, response) {
-          if (err) {
-            alert('ERROR: ' + err);
-            return;
-          }
-          console.log(JSON.stringify(response.body.results));
-          var results = response.body.results;
-
-          _this2.setState({
-            sectionList: results
-          });
-        });
-      }
-
-      fetch(this.props.collection.action, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData.formData)
+      this.props.onChange(true);
+      this.setState({
+        switchToReview: !this.state.switchToReview,
+        formData: formData.formData
       });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
+      var _this2 = this;
 
       var device_sensor_schema = {
         title: "Device Sensor Form",
@@ -35451,7 +35461,7 @@ var JSONSchemaForm = function (_Component) {
       };
       var onSubmit = function onSubmit(_ref) {
         var formData = _ref.formData;
-        return _this3.submit({ formData: formData });
+        return _this2.submit({ formData: formData });
       };
       var schema = this.props.collection.schema;
       var schemaDict = { 'device_sensor_schema': device_sensor_schema, 'sensor_inference_schema': sensor_inference_schema };
@@ -35459,7 +35469,7 @@ var JSONSchemaForm = function (_Component) {
       return _react2.default.createElement(
         "div",
         { style: _styles2.default.schemaform.form },
-        _react2.default.createElement(_reactJsonschemaForm2.default, { schema: schemaDict[schema],
+        this.state.switchToReview ? _react2.default.createElement(_Review2.default, { formData: this.state.formData, collection: this.props.collection }) : _react2.default.createElement(_reactJsonschemaForm2.default, { schema: schemaDict[schema],
           onChange: log("changed"),
           onSubmit: onSubmit,
           onError: log("errors") })
@@ -78070,6 +78080,119 @@ function config (name) {
 /***/ (function(module, exports) {
 
 /* (ignored) */
+
+/***/ }),
+/* 459 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(2);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = __webpack_require__(63);
+
+var _superagent = __webpack_require__(166);
+
+var _superagent2 = _interopRequireDefault(_superagent);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Review = function (_Component) {
+	_inherits(Review, _Component);
+
+	function Review() {
+		_classCallCheck(this, Review);
+
+		var _this = _possibleConstructorReturn(this, (Review.__proto__ || Object.getPrototypeOf(Review)).call(this));
+
+		_this.state = {
+			formData: ""
+		};
+		return _this;
+	}
+
+	_createClass(Review, [{
+		key: "componentDidMount",
+		value: function componentDidMount() {
+			this.setState({
+				formData: JSON.stringify(this.props.formData, undefined, 4)
+			});
+		}
+	}, {
+		key: "submit",
+		value: function submit() {
+			// if(this.props.collection.action == '/api/sensorinference'){
+			//   //get sensorID from device sensor table
+			//   superagent   
+			//   .get('/api/devicesensor')
+			//   .query(null)
+			//   .set('Accept', 'application/json')
+			//   .end((err, response) => {
+			//     if(err){
+			//       alert('ERROR: '+err)
+			//       return
+			//     }
+			//     console.log(JSON.stringify(response.body.results))
+			//     let results = response.body.results
+
+			//     this.setState({ 
+			//       sectionList: results
+			//     })
+			//   })
+			// }
+
+			console.log(this.state.formData);
+			fetch(this.props.collection.action, {
+				method: 'POST',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: this.state.formData
+			});
+		}
+	}, {
+		key: "render",
+		value: function render() {
+			return _react2.default.createElement(
+				"div",
+				null,
+				_react2.default.createElement(
+					"h4",
+					null,
+					"Review New Data Entry"
+				),
+				_react2.default.createElement("hr", null),
+				_react2.default.createElement("textarea", { className: "form-control", value: this.state.formData, rows: "17" }),
+				_react2.default.createElement("hr", null),
+				_react2.default.createElement(
+					"button",
+					{ className: "btn btn-primary", onClick: this.submit.bind(this) },
+					"Submit"
+				)
+			);
+		}
+	}]);
+
+	return Review;
+}(_react.Component);
+
+exports.default = Review;
 
 /***/ })
 /******/ ]);

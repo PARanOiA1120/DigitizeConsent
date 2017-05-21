@@ -10,7 +10,8 @@ class CreateDBEntry extends Component{
 				{title: 'Device-Sensor', action: '/api/devicesensor', schema: 'device_sensor_schema'},
 				{title: 'Sensor-Inference', action: '/api/sensorinference', schema: 'sensor_inference_schema'}
 			],
-			selectedCollection: {}
+			selectedCollection: {},
+			switchToReview: false
 		}
 	}
 
@@ -26,6 +27,12 @@ class CreateDBEntry extends Component{
 		})
 	}
 
+	updateSwitchToReview(event){
+		this.setState({
+			switchToReview: !this.state.switchToReview
+		})
+	}
+
 	render() {
 		const formStyle = styles.schemaform
 		const options = this.state.collectionList.map((collection, i) => {
@@ -37,15 +44,21 @@ class CreateDBEntry extends Component{
 
 		return (
 			<div>
-				<select className="form-control" id="db" style={formStyle.selectionBox}
-					onChange={this.updateSelection.bind(this)}>
-					<option>-------------- Select a Table --------------</option>
-					{options}
-				</select>
+				{ this.state.switchToReview ?
+					null
+					:
+					<select className="form-control" id="db" style={formStyle.selectionBox}
+						onChange={this.updateSelection.bind(this)}>
+						<option>-------------- Select a Table --------------</option>
+						{options}
+					</select>
+				}
 
 				{ this.state.selectedCollection.title &&
-					<JSONSchemaForm collection={this.state.selectedCollection}/>
+					<JSONSchemaForm collection={this.state.selectedCollection} switchToReview={this.state.switchToReview}
+					onChange={this.updateSwitchToReview.bind(this)}/>
 				}
+
 			</div>
 		)
 	}

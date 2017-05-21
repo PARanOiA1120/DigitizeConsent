@@ -17,7 +17,7 @@ module.exports = {
 				return
 			}
 			callback(null, devicesensor)
-			console.log(devicesensor)
+			console.log("[controller]:" + devicesensor)
 		})
 	}
 }

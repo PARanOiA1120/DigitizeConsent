@@ -3,43 +3,24 @@ import { render } from "react-dom";
 import superagent from 'superagent'
 import Form from "react-jsonschema-form";
 import styles from './styles'
+import Review from './Review'
+
 
 class JSONSchemaForm extends Component {
   constructor() {
     super()
+
+    this.state = {
+      switchToReview: false,
+      formData: {}
+    }
   }
 
   submit(formData){
-    console.log("submit: " + JSON.stringify(formData.formData))
-
-    if(this.props.collection.action == '/api/sensorinference'){
-      //get sensorID from device sensor table
-      superagent   
-      .get('/api/devicesensor')
-      .query(null)
-      .set('Accept', 'application/json')
-      .end((err, response) => {
-        if(err){
-          alert('ERROR: '+err)
-          return
-        }
-        console.log(JSON.stringify(response.body.results))
-        let results = response.body.results
-
-        this.setState({ 
-          sectionList: results
-        })
-      })
-    }
-
-
-    fetch(this.props.collection.action, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData.formData)
+    this.props.onChange(true)
+    this.setState({
+      switchToReview: !this.state.switchToReview,
+      formData: formData.formData
     })
 
   }
@@ -142,12 +123,16 @@ class JSONSchemaForm extends Component {
     const schemaDict = {'device_sensor_schema': device_sensor_schema, 'sensor_inference_schema': sensor_inference_schema}
 
     return(
-      <div style={styles.schemaform.form}>
-        <Form schema={schemaDict[schema]}
-              onChange={log("changed")}
-              onSubmit={onSubmit}
-              onError={log("errors")} />
-      </div>
+        <div style={styles.schemaform.form}>
+          {this.state.switchToReview ?
+            <Review formData={this.state.formData} collection={this.props.collection}/>
+            :
+            <Form schema={schemaDict[schema]}
+                  onChange={log("changed")}
+                  onSubmit={onSubmit}
+                  onError={log("errors")} />
+          }
+        </div>
     )
   }
 }

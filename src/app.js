@@ -13,15 +13,6 @@ class App extends Component {
 		}
 	}
 
-	componentDidMount() {
-		const url = location.href.substr(location.href.lastIndexOf('/') + 1)
-		if (url == "#addData"){
-			this.updateTab("addData")
-		} else {
-			this.updateTab("consentForm")
-		}
-	}
-
 	updateTab(tab){
 		let updatedTab = Object.assign("", this.state.tab)
 		updatedTab = tab
@@ -30,7 +21,19 @@ class App extends Component {
 			tab: updatedTab
 		})
 	}
-	
+
+	componentDidMount() {
+		const url = location.href.substr(location.href.lastIndexOf('/') + 1)
+		if (url == "#addData"){
+			this.updateTab("addData")
+		} else if (url == "#searchDB"){
+			this.updateTab("searchDB")
+		} else {
+			this.updateTab("consentForm")
+		}
+	}
+
+
 	render(){
 
 		return (

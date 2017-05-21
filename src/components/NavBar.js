@@ -10,25 +10,36 @@ class NavBar extends Component {
 		}
 	}
 
-	toggleConsentForm(event){
+	componentDidMount() {
+		const url = location.href.substr(location.href.lastIndexOf('/') + 1)
+		if (url == "#addData"){
+			this.toggleAddData()
+		} else if (url == "#searchDB"){
+			this.toggleSearchDB()
+		} else {
+			this.updateTab("consentForm")
+		}
+	}
+
+	toggleConsentForm(){
 		document.getElementById('consentForm').className = "active";
-		document.getElementById('riskReport').className = "riskReport"; 
+		document.getElementById('searchDB').className = "searchDB"; 
 		document.getElementById('addData').className = "addData";
 
 		this.updateTab("consentForm")
 	}
 
-	toggleRiskReport(){
+	toggleSearchDB(){
 		document.getElementById('consentForm').className = "consentForm";
-		document.getElementById('riskReport').className = "active"; 
+		document.getElementById('searchDB').className = "active"; 
 		document.getElementById('addData').className = "addData";
 
-		this.updateTab("riskReport")
+		this.updateTab("searchDB")
 	}
 
 	toggleAddData(){
 		document.getElementById('consentForm').className = "consentForm";
-		document.getElementById('riskReport').className = "riskReport"; 
+		document.getElementById('searchDB').className = "searchDB"; 
 		document.getElementById('addData').className = "active";
 
 		this.updateTab("addData")
@@ -62,9 +73,9 @@ class NavBar extends Component {
 
 				    <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				      <ul className="nav navbar-nav">
-				        <li className="active" onClick={ this.toggleConsentForm.bind(this)} id="consentForm"><a href="/">Consent Form Generator</a></li>
+				        <li onClick={ this.toggleConsentForm.bind(this)} id="consentForm"><a href="/">Consent Form Generator</a></li>
 				        <li onClick={ this.toggleAddData.bind(this)} id="addData"><a href="#addData">Create Data Record</a></li>
-				        <li onClick={ this.toggleRiskReport.bind(this)} id="riskReport"><a href="#searchDB">Search Database</a></li>
+				        <li onClick={ this.toggleSearchDB.bind(this)} id="searchDB"><a href="#searchDB">Search Database</a></li>
 				      </ul>
 				    </div>
 				</div>
