@@ -1,42 +1,69 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
-
+import superagent from 'superagent'
 import Form from "react-jsonschema-form";
 import styles from './styles'
 
 class JSONSchemaForm extends Component {
+  constructor() {
+    super()
+  }
+
+  submit(formData){
+    console.log("submit: " + JSON.stringify(formData.formData))
+
+    if(this.props.collection.action == '/api/sensorinference'){
+      //get sensorID from device sensor table
+      superagent   
+      .get('/api/devicesensor')
+      .query(null)
+      .set('Accept', 'application/json')
+      .end((err, response) => {
+        if(err){
+          alert('ERROR: '+err)
+          return
+        }
+        console.log(JSON.stringify(response.body.results))
+        let results = response.body.results
+
+        this.setState({ 
+          sectionList: results
+        })
+      })
+    }
+
+
+    fetch(this.props.collection.action, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData.formData)
+    })
+
+  }
 
   render (){
-    const schema = {
-    title: "Todo",
-    type: "object",
-    required: ["title"],
-    properties: {
-      title: {type: "string", title: "Title", default: "A new task"},
-      done: {type: "boolean", title: "Done?", default: false}
-    }
-    };
-
-
     const device_sensor_schema = {
       title: "Device Sensor Form",
       type: "object",
-      required: ["device", "sensors"],
+      required: ["device"],
       properties: {
         device: {
             type: "string",
             title: "Device"
         },
-        sensors: {
+        sensorList: {
           type: "array",
           items: {
               type: "object",
               properties: {
-                  id: {
-                      type: "integer",
+                  sensorID: {
+                      type: "string",
                       title: "Sensor ID"
                   },
-                  name: {
+                  sensorName: {
                       type: "string",
                       title: "Sensor Name"
                   }
@@ -50,12 +77,10 @@ class JSONSchemaForm extends Component {
       title: "Sensor Inference Form",
       type: "object",
       properties: {
-        sensors: {
-          id: "/properties/sensors",
+        sensorList: {
           type: "array",
           title: "Sensor List",
           items: {
-            id: "/properties/sensors/items",
             type: "object",
             properties: {              
               device: {
@@ -63,24 +88,19 @@ class JSONSchemaForm extends Component {
                 title: "Device"
               },
               name: {
-                id: "/properties/sensors/items/properties/sensorInfo/properties/name",
                 type: "string",
                 title: "Sensor Name"
               },
               attributes: {
-                id: "/properties/sensors/items/properties/attributes",
                 type: "array",
                 items: {
-                  id: "/properties/sensors/items/properties/attributes/items",
                   type: "object",
                   properties: {
                     attribute: {
-                      id: "/properties/sensors/items/properties/attributes/items/properties/attribute",
                       type: "string",
                       title: "Attribute"
                     },
                     value: {
-                      id: "/properties/sensors/items/properties/attributes/items/properties/value",
                       type: "string",
                       title: "Value"
                     }
@@ -90,27 +110,24 @@ class JSONSchemaForm extends Component {
             }
           }
         },
-        inferences: {
+        inferenceList: {
           type: "array",
           title: "Inference List", 
           items: {
             type: "object",
             properties: {
               inference: {
-                  id: "/properties/inferences/items/properties/inference",
                   type: "string",
                   title: "Inference"
               },
-              inferenceID: {
-                  id: "/properties/inferences/items/properties/inferenceID",
-                  type: "integer",
-                  title: "Inference ID"
+              inferenceDescription: {
+                  type: "string",
+                  title: "Description"
               }
             }
           }
         },
         reference: {
-          id: "/properties/reference",
           type: "string",
           title: "Reference"
         },
@@ -120,11 +137,13 @@ class JSONSchemaForm extends Component {
 
 
     const log = (type) => console.log.bind(console, type);
-    const onSubmit = ({formData}) => console.log({formData})
+    const onSubmit = ({formData}) => this.submit({formData})
+    const schema = this.props.collection.schema
+    const schemaDict = {'device_sensor_schema': device_sensor_schema, 'sensor_inference_schema': sensor_inference_schema}
 
     return(
       <div style={styles.schemaform.form}>
-        <Form schema={sensor_inference_schema}
+        <Form schema={schemaDict[schema]}
               onChange={log("changed")}
               onSubmit={onSubmit}
               onError={log("errors")} />

@@ -1,7 +1,10 @@
 var FormSectionController = require('./FormSectionController')
-var SensorController = require('./SensorController')
+var DeviceSensorController = require('./DeviceSensorController')
+var SensorInferenceController = require('./SensorInferenceController')
 
 module.exports = {
 	formsection: FormSectionController,
-	sensorcombo: SensorController
+	devicesensor: DeviceSensorController,
+	sensorinference: SensorInferenceController,
+
 }

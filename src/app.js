@@ -2,19 +2,27 @@ import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import ConsentForm from './components/ConsentForm'
 import NavBar from './components/NavBar'
-import JSONSchemaForm from './components/JSONSchemaForm'
+import CreateDBEntry from './components/CreateDBEntry'
 
 class App extends Component {
 
 	constructor(){
 		super()
 		this.state = {
-			tab: "consentForm"
+			tab: ""
+		}
+	}
+
+	componentDidMount() {
+		const url = location.href.substr(location.href.lastIndexOf('/') + 1)
+		if (url == "#addData"){
+			this.updateTab("addData")
+		} else {
+			this.updateTab("consentForm")
 		}
 	}
 
 	updateTab(tab){
-		console.log("tab: " + tab)
 		let updatedTab = Object.assign("", this.state.tab)
 		updatedTab = tab
 
@@ -24,6 +32,7 @@ class App extends Component {
 	}
 	
 	render(){
+
 		return (
 			<div>
 				<NavBar currentTab={this.state.tab} onChange={this.updateTab.bind(this)}/>
@@ -31,8 +40,9 @@ class App extends Component {
 				{this.state.tab == "consentForm" &&
 					<ConsentForm/>	
 				}
+
 				{this.state.tab == "addData" &&
-					<JSONSchemaForm />
+					<CreateDBEntry />
 
 				}		
 			</div>

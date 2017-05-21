@@ -77,11 +77,17 @@ export default {
 	},
 	schemaform: {
 		form: {
-			width: 70 + '%',
+			width: 50 + '%',
 			marginLeft: 'auto',
 			marginRight: 'auto',
 			marginTop: 50
-		}
+		},
+		selectionBox: {
+			width: 35+'%',
+			marginLeft: 'auto',
+			marginRight: 'auto',
+			marginTop: 40 + 'px'
+		},
 
 	}
 }
