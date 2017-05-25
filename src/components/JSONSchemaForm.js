@@ -35,21 +35,9 @@ class JSONSchemaForm extends Component {
             type: "string",
             title: "Device"
         },
-        sensorList: {
-          type: "array",
-          items: {
-              type: "object",
-              properties: {
-                  sensorID: {
-                      type: "string",
-                      title: "Sensor ID"
-                  },
-                  sensorName: {
-                      type: "string",
-                      title: "Sensor Name"
-                  }
-              }  
-          }   
+        sensorName: {
+            type: "string",
+            title: "Sensor Name"
         }
       }
     }
@@ -77,7 +65,7 @@ class JSONSchemaForm extends Component {
                 items: {
                   type: "object",
                   properties: {
-                    attribute: {
+                    attriName: {
                       type: "string",
                       title: "Attribute"
                     },
@@ -97,11 +85,11 @@ class JSONSchemaForm extends Component {
           items: {
             type: "object",
             properties: {
-              inference: {
+              inferenceName: {
                   type: "string",
                   title: "Inference"
               },
-              inferenceDescription: {
+              description: {
                   type: "string",
                   title: "Description"
               }
@@ -111,8 +99,7 @@ class JSONSchemaForm extends Component {
         reference: {
           type: "string",
           title: "Reference"
-        },
-
+        }
       }
     }
 
@@ -128,7 +115,6 @@ class JSONSchemaForm extends Component {
             <Review formData={this.state.formData} collection={this.props.collection}/>
             :
             <Form schema={schemaDict[schema]}
-                  onChange={log("changed")}
                   onSubmit={onSubmit}
                   onError={log("errors")} />
           }

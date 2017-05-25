@@ -7,57 +7,84 @@ class Review extends Component {
 		super()
 
 		this.state = {
-			formData: ""
+			formData: {}
 		}
 	}
 
 	componentDidMount(){
 		this.setState({
-			formData: JSON.stringify(this.props.formData, undefined, 4)
+			formData: this.props.formData
 		})
+	}
 
+	updateData(event){
+		// console.log("updateData: " + event.target.value)
+		let updatedFormData = Object.assign({}, this.state.formData)
+		updatedFormData = JSON.parse(event.target.value)
 
+		this.setState({
+			formData: updatedFormData
+		})
 	}
 
 	submit() {
-		    // if(this.props.collection.action == '/api/sensorinference'){
-    //   //get sensorID from device sensor table
-    //   superagent   
-    //   .get('/api/devicesensor')
-    //   .query(null)
-    //   .set('Accept', 'application/json')
-    //   .end((err, response) => {
-    //     if(err){
-    //       alert('ERROR: '+err)
-    //       return
-    //     }
-    //     console.log(JSON.stringify(response.body.results))
-    //     let results = response.body.results
+		if(this.props.collection.action == '/api/sensorinference'){
+			// console.log(JSON.stringify(this.state.formData))
+			let updatedFormData = Object.assign({}, this.state.formData)
 
-    //     this.setState({ 
-    //       sectionList: results
-    //     })
-    //   })
-    // }
+			// console.log("sensorList: " + JSON.stringify(updatedFormData.sensorList))
+			updatedFormData.sensorList.forEach((sensor) => {
+				// console.log("sensor: " + sensor)
+				let device = sensor["device"]
+				let sensorName = sensor["name"]
+				// console.log("device: " + device)
+				// console.log("sensor: " + sensorName)
+				
+				//get sensorID from device sensor table
+				superagent   
+				.get('/api/devicesensor')
+				.query({device: device, sensorName: sensorName})
+				.set('Accept', 'application/json')
+				.end((err, response) => {
+					if(err){
+					  alert('ERROR: '+err)
+					  return
+					}
+					// console.log("result: " + JSON.stringify(response.body.results))
+					let sensorID = response.body.results[0]["_id"]
+					// console.log("sensorID: " + sensorID)
 
-    	console.log(this.state.formData)
-	    fetch(this.props.collection.action, {
-	      method: 'POST',
-	      headers: {
-	        'Accept': 'application/json',
-	        'Content-Type': 'application/json'
-	      },
-	      body: this.state.formData
-	    })
+					sensor["sensorID"] = sensorID
+					delete sensor.device
+					delete sensor.name
 
+					this.setState({
+						formData: updatedFormData
+					})
+
+					console.log("data submitted: " + JSON.stringify(this.state.formData))
+					fetch(this.props.collection.action, {
+				      method: 'POST',
+				      headers: {
+				        'Accept': 'application/json',
+				        'Content-Type': 'application/json'
+				      },
+				      body: JSON.stringify(this.state.formData)
+				    })
+				})
+			})
+		}
 	}
+
+
 
 	render() {
 		return(
 			<div>
 				<h4>Review New Data Entry</h4>
 				<hr />
-				<textarea className="form-control" value={this.state.formData} rows="17"></textarea>
+				<textarea className="form-control" value={JSON.stringify(this.state.formData, undefined, 4)} rows="17"
+				onChange={this.updateData.bind(this)}></textarea>
 				<hr />
 				<button className="btn btn-primary" onClick={this.submit.bind(this)}>Submit</button>
 			</div>

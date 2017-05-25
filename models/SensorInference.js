@@ -9,12 +9,10 @@ var SensorInferenceSchema = new mongoose.Schema({
 		}]
 	}],
 	inferenceList: [{
-		inferenceID: String, 
 		inferenceName: String,
 		description: String
 	}],
 	reference: String
-	
 })
 
 module.exports = mongoose.model('SensorInferenceSchema', SensorInferenceSchema)
