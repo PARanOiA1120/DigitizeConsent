@@ -73,7 +73,7 @@ class NavBar extends Component {
 
 				    <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				      <ul className="nav navbar-nav">
-				        <li onClick={ this.toggleConsentForm.bind(this)} id="consentForm"><a href="/">Consent Form Generator</a></li>
+				        <li onClick={ this.toggleConsentForm.bind(this)} className="active" id="consentForm"><a href="">Consent Form Generator</a></li>
 				        <li onClick={ this.toggleAddData.bind(this)} id="addData"><a href="#addData">Create Data Record</a></li>
 				        <li onClick={ this.toggleSearchDB.bind(this)} id="searchDB"><a href="#searchDB">Search Database</a></li>
 				      </ul>
