@@ -35100,6 +35100,10 @@ var _styles = __webpack_require__(29);
 
 var _styles2 = _interopRequireDefault(_styles);
 
+var _superagent = __webpack_require__(98);
+
+var _superagent2 = _interopRequireDefault(_superagent);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -35119,8 +35123,11 @@ var FormSection = function (_Component) {
     _this.state = {
       section: {},
       text: '',
+      deviceList: [], // a list of all devices
+      deviceSensorList: [], // a list of all sensors of the selected device
+      selectedDevice: '',
       selectedSensor: '',
-      sensorList: [],
+      sensorList: [], // sensor list to query for risks
       sensorRisks: []
     };
 
@@ -35138,9 +35145,29 @@ var FormSection = function (_Component) {
   _createClass(FormSection, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
+      var _this2 = this;
+
       this.setState({
         section: this.props.currentSection,
         text: this.props.currentSection.content
+      });
+
+      _superagent2.default.get('/api/devicesensor').query(null).set('Accept', 'application/json').end(function (err, response) {
+        if (err) {
+          alert('ERROR: ' + err);
+          return;
+        }
+
+        // console.log(JSON.stringify(response.body.results))
+        var results = response.body.results;
+        var devices = Object.assign([], _this2.state.deviceList);
+        results.forEach(function (devicesensor) {
+          if (devices.indexOf(devicesensor.device)) devices.push(devicesensor.device);
+        });
+
+        _this2.setState({
+          deviceList: devices
+        });
       });
     }
   }, {
@@ -35170,7 +35197,7 @@ var FormSection = function (_Component) {
   }, {
     key: 'addSensor',
     value: function addSensor(event) {
-      console.log('add sensor');
+      console.log('add sensor: ' + this.state.selectedSensor);
       var updatedSensorList = Object.assign([], this.state.sensorList);
       updatedSensorList.push(this.state.selectedSensor);
 
@@ -35186,6 +35213,38 @@ var FormSection = function (_Component) {
       this.props.addSection("Risk&Protection");
     }
   }, {
+    key: 'updateDeviceSelection',
+    value: function updateDeviceSelection(event) {
+      var _this3 = this;
+
+      var updatedSelectedDevice = Object.assign('', this.state.selectedDevice);
+      updatedSelectedDevice = event.target.value;
+
+      this.setState({
+        deviceSensorList: []
+      });
+
+      _superagent2.default.get('/api/devicesensor').query({ device: updatedSelectedDevice }).set('Accept', 'application/json').end(function (err, response) {
+        if (err) {
+          alert('ERROR: ' + err);
+          return;
+        }
+
+        // console.log(JSON.stringify(response.body.results))
+        var results = response.body.results;
+        var sensors = Object.assign([], _this3.state.deviceSensorList);
+
+        results.forEach(function (devicesensor) {
+          if (sensors.indexOf(devicesensor.sensorName)) sensors.push(devicesensor.sensorName);
+        });
+
+        _this3.setState({
+          deviceSensorList: sensors,
+          selectedDevice: updatedSelectedDevice
+        });
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
       var modules = {
@@ -35196,9 +35255,17 @@ var FormSection = function (_Component) {
 
       var formStyle = _styles2.default.form;
 
-      var sensors = this.props.currentSection.sensors;
+      var sensors = this.state.deviceSensorList;
 
-      var sensorOptions = this.props.currentSection.sensors.map(function (sensor, i) {
+      var deviceOptions = this.state.deviceList.map(function (device, i) {
+        return _react2.default.createElement(
+          'option',
+          { value: device, key: i },
+          device
+        );
+      });
+
+      var sensorOptions = this.state.deviceSensorList.map(function (sensor, i) {
         return _react2.default.createElement(
           'option',
           { value: sensor, key: i },
@@ -35233,9 +35300,27 @@ var FormSection = function (_Component) {
           ),
           _react2.default.createElement('br', null),
           _react2.default.createElement('br', null),
-          sensors && sensors.length >= 1 && sensors[0] != "" && _react2.default.createElement(
+          _react2.default.createElement(
             'div',
             { className: 'form-group', style: formStyle.formgroup },
+            _react2.default.createElement(
+              'label',
+              { htmlFor: 'device', style: { float: 'left', marginRight: 5 + 'px' } },
+              'Select device:'
+            ),
+            _react2.default.createElement(
+              'select',
+              { className: 'form-control', id: 'device', style: formStyle.selectionBox,
+                onChange: this.updateDeviceSelection.bind(this) },
+              _react2.default.createElement(
+                'option',
+                null,
+                '--- Select a device ---'
+              ),
+              deviceOptions
+            ),
+            _react2.default.createElement('br', null),
+            _react2.default.createElement('br', null),
             _react2.default.createElement(
               'label',
               { htmlFor: 'sensor', style: { float: 'left', marginRight: 5 + 'px' } },

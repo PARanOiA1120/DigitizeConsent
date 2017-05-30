@@ -10,7 +10,7 @@ var SensorInferenceSchema = new mongoose.Schema({
 	}],
 	inferenceList: [{
 		inferenceName: String,
-		description: String
+		inferenceID: String
 	}],
 	reference: String
 })

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import ReactQuill, { Quill } from 'react-quill'
 import styles from './styles'
+import superagent from 'superagent'
 
 class FormSection extends Component {
   constructor(props) {
@@ -8,9 +9,12 @@ class FormSection extends Component {
     this.state = { 
       section: {},
       text: '',
+      deviceList: [], // a list of all devices
+      deviceSensorList: [], // a list of all sensors of the selected device
+      selectedDevice: '',
       selectedSensor: '',
-      sensorList: [],
-      sensorRisks: []
+      sensorList: [], // sensor list to query for risks
+      sensorRisks: [],
     }
 
     // must write in this way bc quill doesn't support handler for text change
@@ -27,6 +31,29 @@ class FormSection extends Component {
     this.setState({
       section: this.props.currentSection,
       text: this.props.currentSection.content
+    })
+
+    superagent
+    .get('/api/devicesensor')
+    .query(null)
+    .set('Accept', 'application/json')
+    .end((err, response) => {
+      if(err){
+        alert('ERROR: '+err)
+        return
+      }
+
+      // console.log(JSON.stringify(response.body.results))
+      let results = response.body.results
+      let devices = Object.assign([], this.state.deviceList)
+      results.forEach((devicesensor) => {
+        if(devices.indexOf(devicesensor.device))
+          devices.push(devicesensor.device)
+      })
+
+      this.setState({ 
+        deviceList: devices
+      })
     })
   }
 
@@ -54,7 +81,7 @@ class FormSection extends Component {
   }
 
   addSensor(event){
-    console.log('add sensor')
+    console.log('add sensor: ' + this.state.selectedSensor)
     let updatedSensorList = Object.assign([], this.state.sensorList)
     updatedSensorList.push(this.state.selectedSensor)
 
@@ -68,6 +95,42 @@ class FormSection extends Component {
   generateRisks(event) {
     this.props.addSection("Risk&Protection")
   }
+
+  updateDeviceSelection(event) {
+    let updatedSelectedDevice = Object.assign('', this.state.selectedDevice)
+    updatedSelectedDevice = event.target.value
+
+    this.setState({
+      deviceSensorList: []
+    })
+
+    superagent
+    .get('/api/devicesensor')
+    .query({device: updatedSelectedDevice})
+    .set('Accept', 'application/json')
+    .end((err, response) => {
+      if(err){
+        alert('ERROR: '+err)
+        return
+      }
+
+      // console.log(JSON.stringify(response.body.results))
+      let results = response.body.results
+      let sensors = Object.assign([], this.state.deviceSensorList)
+
+      results.forEach((devicesensor) => {
+        if(sensors.indexOf(devicesensor.sensorName))
+          sensors.push(devicesensor.sensorName)
+      })
+
+      this.setState({     
+        deviceSensorList: sensors,
+        selectedDevice: updatedSelectedDevice
+      })
+
+    })
+  }
+
  
   render() {
     const modules = {
@@ -89,13 +152,20 @@ class FormSection extends Component {
 
     const formStyle = styles.form
 
-    const sensors = this.props.currentSection.sensors
+    const sensors = this.state.deviceSensorList
 
-    const sensorOptions = this.props.currentSection.sensors.map((sensor, i) => {
+    const deviceOptions = this.state.deviceList.map((device, i) => {
+      return (
+          <option value={device} key={i}>{device}</option>
+        )
+    })
+
+    const sensorOptions = this.state.deviceSensorList.map((sensor, i) => {
       return (
         <option value={sensor} key={i}>{sensor}</option>
       )
     })
+
 
     // TODO: make this part dynamic 
     const sensorList = this.state.sensorList.map((sensor, i) => {
@@ -115,23 +185,31 @@ class FormSection extends Component {
           <br/>
           <br/>
           
-          {sensors && sensors.length >= 1 && sensors[0] != "" &&
-            <div className="form-group" style={formStyle.formgroup}>
-              <label htmlFor="sensor" style={{float:'left', marginRight:5+'px'}}>Select sensor to add:</label>
-              <select className="form-control" id="sensor" style={formStyle.selectionBox}
-                onChange={this.updateSensorSelection.bind(this)}>
-                <option>--- Select a sensor ---</option>
-                {sensorOptions}
-              </select>
-              <button className="btn btn-primary" onClick={this.addSensor.bind(this)}>Add Sensor</button><br/>
-              <hr style={styles.universal.hr} />
+          
+          <div className="form-group" style={formStyle.formgroup}>
+            <label htmlFor="device" style={{float:'left', marginRight:5+'px'}}>Select device:</label>
+            <select className="form-control" id="device" style={formStyle.selectionBox}
+              onChange={this.updateDeviceSelection.bind(this)}>
+              <option>--- Select a device ---</option>
+              {deviceOptions}
+            </select>
+            <br/>
+            <br/>
+            <label htmlFor="sensor" style={{float:'left', marginRight:5+'px'}}>Select sensor to add:</label>
+            <select className="form-control" id="sensor" style={formStyle.selectionBox}
+              onChange={this.updateSensorSelection.bind(this)}>
+              <option>--- Select a sensor ---</option>
+              {sensorOptions}
+            </select>
+            <button className="btn btn-primary" onClick={this.addSensor.bind(this)}>Add Sensor</button><br/>
+            <hr style={styles.universal.hr} />
 
-              <ul style={formStyle.list}>
-                {sensorList}
-              </ul>
-              {sensorList.length > 0 && <hr style={styles.universal.hr} />}
-            </div>
-          }
+            <ul style={formStyle.list}>
+              {sensorList}
+            </ul>
+            {sensorList.length > 0 && <hr style={styles.universal.hr} />}
+          </div>
+          
 
           <ReactQuill theme="snow" 
                   value={this.state.text}
