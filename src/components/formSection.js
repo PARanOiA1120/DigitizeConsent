@@ -55,6 +55,8 @@ class FormSection extends Component {
         deviceList: devices
       })
     })
+
+    console.log("current section: " + JSON.stringify(this.props.currentSection))
   }
 
 
@@ -154,6 +156,8 @@ class FormSection extends Component {
 
     const sensors = this.state.deviceSensorList
 
+    const section = this.props.currentSection.title
+
     const deviceOptions = this.state.deviceList.map((device, i) => {
       return (
           <option value={device} key={i}>{device}</option>
@@ -185,30 +189,31 @@ class FormSection extends Component {
           <br/>
           <br/>
           
-          
-          <div className="form-group" style={formStyle.formgroup}>
-            <label htmlFor="device" style={{float:'left', marginRight:5+'px'}}>Select device:</label>
-            <select className="form-control" id="device" style={formStyle.selectionBox}
-              onChange={this.updateDeviceSelection.bind(this)}>
-              <option>--- Select a device ---</option>
-              {deviceOptions}
-            </select>
-            <br/>
-            <br/>
-            <label htmlFor="sensor" style={{float:'left', marginRight:5+'px'}}>Select sensor to add:</label>
-            <select className="form-control" id="sensor" style={formStyle.selectionBox}
-              onChange={this.updateSensorSelection.bind(this)}>
-              <option>--- Select a sensor ---</option>
-              {sensorOptions}
-            </select>
-            <button className="btn btn-primary" onClick={this.addSensor.bind(this)}>Add Sensor</button><br/>
-            <hr style={styles.universal.hr} />
+          {section == "Data Collection" && 
+            <div className="form-group" style={formStyle.formgroup}>
+              <label htmlFor="device" style={{float:'left', marginRight:5+'px'}}>Select device:</label>
+              <select className="form-control" id="device" style={formStyle.selectionBox}
+                onChange={this.updateDeviceSelection.bind(this)}>
+                <option>--- Select a device ---</option>
+                {deviceOptions}
+              </select>
+              <br/>
+              <br/>
+              <label htmlFor="sensor" style={{float:'left', marginRight:5+'px'}}>Select sensor to add:</label>
+              <select className="form-control" id="sensor" style={formStyle.selectionBox}
+                onChange={this.updateSensorSelection.bind(this)}>
+                <option>--- Select a sensor ---</option>
+                {sensorOptions}
+              </select>
+              <button className="btn btn-primary" onClick={this.addSensor.bind(this)}>Add Sensor</button><br/>
+              <hr style={styles.universal.hr} />
 
-            <ul style={formStyle.list}>
-              {sensorList}
-            </ul>
-            {sensorList.length > 0 && <hr style={styles.universal.hr} />}
-          </div>
+              <ul style={formStyle.list}>
+                {sensorList}
+              </ul>
+              {sensorList.length > 0 && <hr style={styles.universal.hr} />}
+            </div>
+          }
           
 
           <ReactQuill theme="snow" 
@@ -222,7 +227,7 @@ class FormSection extends Component {
           </ReactQuill>
           <br/>
           
-          {sensors && sensors.length >= 1 && sensors[0] != "" &&
+          {section == "Data Collection" &&
             <button className="btn btn-primary" onClick={this.generateRisks.bind(this)}>Generate Risk&Protection</button>
           }
         </div>
