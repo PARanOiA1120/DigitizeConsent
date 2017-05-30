@@ -8,7 +8,8 @@ class CreateDBEntry extends Component{
 		this.state = {
 			collectionList: [
 				{title: 'Device-Sensor', action: '/api/devicesensor', schema: 'device_sensor_schema'},
-				{title: 'Sensor-Inference', action: '/api/sensorinference', schema: 'sensor_inference_schema'}
+				{title: 'Sensor-Inference', action: '/api/sensorinference', schema: 'sensor_inference_schema'},
+				{title: 'Inference-Description', action: '/api/inferencedescription', schema: 'inference_description_schema'}
 			],
 			selectedCollection: {},
 			switchToReview: false

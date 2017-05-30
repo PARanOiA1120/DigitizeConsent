@@ -74,6 +74,17 @@ class Review extends Component {
 				})
 			})
 		}
+		else {
+			console.log("data submitted: " + JSON.stringify(this.state.formData))
+			fetch(this.props.collection.action, {
+		      method: 'POST',
+		      headers: {
+		        'Accept': 'application/json',
+		        'Content-Type': 'application/json'
+		      },
+		      body: JSON.stringify(this.state.formData)
+		    })
+		}
 	}
 
 
