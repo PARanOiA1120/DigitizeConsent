@@ -13,8 +13,12 @@ class FormSection extends Component {
       deviceSensorList: [], // a list of all sensors of the selected device
       selectedDevice: '',
       selectedSensor: '',
-      sensorList: [], // sensor list to query for risks
+      sensorList: [], // sensor list to query for risks, include device
       sensorRisks: [],
+      currentSensor: {},
+      currentAttributes: {},
+      attrName: "",
+      attrValue: ""
     }
 
     // must write in this way bc quill doesn't support handler for text change
@@ -82,8 +86,36 @@ class FormSection extends Component {
     })
   }
 
+  updateAttrName(event) {
+    this.setState({
+      attrName: event.target.value
+    })
+
+  }
+
+  updateAttrValue(event) {
+    this.setState({
+      attrValue: event.target.value
+    })
+  }
+
+  addAttr(event){
+    let updatedCurrentAttr = Object.assign({}, this.state. currentAttributes)
+    updatedCurrentAttr[this.state.attrName] = this.state.attrValue
+
+    this.setState({
+      currentAttributes: updatedCurrentAttr,
+      attrName: "",
+      attrValue: ""
+    })
+
+  }
+
   addSensor(event){
     console.log('add sensor: ' + this.state.selectedSensor)
+    let updatedSensor = Object.assign({}, this.state.currentSensor)
+
+
     let updatedSensorList = Object.assign([], this.state.sensorList)
     updatedSensorList.push(this.state.selectedSensor)
 
@@ -91,7 +123,7 @@ class FormSection extends Component {
       sensorList: updatedSensorList
     })
 
-    // TODO: fetch attribute list from db
+    // needs to clear currentAttributes and currentSensor
   }
 
   generateRisks(event) {
@@ -172,11 +204,10 @@ class FormSection extends Component {
 
 
     // TODO: make this part dynamic 
-    const sensorList = this.state.sensorList.map((sensor, i) => {
+    const attributeList = Object.keys(this.state.currentAttributes).map((attr) => {
       return (
-        <li key={i}>
-          <label style={{marginRight: 5+'px', float: 'left'}}>Sampling Rate: </label>
-          <input className="form-control" style={{width:50+'%'}}></input>
+        <li key={attr} style={{fontSize: 17 + 'px'}}>
+          <b>{attr}</b>: {this.state.currentAttributes[attr]}
         </li>
       )
     })
@@ -205,13 +236,30 @@ class FormSection extends Component {
                 <option>--- Select a sensor ---</option>
                 {sensorOptions}
               </select>
-              <button className="btn btn-primary" onClick={this.addSensor.bind(this)}>Add Sensor</button><br/>
+              <br/>
               <hr style={styles.universal.hr} />
 
-              <ul style={formStyle.list}>
-                {sensorList}
-              </ul>
-              {sensorList.length > 0 && <hr style={styles.universal.hr} />}
+              { this.state.selectedSensor != "" &&
+                <div className="attriList" style={{marginLeft: 20 + 'px'}}>
+                  {this.state.currentAttributes != {} && 
+                    <div className="finalizedAttrList">
+                      <ul style={formStyle.list}>
+                        {attributeList}
+                      </ul>
+
+                    </div>
+                  }
+                  <br/>
+                  <input className="form-control" placeholder="attribute name" style={formStyle.attribute}
+                    value={this.state.attrName} onChange={this.updateAttrName.bind(this)}/>
+                  <input className="form-control" placeholder="attribute value" style={formStyle.attribute}
+                    value={this.state.attrValue} onChange={this.updateAttrValue.bind(this)}/>
+                  <button className="btn btn-primary" onClick={this.addAttr.bind(this)}>Add attribute</button>
+                  <br/>
+                  <hr style={styles.universal.hr} />
+                </div>
+              }
+              <button className="btn btn-primary" onClick={this.addSensor.bind(this)}>Add Sensor</button>
             </div>
           }
           

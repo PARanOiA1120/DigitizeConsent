@@ -73,6 +73,11 @@ export default {
 			listStyle:'none',
 			padding: 0,
 			margin:0
+		},
+		attribute: {
+			width: 200 + 'px',
+			marginRight: 5 + 'px',
+			float: 'left'
 		}
 	},
 	schemaform: {

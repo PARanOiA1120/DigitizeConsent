@@ -5598,6 +5598,11 @@ exports.default = {
 			listStyle: 'none',
 			padding: 0,
 			margin: 0
+		},
+		attribute: {
+			width: 200 + 'px',
+			marginRight: 5 + 'px',
+			float: 'left'
 		}
 	},
 	schemaform: {
@@ -35127,8 +35132,12 @@ var FormSection = function (_Component) {
       deviceSensorList: [], // a list of all sensors of the selected device
       selectedDevice: '',
       selectedSensor: '',
-      sensorList: [], // sensor list to query for risks
-      sensorRisks: []
+      sensorList: [], // sensor list to query for risks, include device
+      sensorRisks: [],
+      currentSensor: {},
+      currentAttributes: {},
+      attrName: "",
+      attrValue: ""
     };
 
     // must write in this way bc quill doesn't support handler for text change
@@ -35197,9 +35206,37 @@ var FormSection = function (_Component) {
       });
     }
   }, {
+    key: 'updateAttrName',
+    value: function updateAttrName(event) {
+      this.setState({
+        attrName: event.target.value
+      });
+    }
+  }, {
+    key: 'updateAttrValue',
+    value: function updateAttrValue(event) {
+      this.setState({
+        attrValue: event.target.value
+      });
+    }
+  }, {
+    key: 'addAttr',
+    value: function addAttr(event) {
+      var updatedCurrentAttr = Object.assign({}, this.state.currentAttributes);
+      updatedCurrentAttr[this.state.attrName] = this.state.attrValue;
+
+      this.setState({
+        currentAttributes: updatedCurrentAttr,
+        attrName: "",
+        attrValue: ""
+      });
+    }
+  }, {
     key: 'addSensor',
     value: function addSensor(event) {
       console.log('add sensor: ' + this.state.selectedSensor);
+      var updatedSensor = Object.assign({}, this.state.currentSensor);
+
       var updatedSensorList = Object.assign([], this.state.sensorList);
       updatedSensorList.push(this.state.selectedSensor);
 
@@ -35207,7 +35244,7 @@ var FormSection = function (_Component) {
         sensorList: updatedSensorList
       });
 
-      // TODO: fetch attribute list from db
+      // needs to clear currentAttributes and currentSensor
     }
   }, {
     key: 'generateRisks',
@@ -35249,6 +35286,8 @@ var FormSection = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
+      var _this4 = this;
+
       var modules = {
         toolbar: [[{ 'header': [1, 2, false] }], ['bold', 'italic', 'underline', 'strike', 'blockquote'], [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }], ['link', 'image'], ['clean']]
       };
@@ -35278,16 +35317,17 @@ var FormSection = function (_Component) {
       });
 
       // TODO: make this part dynamic 
-      var sensorList = this.state.sensorList.map(function (sensor, i) {
+      var attributeList = Object.keys(this.state.currentAttributes).map(function (attr) {
         return _react2.default.createElement(
           'li',
-          { key: i },
+          { key: attr, style: { fontSize: 17 + 'px' } },
           _react2.default.createElement(
-            'label',
-            { style: { marginRight: 5 + 'px', float: 'left' } },
-            'Sampling Rate: '
+            'b',
+            null,
+            attr
           ),
-          _react2.default.createElement('input', { className: 'form-control', style: { width: 50 + '%' } })
+          ': ',
+          _this4.state.currentAttributes[attr]
         );
       });
 
@@ -35341,19 +35381,38 @@ var FormSection = function (_Component) {
               ),
               sensorOptions
             ),
+            _react2.default.createElement('br', null),
+            _react2.default.createElement('hr', { style: _styles2.default.universal.hr }),
+            this.state.selectedSensor != "" && _react2.default.createElement(
+              'div',
+              { className: 'attriList', style: { marginLeft: 20 + 'px' } },
+              this.state.currentAttributes != {} && _react2.default.createElement(
+                'div',
+                { className: 'finalizedAttrList' },
+                _react2.default.createElement(
+                  'ul',
+                  { style: formStyle.list },
+                  attributeList
+                )
+              ),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement('input', { className: 'form-control', placeholder: 'attribute name', style: formStyle.attribute,
+                value: this.state.attrName, onChange: this.updateAttrName.bind(this) }),
+              _react2.default.createElement('input', { className: 'form-control', placeholder: 'attribute value', style: formStyle.attribute,
+                value: this.state.attrValue, onChange: this.updateAttrValue.bind(this) }),
+              _react2.default.createElement(
+                'button',
+                { className: 'btn btn-primary', onClick: this.addAttr.bind(this) },
+                'Add attribute'
+              ),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement('hr', { style: _styles2.default.universal.hr })
+            ),
             _react2.default.createElement(
               'button',
               { className: 'btn btn-primary', onClick: this.addSensor.bind(this) },
               'Add Sensor'
-            ),
-            _react2.default.createElement('br', null),
-            _react2.default.createElement('hr', { style: _styles2.default.universal.hr }),
-            _react2.default.createElement(
-              'ul',
-              { style: formStyle.list },
-              sensorList
-            ),
-            sensorList.length > 0 && _react2.default.createElement('hr', { style: _styles2.default.universal.hr })
+            )
           ),
           _react2.default.createElement(
             _reactQuill2.default,
