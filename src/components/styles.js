@@ -54,7 +54,7 @@ export default {
 		label: {
 			float:'left', 
 			marginRight:2+'%',
-			fontSize: 16
+			fontSize: 15
 		},
 		selectionBox: {
 			width: 50+'%',
@@ -66,7 +66,7 @@ export default {
 			marginLeft: 2 + '%',
 			height: 'calc(100vh - 52px - 25vh)',
 			background:'white',
-			padding:5+'px',
+			padding:10+'px',
 			overflow:'scroll'
 		},
 		list: {

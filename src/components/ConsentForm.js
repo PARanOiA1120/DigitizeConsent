@@ -13,6 +13,8 @@ class ConsentForm extends Component {
 			sectionList: [],
 			selectedSectionList: [],
 			selected: '',
+			title: '',
+			context: '',
 			full_text:''
 		}
 	}
@@ -60,9 +62,11 @@ class ConsentForm extends Component {
 
 		this.setState({
 			selectedSectionList: updatedSections
+		}, () => {
+			this.updateFullText()
 		})
 
-		this.updateFullText()
+		
 	}
 
 	addRiskSection(title){
@@ -75,9 +79,9 @@ class ConsentForm extends Component {
 
 		this.setState({
 			selectedSectionList: updatedSections
+		}, () => {
+			this.updateFullText()
 		})
-
-		this.updateFullText()	
 	}
 
 
@@ -92,13 +96,24 @@ class ConsentForm extends Component {
 		this.updateFullText()
 	}
 
+	updateTitle(event) {
+		let title = ""
+		title += 
+
+		this.setState({
+			title: event.target.value
+		}, () => {
+			this.updateFormViewer()
+		})
+	}
+
 
 	// the text to display on the right panel
 	updateFullText(){
 		let text = ""
 		for(let section of this.state.selectedSectionList){
-			text += (section["title"] + '</br>')
-			text += (section["content"] + '<br/><br/>')
+			// text += (section["title"] + '</br>')
+			text += (section["content"] + '<br/>')
 		}
 
 		let updatedFullText = Object.assign("", this.state.full_text)
@@ -106,8 +121,33 @@ class ConsentForm extends Component {
 
 		this.setState({
 			full_text: updatedFullText
+		}, () => {
+			this.updateFormViewer()
 		})
 	}
+
+	updateFormViewer() {
+		let content = ""
+		if(this.state.title != ""){
+			content += "<p style='text-align: center'>"
+			content += this.state.title
+			content += "</p>"
+			content += '<br/>'
+		}
+	
+		content += this.state.full_text
+
+		let updatedFormContent = Object.assign("", this.state.context)
+		updatedFormContent = content
+
+		this.setState({
+			context: updatedFormContent
+		}, () => {
+			console.log("preview: " + this.state.context)
+		})
+	}
+
+
 
 
 	render(){
@@ -132,7 +172,16 @@ class ConsentForm extends Component {
 				<div className="leftpanel" style={formStyle.leftpanel}>
 					<h4 style={formStyle.header}>Managing Form Sections</h4>
 					<hr style={universalStyle.hr}/>
+
 					<div className="form-group" style={formStyle.formgroup}>
+						<label style={formStyle.label}>Title: </label>
+						<input className="form-control" style={{width: 40+'%'}} 
+							onChange={this.updateTitle.bind(this)}
+							value={this.state.title}
+							/>
+						
+						<hr style={universalStyle.hr}/>
+
 						<label htmlFor="section" style={formStyle.label}>Select section to add:</label>
 						<select className="form-control" id="section" style={formStyle.selectionBox}
 							onChange={this.updateSelection.bind(this)}>
@@ -152,12 +201,12 @@ class ConsentForm extends Component {
 				</div>
 				
 				<div className="rightpanel" style={formStyle.rightpanel}>
-					<h4 style={formStyle.header}>Formatting Consent Form</h4>
+					<h4 style={formStyle.header}>Consent Form Viewer</h4>
 					<div style={formStyle.preview}>
-						<ContentPreview content={this.state.full_text} />
+						<ContentPreview content={this.state.context} />
 					</div>
 					
-					<DownloadPDF content={this.state.full_text} />
+					<DownloadPDF content={this.state.context} />
 				</div>
 			</div>
 		);

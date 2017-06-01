@@ -7,9 +7,12 @@ class DownloadPDF extends Component {
     this.pdfToHTML=this.pdfToHTML.bind(this);
   }
 
+// http://www.techumber.com/html-to-pdf-conversion-using-javascript/
+
   pdfToHTML(){
     var pdf = new jsPDF('p', 'pt', 'letter');
     var source = this.props.content;
+    console.log("source: " + source)
     var specialElementHandlers = {
       '#bypassme': function(element, renderer) {
         return true

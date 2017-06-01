@@ -35,9 +35,16 @@ class FormSection extends Component {
   }
 
   componentDidMount(){
+    let content = ""
+    content += this.props.currentSection.title
+    content += "<br/>"
+    content += this.props.currentSection.content
+
+    this.props.currentSection["content"] = content
+
     this.setState({
       section: this.props.currentSection,
-      text: this.props.currentSection.content
+      text: content
     })
 
     superagent
@@ -153,7 +160,6 @@ class FormSection extends Component {
   addSensor(event){
     console.log('add sensor: ' + this.state.selectedSensor)
     let updatedSensor = Object.assign({}, this.state.currentSensor)
-
 
     let updatedSensorList = Object.assign([], this.state.sensorList)
     updatedSensorList.push(this.state.selectedSensor)
@@ -294,7 +300,8 @@ class FormSection extends Component {
                     <select className="form-control" style={formStyle.attribute}
                       value={this.state.attrName} onChange={this.updateAttrName.bind(this)}>
                       <option value="" key="">---Select an attribute---</option>
-                      <option value="GPS" key="GPS">GPS</option>
+                      <option value="sampling rate" key="sampling rate">sampling rate</option>
+                      <option value="continuous" key="continuous">continuous</option>
                     </select>
                     <input className="form-control" placeholder="attribute value" style={formStyle.attribute}
                       value={this.state.attrValue} onChange={this.updateAttrValue.bind(this)}/>

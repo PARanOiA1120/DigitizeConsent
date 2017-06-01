@@ -5579,7 +5579,7 @@ exports.default = {
 		label: {
 			float: 'left',
 			marginRight: 2 + '%',
-			fontSize: 16
+			fontSize: 15
 		},
 		selectionBox: {
 			width: 50 + '%',
@@ -5591,7 +5591,7 @@ exports.default = {
 			marginLeft: 2 + '%',
 			height: 'calc(100vh - 52px - 25vh)',
 			background: 'white',
-			padding: 5 + 'px',
+			padding: 10 + 'px',
 			overflow: 'scroll'
 		},
 		list: {
@@ -34348,6 +34348,8 @@ var ConsentForm = function (_Component) {
 			sectionList: [],
 			selectedSectionList: [],
 			selected: '',
+			title: '',
+			context: '',
 			full_text: ''
 		};
 		return _this;
@@ -34387,6 +34389,8 @@ var ConsentForm = function (_Component) {
 	}, {
 		key: 'addSection',
 		value: function addSection(event) {
+			var _this3 = this;
+
 			console.log('add section: ' + this.state.selected);
 
 			var index = _.findIndex(this.state.sectionList, ['title', this.state.selected]);
@@ -34398,13 +34402,15 @@ var ConsentForm = function (_Component) {
 
 			this.setState({
 				selectedSectionList: updatedSections
+			}, function () {
+				_this3.updateFullText();
 			});
-
-			this.updateFullText();
 		}
 	}, {
 		key: 'addRiskSection',
 		value: function addRiskSection(title) {
+			var _this4 = this;
+
 			var index = _.findIndex(this.state.sectionList, ['title', title]);
 			var selectedSection = this.state.sectionList[index];
 			// console.log('added section: ' + JSON.stringify(selectedSection))
@@ -34414,9 +34420,9 @@ var ConsentForm = function (_Component) {
 
 			this.setState({
 				selectedSectionList: updatedSections
+			}, function () {
+				_this4.updateFullText();
 			});
-
-			this.updateFullText();
 		}
 	}, {
 		key: 'updateSection',
@@ -34430,12 +34436,26 @@ var ConsentForm = function (_Component) {
 
 			this.updateFullText();
 		}
+	}, {
+		key: 'updateTitle',
+		value: function updateTitle(event) {
+			var _this5 = this;
+
+			var title = "";
+			title += this.setState({
+				title: event.target.value
+			}, function () {
+				_this5.updateFormViewer();
+			});
+		}
 
 		// the text to display on the right panel
 
 	}, {
 		key: 'updateFullText',
 		value: function updateFullText() {
+			var _this6 = this;
+
 			var text = "";
 			var _iteratorNormalCompletion = true;
 			var _didIteratorError = false;
@@ -34445,8 +34465,8 @@ var ConsentForm = function (_Component) {
 				for (var _iterator = this.state.selectedSectionList[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 					var section = _step.value;
 
-					text += section["title"] + '</br>';
-					text += section["content"] + '<br/><br/>';
+					// text += (section["title"] + '</br>')
+					text += section["content"] + '<br/>';
 				}
 			} catch (err) {
 				_didIteratorError = true;
@@ -34468,12 +34488,38 @@ var ConsentForm = function (_Component) {
 
 			this.setState({
 				full_text: updatedFullText
+			}, function () {
+				_this6.updateFormViewer();
+			});
+		}
+	}, {
+		key: 'updateFormViewer',
+		value: function updateFormViewer() {
+			var _this7 = this;
+
+			var content = "";
+			if (this.state.title != "") {
+				content += "<p style='text-align: center'>";
+				content += this.state.title;
+				content += "</p>";
+				content += '<br/>';
+			}
+
+			content += this.state.full_text;
+
+			var updatedFormContent = Object.assign("", this.state.context);
+			updatedFormContent = content;
+
+			this.setState({
+				context: updatedFormContent
+			}, function () {
+				console.log("preview: " + _this7.state.context);
 			});
 		}
 	}, {
 		key: 'render',
 		value: function render() {
-			var _this3 = this;
+			var _this8 = this;
 
 			var formStyle = _styles2.default.form;
 			var universalStyle = _styles2.default.universal;
@@ -34490,7 +34536,7 @@ var ConsentForm = function (_Component) {
 				return _react2.default.createElement(
 					'li',
 					{ key: i },
-					_react2.default.createElement(_FormSection2.default, { currentSection: section, addSection: _this3.addRiskSection.bind(_this3), onChange: _this3.updateSection.bind(_this3, i) })
+					_react2.default.createElement(_FormSection2.default, { currentSection: section, addSection: _this8.addRiskSection.bind(_this8), onChange: _this8.updateSection.bind(_this8, i) })
 				);
 			});
 
@@ -34509,6 +34555,16 @@ var ConsentForm = function (_Component) {
 					_react2.default.createElement(
 						'div',
 						{ className: 'form-group', style: formStyle.formgroup },
+						_react2.default.createElement(
+							'label',
+							{ style: formStyle.label },
+							'Title: '
+						),
+						_react2.default.createElement('input', { className: 'form-control', style: { width: 40 + '%' },
+							onChange: this.updateTitle.bind(this),
+							value: this.state.title
+						}),
+						_react2.default.createElement('hr', { style: universalStyle.hr }),
 						_react2.default.createElement(
 							'label',
 							{ htmlFor: 'section', style: formStyle.label },
@@ -34548,14 +34604,14 @@ var ConsentForm = function (_Component) {
 					_react2.default.createElement(
 						'h4',
 						{ style: formStyle.header },
-						'Formatting Consent Form'
+						'Consent Form Viewer'
 					),
 					_react2.default.createElement(
 						'div',
 						{ style: formStyle.preview },
-						_react2.default.createElement(_ContentPreview2.default, { content: this.state.full_text })
+						_react2.default.createElement(_ContentPreview2.default, { content: this.state.context })
 					),
-					_react2.default.createElement(_DownloadPDF2.default, { content: this.state.full_text })
+					_react2.default.createElement(_DownloadPDF2.default, { content: this.state.context })
 				)
 			);
 		}
@@ -35029,11 +35085,14 @@ var DownloadPDF = function (_Component) {
     return _this;
   }
 
+  // http://www.techumber.com/html-to-pdf-conversion-using-javascript/
+
   _createClass(DownloadPDF, [{
     key: 'pdfToHTML',
     value: function pdfToHTML() {
       var pdf = new jsPDF('p', 'pt', 'letter');
       var source = this.props.content;
+      console.log("source: " + source);
       var specialElementHandlers = {
         '#bypassme': function bypassme(element, renderer) {
           return true;
@@ -35159,9 +35218,16 @@ var FormSection = function (_Component) {
     value: function componentDidMount() {
       var _this2 = this;
 
+      var content = "";
+      content += this.props.currentSection.title;
+      content += "<br/>";
+      content += this.props.currentSection.content;
+
+      this.props.currentSection["content"] = content;
+
       this.setState({
         section: this.props.currentSection,
-        text: this.props.currentSection.content
+        text: content
       });
 
       _superagent2.default.get('/api/devicesensor').query(null).set('Accept', 'application/json').end(function (err, response) {
@@ -35457,8 +35523,13 @@ var FormSection = function (_Component) {
                   ),
                   _react2.default.createElement(
                     'option',
-                    { value: 'GPS', key: 'GPS' },
-                    'GPS'
+                    { value: 'sampling rate', key: 'sampling rate' },
+                    'sampling rate'
+                  ),
+                  _react2.default.createElement(
+                    'option',
+                    { value: 'continuous', key: 'continuous' },
+                    'continuous'
                   )
                 ),
                 _react2.default.createElement('input', { className: 'form-control', placeholder: 'attribute value', style: formStyle.attribute,
