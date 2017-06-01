@@ -163,32 +163,39 @@ class FormSection extends Component {
   addSensor(event){
     // generate context to display in the section
     let updatedSectionContent = this.state.section.content
-    updatedSectionContent += "The study uses " + this.state.selectedSensor + " on " + this.state.selectedDevice + " with attributes "
+    updatedSectionContent += "The study uses " + this.state.selectedSensor + " on " + this.state.selectedDevice + " with attribute "
 
     let attributes = this.state.currentAttributes
+    let i = 1
     Object.keys(attributes).map(function(key){
-      updatedSectionContent += key + " set to " + attributes[key] + ", ";
+      if(i == 1)
+        updatedSectionContent += key + " set to " + attributes[key]
+      else
+        updatedSectionContent += ", " + key + " set to " + attributes[key];
     })
 
+    updatedSectionContent += "."
     this.updateSection(updatedSectionContent)
 
+    // add sensor along with its attribute list to sensorList
+    let updatedSensor = Object.assign({}, this.state.currentSensor)
+    updatedSensor["device"] = this.state.selectedDevice
+    updatedSensor["sensor"] = this.state.selectedSensor
+    updatedSensor["attributes"] = this.state.attrForSearch
+    console.log('add sensor: ' + JSON.stringify(updatedSensor))
+
+    let updatedSensorList = Object.assign([], this.state.sensorList)
+    updatedSensorList.push(updatedSensor)
+
     this.setState({
-      text: updatedSectionContent
+      text: updatedSectionContent, //update section text display
+      sensorList: updatedSensorList,
+      // clear selectedDevice, selectedSensor, currentAttributes, and currentSensor 
+      selectedDevice: "",
+      selectedSensor: "",
+      currentAttributes: {},
+      attrForSearch: {}, 
     })
-
-
-    // add sensor along with its attribute list to 
-    // console.log('add sensor: ' + this.state.selectedSensor)
-    // let updatedSensor = Object.assign({}, this.state.currentSensor)
-
-    // let updatedSensorList = Object.assign([], this.state.sensorList)
-    // updatedSensorList.push(this.state.selectedSensor)
-
-    // this.setState({
-    //   sensorList: updatedSensorList
-    // })
-
-    // needs to clear currentAttributes and currentSensor
   }
 
   generateRisks(event) {
@@ -289,16 +296,16 @@ class FormSection extends Component {
             <div className="form-group" style={formStyle.formgroup}>
               <label htmlFor="device" style={{float:'left', marginRight:5+'px'}}>Select device:</label>
               <select className="form-control" id="device" style={formStyle.selectionBox}
-                onChange={this.updateDeviceSelection.bind(this)}>
-                <option>--- Select a device ---</option>
+                onChange={this.updateDeviceSelection.bind(this)} value={this.state.selectedDevice}>
+                <option value="" key="">--- Select a device ---</option>
                 {deviceOptions}
               </select>
               <br/>
               <br/>
               <label htmlFor="sensor" style={{float:'left', marginRight:5+'px'}}>Select sensor to add:</label>
               <select className="form-control" id="sensor" style={formStyle.selectionBox}
-                onChange={this.updateSensorSelection.bind(this)}>
-                <option>--- Select a sensor ---</option>
+                onChange={this.updateSensorSelection.bind(this)} value={this.state.selectedSensor}>
+                <option value="" key="">--- Select a sensor ---</option>
                 {sensorOptions}
               </select>
               <br/>
