@@ -17,8 +17,11 @@ class FormSection extends Component {
       sensorRisks: [],
       currentSensor: {},
       currentAttributes: {},
+      attrForSearch: {},
       attrName: "",
-      attrValue: ""
+      attrValue: "",
+      attrNameC: "", // attribute name and value for customized attributes
+      attrValueC: ""
     }
 
     // must write in this way bc quill doesn't support handler for text change
@@ -87,26 +90,62 @@ class FormSection extends Component {
   }
 
   updateAttrName(event) {
+    console.log("update arrtibute name: " + event.target)
     this.setState({
-      attrName: event.target.value
+      attrName: event.target.value,
+      attrNameC: "",
+      attrValueC: ""
     })
-
   }
 
   updateAttrValue(event) {
     this.setState({
-      attrValue: event.target.value
+      attrValue: event.target.value,
+      attrNameC: "",
+      attrValueC: ""
     })
   }
 
+  updateAttrNameC(event) {
+    this.setState({
+      attrNameC: event.target.value,
+      attrName: "",
+      attrValue: ""
+    })
+  }
+
+  updateAttrValueC(event) {
+    this.setState({
+      attrValueC: event.target.value,
+      attrName: "",
+      attrValue: ""
+    })
+  }
+
+  // add attribute to both currentAttributes and attrForSearch
   addAttr(event){
     let updatedCurrentAttr = Object.assign({}, this.state. currentAttributes)
     updatedCurrentAttr[this.state.attrName] = this.state.attrValue
+
+    let updatedAttrForSearch = Object.assign({}, this.state.attrForSearch)
+    updatedAttrForSearch[this.state.attrName] = this.state.attrValue
 
     this.setState({
       currentAttributes: updatedCurrentAttr,
       attrName: "",
       attrValue: ""
+    })
+  }
+
+  // add attribute to currentAttributes but not to attrForSearch
+  addCustomizedAttr(event){
+    let updatedCurrentAttr = Object.assign({}, this.state. currentAttributes)
+    updatedCurrentAttr[this.state.attrNameC] = this.state.attrValueC
+
+    this.setState({
+      currentAttributes: updatedCurrentAttr,
+      attrNameC: "",
+      attrValueC: ""
     })
 
   }
@@ -250,12 +289,30 @@ class FormSection extends Component {
                     </div>
                   }
                   <br/>
-                  <input className="form-control" placeholder="attribute name" style={formStyle.attribute}
-                    value={this.state.attrName} onChange={this.updateAttrName.bind(this)}/>
-                  <input className="form-control" placeholder="attribute value" style={formStyle.attribute}
-                    value={this.state.attrValue} onChange={this.updateAttrValue.bind(this)}/>
-                  <button className="btn btn-primary" onClick={this.addAttr.bind(this)}>Add attribute</button>
-                  <br/>
+
+                  <div className="knownAttr">
+                    <select className="form-control" style={formStyle.attribute}
+                      value={this.state.attrName} onChange={this.updateAttrName.bind(this)}>
+                      <option value="" key="">---Select an attribute---</option>
+                      <option value="GPS" key="GPS">GPS</option>
+                    </select>
+                    <input className="form-control" placeholder="attribute value" style={formStyle.attribute}
+                      value={this.state.attrValue} onChange={this.updateAttrValue.bind(this)}/>
+                    <button className="btn btn-primary" onClick={this.addAttr.bind(this)}>Add attribute</button>
+                    <br/>
+                    <br/>
+                  </div>
+
+                  <div className="customizedAttr">
+                    <input className="form-control" placeholder="attribute name" style={formStyle.attribute}
+                      value={this.state.attrNameC} onChange={this.updateAttrNameC.bind(this)}/>
+                    <input className="form-control" placeholder="attribute value" style={formStyle.attribute}
+                      value={this.state.attrValueC} onChange={this.updateAttrValueC.bind(this)}/>
+                    <button className="btn btn-primary" onClick={this.addCustomizedAttr.bind(this)} 
+                    style={{fontSize:12+'px'}}>Add Customized Attribute</button>
+                    <br/>
+                  </div>
+
                   <hr style={styles.universal.hr} />
                 </div>
               }

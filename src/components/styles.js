@@ -75,7 +75,7 @@ export default {
 			margin:0
 		},
 		attribute: {
-			width: 200 + 'px',
+			width: 180 + 'px',
 			marginRight: 5 + 'px',
 			float: 'left'
 		}

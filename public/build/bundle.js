@@ -5600,7 +5600,7 @@ exports.default = {
 			margin: 0
 		},
 		attribute: {
-			width: 200 + 'px',
+			width: 180 + 'px',
 			marginRight: 5 + 'px',
 			float: 'left'
 		}
@@ -35136,8 +35136,11 @@ var FormSection = function (_Component) {
       sensorRisks: [],
       currentSensor: {},
       currentAttributes: {},
+      attrForSearch: {},
       attrName: "",
-      attrValue: ""
+      attrValue: "",
+      attrNameC: "", // attribute name and value for customized attributes
+      attrValueC: ""
     };
 
     // must write in this way bc quill doesn't support handler for text change
@@ -35208,27 +35211,71 @@ var FormSection = function (_Component) {
   }, {
     key: 'updateAttrName',
     value: function updateAttrName(event) {
+      console.log("update arrtibute name: " + event.target);
       this.setState({
-        attrName: event.target.value
+        attrName: event.target.value,
+        attrNameC: "",
+        attrValueC: ""
       });
     }
   }, {
     key: 'updateAttrValue',
     value: function updateAttrValue(event) {
       this.setState({
-        attrValue: event.target.value
+        attrValue: event.target.value,
+        attrNameC: "",
+        attrValueC: ""
       });
     }
+  }, {
+    key: 'updateAttrNameC',
+    value: function updateAttrNameC(event) {
+      this.setState({
+        attrNameC: event.target.value,
+        attrName: "",
+        attrValue: ""
+      });
+    }
+  }, {
+    key: 'updateAttrValueC',
+    value: function updateAttrValueC(event) {
+      this.setState({
+        attrValueC: event.target.value,
+        attrName: "",
+        attrValue: ""
+      });
+    }
+
+    // add attribute to both currentAttributes and attrForSearch
+
   }, {
     key: 'addAttr',
     value: function addAttr(event) {
       var updatedCurrentAttr = Object.assign({}, this.state.currentAttributes);
       updatedCurrentAttr[this.state.attrName] = this.state.attrValue;
 
+      var updatedAttrForSearch = Object.assign({}, this.state.attrForSearch);
+      updatedAttrForSearch[this.state.attrName] = this.state.attrValue;
+
       this.setState({
         currentAttributes: updatedCurrentAttr,
         attrName: "",
         attrValue: ""
+      });
+    }
+
+    // add attribute to currentAttributes but not to attrForSearch
+
+  }, {
+    key: 'addCustomizedAttr',
+    value: function addCustomizedAttr(event) {
+      var updatedCurrentAttr = Object.assign({}, this.state.currentAttributes);
+      updatedCurrentAttr[this.state.attrNameC] = this.state.attrValueC;
+
+      this.setState({
+        currentAttributes: updatedCurrentAttr,
+        attrNameC: "",
+        attrValueC: ""
       });
     }
   }, {
@@ -35396,16 +35443,49 @@ var FormSection = function (_Component) {
                 )
               ),
               _react2.default.createElement('br', null),
-              _react2.default.createElement('input', { className: 'form-control', placeholder: 'attribute name', style: formStyle.attribute,
-                value: this.state.attrName, onChange: this.updateAttrName.bind(this) }),
-              _react2.default.createElement('input', { className: 'form-control', placeholder: 'attribute value', style: formStyle.attribute,
-                value: this.state.attrValue, onChange: this.updateAttrValue.bind(this) }),
               _react2.default.createElement(
-                'button',
-                { className: 'btn btn-primary', onClick: this.addAttr.bind(this) },
-                'Add attribute'
+                'div',
+                { className: 'knownAttr' },
+                _react2.default.createElement(
+                  'select',
+                  { className: 'form-control', style: formStyle.attribute,
+                    value: this.state.attrName, onChange: this.updateAttrName.bind(this) },
+                  _react2.default.createElement(
+                    'option',
+                    { value: '', key: '' },
+                    '---Select an attribute---'
+                  ),
+                  _react2.default.createElement(
+                    'option',
+                    { value: 'GPS', key: 'GPS' },
+                    'GPS'
+                  )
+                ),
+                _react2.default.createElement('input', { className: 'form-control', placeholder: 'attribute value', style: formStyle.attribute,
+                  value: this.state.attrValue, onChange: this.updateAttrValue.bind(this) }),
+                _react2.default.createElement(
+                  'button',
+                  { className: 'btn btn-primary', onClick: this.addAttr.bind(this) },
+                  'Add attribute'
+                ),
+                _react2.default.createElement('br', null),
+                _react2.default.createElement('br', null)
               ),
-              _react2.default.createElement('br', null),
+              _react2.default.createElement(
+                'div',
+                { className: 'customizedAttr' },
+                _react2.default.createElement('input', { className: 'form-control', placeholder: 'attribute name', style: formStyle.attribute,
+                  value: this.state.attrNameC, onChange: this.updateAttrNameC.bind(this) }),
+                _react2.default.createElement('input', { className: 'form-control', placeholder: 'attribute value', style: formStyle.attribute,
+                  value: this.state.attrValueC, onChange: this.updateAttrValueC.bind(this) }),
+                _react2.default.createElement(
+                  'button',
+                  { className: 'btn btn-primary', onClick: this.addCustomizedAttr.bind(this),
+                    style: { fontSize: 12 + 'px' } },
+                  'Add Customized Attribute'
+                ),
+                _react2.default.createElement('br', null)
+              ),
               _react2.default.createElement('hr', { style: _styles2.default.universal.hr })
             ),
             _react2.default.createElement(
