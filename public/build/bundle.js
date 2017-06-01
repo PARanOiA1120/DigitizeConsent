@@ -34427,25 +34427,27 @@ var ConsentForm = function (_Component) {
 	}, {
 		key: 'updateSection',
 		value: function updateSection(i, section) {
+			var _this5 = this;
+
 			var updatedSectionList = Object.assign([], this.state.selectedSectionList);
 			updatedSectionList[i] = section;
 
 			this.setState({
 				selectedSectionList: updatedSectionList
+			}, function () {
+				_this5.updateFullText();
 			});
-
-			this.updateFullText();
 		}
 	}, {
 		key: 'updateTitle',
 		value: function updateTitle(event) {
-			var _this5 = this;
+			var _this6 = this;
 
 			var title = "";
 			title += this.setState({
 				title: event.target.value
 			}, function () {
-				_this5.updateFormViewer();
+				_this6.updateFormViewer();
 			});
 		}
 
@@ -34454,7 +34456,7 @@ var ConsentForm = function (_Component) {
 	}, {
 		key: 'updateFullText',
 		value: function updateFullText() {
-			var _this6 = this;
+			var _this7 = this;
 
 			var text = "";
 			var _iteratorNormalCompletion = true;
@@ -34489,19 +34491,19 @@ var ConsentForm = function (_Component) {
 			this.setState({
 				full_text: updatedFullText
 			}, function () {
-				_this6.updateFormViewer();
+				_this7.updateFormViewer();
 			});
 		}
 	}, {
 		key: 'updateFormViewer',
 		value: function updateFormViewer() {
-			var _this7 = this;
-
 			var content = "";
 			if (this.state.title != "") {
-				content += "<p style='text-align: center'>";
+				// content += "<p style='text-align: center'>"
+				content += "<h3><center><strong>";
 				content += this.state.title;
-				content += "</p>";
+				content += "</strong></center></h3>";
+				// content += "</p>"
 				content += '<br/>';
 			}
 
@@ -34513,7 +34515,7 @@ var ConsentForm = function (_Component) {
 			this.setState({
 				context: updatedFormContent
 			}, function () {
-				console.log("preview: " + _this7.state.context);
+				// console.log("preview: " + this.state.context)
 			});
 		}
 	}, {
@@ -35086,6 +35088,7 @@ var DownloadPDF = function (_Component) {
   }
 
   // http://www.techumber.com/html-to-pdf-conversion-using-javascript/
+  // https://codepen.io/akfish/pen/LNWXrM --> pdf loader
 
   _createClass(DownloadPDF, [{
     key: 'pdfToHTML',
@@ -35194,8 +35197,8 @@ var FormSection = function (_Component) {
       sensorList: [], // sensor list to query for risks, include device
       sensorRisks: [],
       currentSensor: {},
-      currentAttributes: {},
-      attrForSearch: {},
+      currentAttributes: {}, //all attributes
+      attrForSearch: {}, // attributes that have a match in the db
       attrName: "",
       attrValue: "",
       attrNameC: "", // attribute name and value for customized attributes
@@ -35253,6 +35256,8 @@ var FormSection = function (_Component) {
   }, {
     key: 'updateSection',
     value: function updateSection(content) {
+      var _this3 = this;
+
       var updatedSection = Object.assign({}, this.state.section);
       updatedSection["content"] = content;
 
@@ -35261,6 +35266,8 @@ var FormSection = function (_Component) {
 
       this.setState({
         section: updatedSection
+      }, function () {
+        console.log("updated section: " + JSON.stringify(_this3.state.section));
       });
     }
   }, {
@@ -35347,15 +35354,31 @@ var FormSection = function (_Component) {
   }, {
     key: 'addSensor',
     value: function addSensor(event) {
-      console.log('add sensor: ' + this.state.selectedSensor);
-      var updatedSensor = Object.assign({}, this.state.currentSensor);
+      // generate context to display in the section
+      var updatedSectionContent = this.state.section.content;
+      updatedSectionContent += "The study uses " + this.state.selectedSensor + " on " + this.state.selectedDevice + " with attributes ";
 
-      var updatedSensorList = Object.assign([], this.state.sensorList);
-      updatedSensorList.push(this.state.selectedSensor);
+      var attributes = this.state.currentAttributes;
+      Object.keys(attributes).map(function (key) {
+        updatedSectionContent += key + " set to " + attributes[key] + ", ";
+      });
+
+      this.updateSection(updatedSectionContent);
 
       this.setState({
-        sensorList: updatedSensorList
+        text: updatedSectionContent
       });
+
+      // add sensor along with its attribute list to 
+      // console.log('add sensor: ' + this.state.selectedSensor)
+      // let updatedSensor = Object.assign({}, this.state.currentSensor)
+
+      // let updatedSensorList = Object.assign([], this.state.sensorList)
+      // updatedSensorList.push(this.state.selectedSensor)
+
+      // this.setState({
+      //   sensorList: updatedSensorList
+      // })
 
       // needs to clear currentAttributes and currentSensor
     }
@@ -35367,7 +35390,7 @@ var FormSection = function (_Component) {
   }, {
     key: 'updateDeviceSelection',
     value: function updateDeviceSelection(event) {
-      var _this3 = this;
+      var _this4 = this;
 
       var updatedSelectedDevice = Object.assign('', this.state.selectedDevice);
       updatedSelectedDevice = event.target.value;
@@ -35384,13 +35407,13 @@ var FormSection = function (_Component) {
 
         // console.log(JSON.stringify(response.body.results))
         var results = response.body.results;
-        var sensors = Object.assign([], _this3.state.deviceSensorList);
+        var sensors = Object.assign([], _this4.state.deviceSensorList);
 
         results.forEach(function (devicesensor) {
           if (sensors.indexOf(devicesensor.sensorName)) sensors.push(devicesensor.sensorName);
         });
 
-        _this3.setState({
+        _this4.setState({
           deviceSensorList: sensors,
           selectedDevice: updatedSelectedDevice
         });
@@ -35399,7 +35422,7 @@ var FormSection = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this4 = this;
+      var _this5 = this;
 
       var modules = {
         toolbar: [[{ 'header': [1, 2, false] }], ['bold', 'italic', 'underline', 'strike', 'blockquote'], [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }], ['link', 'image'], ['clean']]
@@ -35440,7 +35463,7 @@ var FormSection = function (_Component) {
             attr
           ),
           ': ',
-          _this4.state.currentAttributes[attr]
+          _this5.state.currentAttributes[attr]
         );
       });
 

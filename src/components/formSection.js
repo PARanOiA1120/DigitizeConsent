@@ -16,8 +16,8 @@ class FormSection extends Component {
       sensorList: [], // sensor list to query for risks, include device
       sensorRisks: [],
       currentSensor: {},
-      currentAttributes: {},
-      attrForSearch: {},
+      currentAttributes: {}, //all attributes
+      attrForSearch: {}, // attributes that have a match in the db
       attrName: "",
       attrValue: "",
       attrNameC: "", // attribute name and value for customized attributes
@@ -83,6 +83,8 @@ class FormSection extends Component {
     
     this.setState({
       section: updatedSection
+    }, () => {
+      console.log("updated section: " + JSON.stringify(this.state.section))
     })
   }
 
@@ -157,16 +159,34 @@ class FormSection extends Component {
 
   }
 
-  addSensor(event){
-    console.log('add sensor: ' + this.state.selectedSensor)
-    let updatedSensor = Object.assign({}, this.state.currentSensor)
 
-    let updatedSensorList = Object.assign([], this.state.sensorList)
-    updatedSensorList.push(this.state.selectedSensor)
+  addSensor(event){
+    // generate context to display in the section
+    let updatedSectionContent = this.state.section.content
+    updatedSectionContent += "The study uses " + this.state.selectedSensor + " on " + this.state.selectedDevice + " with attributes "
+
+    let attributes = this.state.currentAttributes
+    Object.keys(attributes).map(function(key){
+      updatedSectionContent += key + " set to " + attributes[key] + ", ";
+    })
+
+    this.updateSection(updatedSectionContent)
 
     this.setState({
-      sensorList: updatedSensorList
+      text: updatedSectionContent
     })
+
+
+    // add sensor along with its attribute list to 
+    // console.log('add sensor: ' + this.state.selectedSensor)
+    // let updatedSensor = Object.assign({}, this.state.currentSensor)
+
+    // let updatedSensorList = Object.assign([], this.state.sensorList)
+    // updatedSensorList.push(this.state.selectedSensor)
+
+    // this.setState({
+    //   sensorList: updatedSensorList
+    // })
 
     // needs to clear currentAttributes and currentSensor
   }

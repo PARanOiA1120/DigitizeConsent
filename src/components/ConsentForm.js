@@ -91,9 +91,9 @@ class ConsentForm extends Component {
 
 		this.setState({
 			selectedSectionList: updatedSectionList
+		}, () => {
+			this.updateFullText()
 		})
-
-		this.updateFullText()
 	}
 
 	updateTitle(event) {
@@ -129,9 +129,11 @@ class ConsentForm extends Component {
 	updateFormViewer() {
 		let content = ""
 		if(this.state.title != ""){
-			content += "<p style='text-align: center'>"
+			// content += "<p style='text-align: center'>"
+			content += "<h3><center><strong>"
 			content += this.state.title
-			content += "</p>"
+			content += "</strong></center></h3>"
+			// content += "</p>"
 			content += '<br/>'
 		}
 	
@@ -143,7 +145,7 @@ class ConsentForm extends Component {
 		this.setState({
 			context: updatedFormContent
 		}, () => {
-			console.log("preview: " + this.state.context)
+			// console.log("preview: " + this.state.context)
 		})
 	}
 

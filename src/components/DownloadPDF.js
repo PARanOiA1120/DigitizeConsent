@@ -8,6 +8,7 @@ class DownloadPDF extends Component {
   }
 
 // http://www.techumber.com/html-to-pdf-conversion-using-javascript/
+// https://codepen.io/akfish/pen/LNWXrM --> pdf loader
 
   pdfToHTML(){
     var pdf = new jsPDF('p', 'pt', 'letter');
