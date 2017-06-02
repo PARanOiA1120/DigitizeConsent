@@ -34414,6 +34414,7 @@ var ConsentForm = function (_Component) {
 			var index = _.findIndex(this.state.sectionList, ['title', title]);
 			var selectedSection = this.state.sectionList[index];
 			// console.log('added section: ' + JSON.stringify(selectedSection))
+			selectedSection["content"] = "GPS sensor on iPhone7 can reveal location information.";
 
 			var updatedSections = Object.assign([], this.state.selectedSectionList);
 			updatedSections.push(selectedSection);
@@ -34444,7 +34445,8 @@ var ConsentForm = function (_Component) {
 			var _this6 = this;
 
 			var title = "";
-			title += this.setState({
+
+			this.setState({
 				title: event.target.value
 			}, function () {
 				_this6.updateFormViewer();
@@ -34500,9 +34502,9 @@ var ConsentForm = function (_Component) {
 			var content = "";
 			if (this.state.title != "") {
 				// content += "<p style='text-align: center'>"
-				content += "<h3><center><strong>";
-				content += this.state.title;
-				content += "</strong></center></h3>";
+				// content += "<h3><center><strong>"
+				content += "<h4>" + this.state.title + "</h4>";
+				// content += "</strong></center></h3>"
 				// content += "</p>"
 				content += '<br/>';
 			}
@@ -35222,7 +35224,7 @@ var FormSection = function (_Component) {
       var _this2 = this;
 
       var content = "";
-      content += this.props.currentSection.title;
+      content += "<strong>" + this.props.currentSection.title + "</strong>";
       content += "<br/>";
       content += this.props.currentSection.content;
 
@@ -35362,6 +35364,7 @@ var FormSection = function (_Component) {
       var i = 1;
       Object.keys(attributes).map(function (key) {
         if (i == 1) updatedSectionContent += key + " set to " + attributes[key];else updatedSectionContent += ", " + key + " set to " + attributes[key];
+        i += 1;
       });
 
       updatedSectionContent += ".";

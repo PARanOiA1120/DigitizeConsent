@@ -36,7 +36,7 @@ class FormSection extends Component {
 
   componentDidMount(){
     let content = ""
-    content += this.props.currentSection.title
+    content += "<strong>" + this.props.currentSection.title + "</strong>"
     content += "<br/>"
     content += this.props.currentSection.content
 
@@ -172,6 +172,7 @@ class FormSection extends Component {
         updatedSectionContent += key + " set to " + attributes[key]
       else
         updatedSectionContent += ", " + key + " set to " + attributes[key];
+      i += 1
     })
 
     updatedSectionContent += "."

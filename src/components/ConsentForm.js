@@ -73,7 +73,8 @@ class ConsentForm extends Component {
 		const index = _.findIndex(this.state.sectionList, ['title', title])
 		const selectedSection = this.state.sectionList[index]
 		// console.log('added section: ' + JSON.stringify(selectedSection))
-		
+		selectedSection["content"] = "GPS sensor on iPhone7 can reveal location information."
+
 		let updatedSections = Object.assign([], this.state.selectedSectionList)
 		updatedSections.push(selectedSection)
 
@@ -98,7 +99,6 @@ class ConsentForm extends Component {
 
 	updateTitle(event) {
 		let title = ""
-		title += 
 
 		this.setState({
 			title: event.target.value
@@ -130,9 +130,9 @@ class ConsentForm extends Component {
 		let content = ""
 		if(this.state.title != ""){
 			// content += "<p style='text-align: center'>"
-			content += "<h3><center><strong>"
-			content += this.state.title
-			content += "</strong></center></h3>"
+			// content += "<h3><center><strong>"
+			content += "<h4>" + this.state.title + "</h4>"
+			// content += "</strong></center></h3>"
 			// content += "</p>"
 			content += '<br/>'
 		}
