@@ -35716,32 +35716,46 @@ var JSONSchemaForm = function (_Component) {
         title: "Sensor Inference Form",
         type: "object",
         properties: {
-          sensorList: {
+          reference: {
+            type: "string",
+            title: "Reference"
+          },
+          deviceList: {
             type: "array",
-            title: "Sensor List",
+            title: "Device List",
             items: {
               type: "object",
               properties: {
-                device: {
+                deviceType: {
                   type: "string",
+                  enum: ["Phone", "Watch", "Shoes"],
                   title: "Device"
                 },
-                name: {
-                  type: "string",
-                  title: "Sensor Name"
-                },
-                attributes: {
+                sensorList: {
                   type: "array",
+                  title: "Sensor List",
                   items: {
                     type: "object",
                     properties: {
-                      attriName: {
+                      sensorName: {
                         type: "string",
-                        title: "Attribute"
+                        title: "Sensor Name"
                       },
-                      value: {
-                        type: "string",
-                        title: "Value"
+                      attributes: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            attriName: {
+                              type: "string",
+                              title: "Attribute"
+                            },
+                            value: {
+                              type: "string",
+                              title: "Value"
+                            }
+                          }
+                        }
                       }
                     }
                   }
@@ -35749,26 +35763,19 @@ var JSONSchemaForm = function (_Component) {
               }
             }
           },
-          inferenceList: {
-            type: "array",
-            title: "Inference List",
-            items: {
-              type: "object",
-              properties: {
-                inferenceName: {
-                  type: "string",
-                  title: "Inference"
-                },
-                description: {
-                  type: "string",
-                  title: "Description"
-                }
+          inference: {
+            type: "object",
+            title: "Inference",
+            properties: {
+              inferenceName: {
+                type: "string",
+                title: "Inference"
+              },
+              description: {
+                type: "string",
+                title: "Description"
               }
             }
-          },
-          reference: {
-            type: "string",
-            title: "Reference"
           }
         }
       };
