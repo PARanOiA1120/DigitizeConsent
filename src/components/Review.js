@@ -28,53 +28,53 @@ class Review extends Component {
 	}
 
 	submit() {
-		if(this.props.collection.action == '/api/sensorinference'){
-			// console.log(JSON.stringify(this.state.formData))
-			let updatedFormData = Object.assign({}, this.state.formData)
+		// if(this.props.collection.action == '/api/sensorinference'){
+		// 	// console.log(JSON.stringify(this.state.formData))
+		// 	let updatedFormData = Object.assign({}, this.state.formData)
 
-			// console.log("sensorList: " + JSON.stringify(updatedFormData.sensorList))
-			updatedFormData.sensorList.forEach((sensor) => {
-				// console.log("sensor: " + sensor)
-				let device = sensor["device"]
-				let sensorName = sensor["name"]
-				// console.log("device: " + device)
-				// console.log("sensor: " + sensorName)
+		// 	// console.log("sensorList: " + JSON.stringify(updatedFormData.sensorList))
+		// 	updatedFormData.sensorList.forEach((sensor) => {
+		// 		// console.log("sensor: " + sensor)
+		// 		let device = sensor["device"]
+		// 		let sensorName = sensor["name"]
+		// 		// console.log("device: " + device)
+		// 		// console.log("sensor: " + sensorName)
 				
-				//get sensorID from device sensor table
-				superagent   
-				.get('/api/devicesensor')
-				.query({device: device, sensorName: sensorName})
-				.set('Accept', 'application/json')
-				.end((err, response) => {
-					if(err){
-					  alert('ERROR: '+err)
-					  return
-					}
-					// console.log("result: " + JSON.stringify(response.body.results))
-					let sensorID = response.body.results[0]["_id"]
-					// console.log("sensorID: " + sensorID)
+		// 		//get sensorID from device sensor table
+		// 		superagent   
+		// 		.get('/api/devicesensor')
+		// 		.query({device: device, sensorName: sensorName})
+		// 		.set('Accept', 'application/json')
+		// 		.end((err, response) => {
+		// 			if(err){
+		// 			  alert('ERROR: '+err)
+		// 			  return
+		// 			}
+		// 			// console.log("result: " + JSON.stringify(response.body.results))
+		// 			let sensorID = response.body.results[0]["_id"]
+		// 			// console.log("sensorID: " + sensorID)
 
-					sensor["sensorID"] = sensorID
-					delete sensor.device
-					delete sensor.name
+		// 			sensor["sensorID"] = sensorID
+		// 			delete sensor.device
+		// 			delete sensor.name
 
-					this.setState({
-						formData: updatedFormData
-					})
+		// 			this.setState({
+		// 				formData: updatedFormData
+		// 			})
 
-					console.log("data submitted: " + JSON.stringify(this.state.formData))
-					fetch(this.props.collection.action, {
-				      method: 'POST',
-				      headers: {
-				        'Accept': 'application/json',
-				        'Content-Type': 'application/json'
-				      },
-				      body: JSON.stringify(this.state.formData)
-				    })
-				})
-			})
-		}
-		else {
+		// 			console.log("data submitted: " + JSON.stringify(this.state.formData))
+		// 			fetch(this.props.collection.action, {
+		// 		      method: 'POST',
+		// 		      headers: {
+		// 		        'Accept': 'application/json',
+		// 		        'Content-Type': 'application/json'
+		// 		      },
+		// 		      body: JSON.stringify(this.state.formData)
+		// 		    })
+		// 		})
+		// 	})
+		// }
+		// else {
 			console.log("data submitted: " + JSON.stringify(this.state.formData))
 			fetch(this.props.collection.action, {
 		      method: 'POST',
@@ -84,7 +84,7 @@ class Review extends Component {
 		      },
 		      body: JSON.stringify(this.state.formData)
 		    })
-		}
+		// }
 	}
 
 
