@@ -9,7 +9,8 @@ class CreateDBEntry extends Component{
 			collectionList: [
 				{title: 'Device-Sensor', action: '/api/devicesensor', schema: 'device_sensor_schema'},
 				{title: 'Sensor-Inference', action: '/api/sensorinference', schema: 'sensor_inference_schema'},
-				{title: 'Inference-Description', action: '/api/inferencedescription', schema: 'inference_description_schema'}
+				{title: 'Inference-Description', action: '/api/inferencedescription', schema: 'inference_description_schema'},
+				{title: 'App-Sensor', action: '/api/appsensor', schema: 'app_sensor_schema'},
 			],
 			selectedCollection: {},
 			switchToReview: false

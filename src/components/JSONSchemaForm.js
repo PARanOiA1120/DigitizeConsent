@@ -125,13 +125,31 @@ class JSONSchemaForm extends Component {
       }
     }
 
+    const app_sensor_schema = {
+      title: "Application Sensor Form",
+      type: "object",
+      properties: {
+        application: {
+          type: "string",
+          title: "Application"
+        },
+        softwareSensor: {
+          type: "array",
+          items: {
+            type: "string",
+          }
+        }
+      }
+    }
+
 
     const log = (type) => console.log.bind(console, type);
     const onSubmit = ({formData}) => this.submit({formData})
     const schema = this.props.collection.schema
     const schemaDict = {'device_sensor_schema': device_sensor_schema, 
                         'sensor_inference_schema': sensor_inference_schema, 
-                        'inference_description_schema': inference_description_schema
+                        'inference_description_schema': inference_description_schema,
+                        'app_sensor_schema': app_sensor_schema
                       }
 
     return(

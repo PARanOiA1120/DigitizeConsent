@@ -34668,7 +34668,7 @@ var CreateDBEntry = function (_Component) {
 		var _this = _possibleConstructorReturn(this, (CreateDBEntry.__proto__ || Object.getPrototypeOf(CreateDBEntry)).call(this));
 
 		_this.state = {
-			collectionList: [{ title: 'Device-Sensor', action: '/api/devicesensor', schema: 'device_sensor_schema' }, { title: 'Sensor-Inference', action: '/api/sensorinference', schema: 'sensor_inference_schema' }, { title: 'Inference-Description', action: '/api/inferencedescription', schema: 'inference_description_schema' }],
+			collectionList: [{ title: 'Device-Sensor', action: '/api/devicesensor', schema: 'device_sensor_schema' }, { title: 'Sensor-Inference', action: '/api/sensorinference', schema: 'sensor_inference_schema' }, { title: 'Inference-Description', action: '/api/inferencedescription', schema: 'inference_description_schema' }, { title: 'App-Sensor', action: '/api/appsensor', schema: 'app_sensor_schema' }],
 			selectedCollection: {},
 			switchToReview: false
 		};
@@ -35192,6 +35192,7 @@ var FormSection = function (_Component) {
     _this.state = {
       section: {},
       text: '',
+      appList: [],
       deviceList: [], // a list of all devices
       deviceSensorList: [], // a list of all sensors of the selected device
       selectedDevice: '',
@@ -35354,6 +35355,9 @@ var FormSection = function (_Component) {
       });
     }
   }, {
+    key: 'updateAppSelection',
+    value: function updateAppSelection(event) {}
+  }, {
     key: 'addSensor',
     value: function addSensor(event) {
       // generate context to display in the section
@@ -35444,6 +35448,10 @@ var FormSection = function (_Component) {
 
       var section = this.props.currentSection.title;
 
+      var appOptions = this.state.appList.map(function (app, i) {
+        return _react2.default.createElement('option', null);
+      });
+
       var deviceOptions = this.state.deviceList.map(function (device, i) {
         return _react2.default.createElement(
           'option',
@@ -35493,19 +35501,37 @@ var FormSection = function (_Component) {
             { className: 'form-group', style: formStyle.formgroup },
             _react2.default.createElement(
               'label',
+              { htmlFor: 'app', style: { float: 'left', marginRight: 5 + 'px' } },
+              'Select application (Optional):'
+            ),
+            _react2.default.createElement(
+              'select',
+              { className: 'form-control', id: 'app', style: formStyle.selectionBox,
+                onChange: this.updateDeviceSelection.bind(this), value: this.state.selectedDevice },
+              _react2.default.createElement(
+                'option',
+                { value: '', key: '' },
+                '--- Select an application ---'
+              ),
+              deviceOptions
+            ),
+            _react2.default.createElement('br', null),
+            _react2.default.createElement('br', null),
+            _react2.default.createElement(
+              'label',
               { htmlFor: 'device', style: { float: 'left', marginRight: 5 + 'px' } },
               'Select device:'
             ),
             _react2.default.createElement(
               'select',
               { className: 'form-control', id: 'device', style: formStyle.selectionBox,
-                onChange: this.updateDeviceSelection.bind(this), value: this.state.selectedDevice },
+                onChange: this.updateAppSelection.bind(this), value: this.state.selectedApp },
               _react2.default.createElement(
                 'option',
                 { value: '', key: '' },
                 '--- Select a device ---'
               ),
-              deviceOptions
+              appOptions
             ),
             _react2.default.createElement('br', null),
             _react2.default.createElement('br', null),
@@ -35795,6 +35821,23 @@ var JSONSchemaForm = function (_Component) {
         }
       };
 
+      var app_sensor_schema = {
+        title: "Application Sensor Form",
+        type: "object",
+        properties: {
+          application: {
+            type: "string",
+            title: "Application"
+          },
+          softwareSensor: {
+            type: "array",
+            items: {
+              type: "string"
+            }
+          }
+        }
+      };
+
       var log = function log(type) {
         return console.log.bind(console, type);
       };
@@ -35805,7 +35848,8 @@ var JSONSchemaForm = function (_Component) {
       var schema = this.props.collection.schema;
       var schemaDict = { 'device_sensor_schema': device_sensor_schema,
         'sensor_inference_schema': sensor_inference_schema,
-        'inference_description_schema': inference_description_schema
+        'inference_description_schema': inference_description_schema,
+        'app_sensor_schema': app_sensor_schema
       };
 
       return _react2.default.createElement(

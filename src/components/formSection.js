@@ -9,6 +9,7 @@ class FormSection extends Component {
     this.state = { 
       section: {},
       text: '',
+      appList: [],
       deviceList: [], // a list of all devices
       deviceSensorList: [], // a list of all sensors of the selected device
       selectedDevice: '',
@@ -159,6 +160,10 @@ class FormSection extends Component {
 
   }
 
+  updateAppSelection(event){
+
+  }
+
 
   addSensor(event){
     // generate context to display in the section
@@ -263,6 +268,13 @@ class FormSection extends Component {
 
     const section = this.props.currentSection.title
 
+
+    const appOptions = this.state.appList.map((app, i) => {
+      return (
+        <option></option>
+        )
+    })
+
     const deviceOptions = this.state.deviceList.map((device, i) => {
       return (
           <option value={device} key={i}>{device}</option>
@@ -295,11 +307,20 @@ class FormSection extends Component {
           
           {section == "Data Collection" && 
             <div className="form-group" style={formStyle.formgroup}>
+              <label htmlFor="app" style={{float:'left', marginRight:5+'px'}}>Select application (Optional):</label>
+              <select className="form-control" id="app" style={formStyle.selectionBox}
+                onChange={this.updateDeviceSelection.bind(this)} value={this.state.selectedDevice}>
+                <option value="" key="">--- Select an application ---</option>
+                {deviceOptions}
+              </select>
+              <br/>
+              <br/>
+
               <label htmlFor="device" style={{float:'left', marginRight:5+'px'}}>Select device:</label>
               <select className="form-control" id="device" style={formStyle.selectionBox}
-                onChange={this.updateDeviceSelection.bind(this)} value={this.state.selectedDevice}>
+                onChange={this.updateAppSelection.bind(this)} value={this.state.selectedApp}>
                 <option value="" key="">--- Select a device ---</option>
-                {deviceOptions}
+                {appOptions}
               </select>
               <br/>
               <br/>
