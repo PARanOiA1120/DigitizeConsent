@@ -34668,7 +34668,7 @@ var CreateDBEntry = function (_Component) {
 		var _this = _possibleConstructorReturn(this, (CreateDBEntry.__proto__ || Object.getPrototypeOf(CreateDBEntry)).call(this));
 
 		_this.state = {
-			collectionList: [{ title: 'Software-Sensor', action: '/api/swsensor', schema: 'software_sensor_schema' }, { title: 'App-Sensor', action: '/api/appsensor', schema: 'app_sensor_schema' }, { title: 'Device-Sensor', action: '/api/devicesensor', schema: 'device_sensor_schema' }, { title: 'Sensor-Inference', action: '/api/sensorinference', schema: 'sensor_inference_schema' }, { title: 'Inference-Description', action: '/api/inferencedescription', schema: 'inference_description_schema' }],
+			collectionList: [{ title: 'Device', action: '/api/device', schema: 'device_schema' }, { title: 'Software-Sensor', action: '/api/swsensor', schema: 'software_sensor_schema' }, { title: 'App-Sensor', action: '/api/appsensor', schema: 'app_sensor_schema' }, { title: 'Device-Sensor', action: '/api/devicesensor', schema: 'device_sensor_schema' }, { title: 'Sensor-Inference', action: '/api/sensorinference', schema: 'sensor_inference_schema' }, { title: 'Inference-Description', action: '/api/inferencedescription', schema: 'inference_description_schema' }],
 			selectedCollection: {},
 			switchToReview: false
 		};
@@ -35911,7 +35911,9 @@ var JSONSchemaForm = function (_Component) {
     _this.state = {
       switchToReview: false,
       formData: {},
-      softwareSensors: []
+      softwareSensors: [],
+      devices: [],
+      devicesensors: []
     };
     return _this;
   }
@@ -35921,19 +35923,54 @@ var JSONSchemaForm = function (_Component) {
     value: function componentDidMount() {
       var _this2 = this;
 
+      // get the list of all software sensors
       _superagent2.default.get('/api/swsensor').query(null).set('Accept', 'application/json').end(function (err, response) {
         if (err) {
           alert('ERROR: ' + err);
           return;
         }
 
-        console.log(JSON.stringify(response.body.results));
         var results = response.body.results;
         var sensors = Object.assign([], _this2.state.softwareSensors);
         for (var i = 0; i < results.length; i++) {
           sensors.push(results[i].sensor);
         }_this2.setState({
           softwareSensors: sensors
+        });
+      });
+
+      // get the list of device
+      _superagent2.default.get('/api/device').query(null).set('Accept', 'application/json').end(function (err, response) {
+        if (err) {
+          alert('ERROR: ' + err);
+          return;
+        }
+
+        var results = response.body.results;
+        var devices = Object.assign([], _this2.state.devices);
+        for (var i = 0; i < results.length; i++) {
+          devices.push(results[i].device);
+        }_this2.setState({
+          devices: devices
+        });
+      });
+
+      // get the list of hardware sensors
+      _superagent2.default.get('/api/devicesensor').query(null).set('Accept', 'application/json').end(function (err, response) {
+        if (err) {
+          alert('ERROR: ' + err);
+          return;
+        }
+
+        var results = response.body.results;
+        var devicesensors = Object.assign([], _this2.state.devicesensors);
+        for (var i = 0; i < results.length; i++) {
+          var sensor = results[i].sensorName + "(" + results[i].device + ")";
+          devicesensors.push(sensor);
+        }
+
+        _this2.setState({
+          devicesensors: devicesensors
         });
       });
     }
@@ -35952,7 +35989,7 @@ var JSONSchemaForm = function (_Component) {
       var _this3 = this;
 
       var software_sensor_schema = {
-        title: "Software Sensor Form",
+        title: "Add Software Sensor",
         type: "object",
         properties: {
           sensor: {
@@ -35962,13 +35999,25 @@ var JSONSchemaForm = function (_Component) {
         }
       };
 
+      var device_schema = {
+        title: "Add Device",
+        type: "object",
+        properties: {
+          device: {
+            type: "string",
+            title: "Device Name"
+          }
+        }
+      };
+
       var device_sensor_schema = {
-        title: "Device Sensor Form",
+        title: "Add Raw Sensor from Device",
         type: "object",
         required: ["device"],
         properties: {
           device: {
             type: "string",
+            enum: this.state.devices,
             title: "Device"
           },
           sensorName: {
@@ -35979,7 +36028,7 @@ var JSONSchemaForm = function (_Component) {
       };
 
       var sensor_inference_schema = {
-        title: "Sensor Inference Form",
+        title: "Add Sensor Inference",
         type: "object",
         properties: {
           reference: {
@@ -35994,7 +36043,7 @@ var JSONSchemaForm = function (_Component) {
               properties: {
                 deviceType: {
                   type: "string",
-                  enum: ["Phone", "Watch", "Shoes"],
+                  enum: this.state.devices,
                   title: "Device"
                 },
                 sensorList: {
@@ -36005,6 +36054,7 @@ var JSONSchemaForm = function (_Component) {
                     properties: {
                       sensorName: {
                         type: "string",
+                        enum: this.state.devicesensors.concat(this.state.softwareSensors),
                         title: "Sensor Name"
                       },
                       attributes: {
@@ -36047,7 +36097,7 @@ var JSONSchemaForm = function (_Component) {
       };
 
       var inference_description_schema = {
-        title: "Inference Description Form",
+        title: "Add Inference Description",
         type: "object",
         properties: {
           inferenceName: {
@@ -36062,7 +36112,7 @@ var JSONSchemaForm = function (_Component) {
       };
 
       var app_sensor_schema = {
-        title: "Application Sensor Form",
+        title: "Add Software Sensor from App",
         type: "object",
         properties: {
           application: {
@@ -36080,7 +36130,7 @@ var JSONSchemaForm = function (_Component) {
             type: "array",
             items: {
               type: "string",
-              enum: ["Phone", "Watch", "Shoes"]
+              enum: this.state.devices
             }
           }
         }
@@ -36094,7 +36144,9 @@ var JSONSchemaForm = function (_Component) {
         return _this3.submit({ formData: formData });
       };
       var schema = this.props.collection.schema;
-      var schemaDict = { 'device_sensor_schema': device_sensor_schema,
+      var schemaDict = {
+        'device_schema': device_schema,
+        'device_sensor_schema': device_sensor_schema,
         'sensor_inference_schema': sensor_inference_schema,
         'inference_description_schema': inference_description_schema,
         'app_sensor_schema': app_sensor_schema,

@@ -7,6 +7,7 @@ class CreateDBEntry extends Component{
 		super()
 		this.state = {
 			collectionList: [
+				{title: 'Device', action: '/api/device', schema: 'device_schema'},
 				{title: 'Software-Sensor', action: '/api/swsensor', schema: 'software_sensor_schema'},
 				{title: 'App-Sensor', action: '/api/appsensor', schema: 'app_sensor_schema'},
 				{title: 'Device-Sensor', action: '/api/devicesensor', schema: 'device_sensor_schema'},
