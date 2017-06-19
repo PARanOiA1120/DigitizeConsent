@@ -34668,7 +34668,7 @@ var CreateDBEntry = function (_Component) {
 		var _this = _possibleConstructorReturn(this, (CreateDBEntry.__proto__ || Object.getPrototypeOf(CreateDBEntry)).call(this));
 
 		_this.state = {
-			collectionList: [{ title: 'Device-Sensor', action: '/api/devicesensor', schema: 'device_sensor_schema' }, { title: 'Sensor-Inference', action: '/api/sensorinference', schema: 'sensor_inference_schema' }, { title: 'Inference-Description', action: '/api/inferencedescription', schema: 'inference_description_schema' }],
+			collectionList: [{ title: 'Software-Sensor', action: '/api/swsensor', schema: 'software_sensor_schema' }, { title: 'App-Sensor', action: '/api/appsensor', schema: 'app_sensor_schema' }, { title: 'Device-Sensor', action: '/api/devicesensor', schema: 'device_sensor_schema' }, { title: 'Sensor-Inference', action: '/api/sensorinference', schema: 'sensor_inference_schema' }, { title: 'Inference-Description', action: '/api/inferencedescription', schema: 'inference_description_schema' }],
 			selectedCollection: {},
 			switchToReview: false
 		};
@@ -35192,14 +35192,28 @@ var FormSection = function (_Component) {
     _this.state = {
       section: {},
       text: '',
+
+      appList: [], //appsensor objects
+      apps: [], //app name list
+      selectedApp: '',
+
+      swsensorListforSelectedApp: [],
+      supportedDevices: [],
+      selectedSWSeneors: [],
+      selectedDeviceforApp: [],
+
+      addAdditionalSensor: false,
       deviceList: [], // a list of all devices
       deviceSensorList: [], // a list of all sensors of the selected device
       selectedDevice: '',
+
       selectedSensor: '',
       sensorList: [], // sensor list to query for risks, include device
       sensorRisks: [],
       currentSensor: {},
+
       currentAttributes: {}, //all attributes
+
       attrForSearch: {}, // attributes that have a match in the db
       attrName: "",
       attrValue: "",
@@ -35235,6 +35249,28 @@ var FormSection = function (_Component) {
         text: content
       });
 
+      //get application list 
+      _superagent2.default.get('/api/appsensor').query(null).set('Accept', 'application/json').end(function (err, response) {
+        if (err) {
+          alert('ERROR: ' + err);
+          return;
+        }
+
+        console.log(JSON.stringify(response.body.results));
+        var results = response.body.results;
+        var apps = Object.assign([], _this2.state.apps);
+        results.forEach(function (app) {
+          apps.push(app.application);
+        });
+
+        console.log("apps: " + apps);
+
+        _this2.setState({
+          appList: results,
+          apps: apps
+        });
+      });
+
       _superagent2.default.get('/api/devicesensor').query(null).set('Accept', 'application/json').end(function (err, response) {
         if (err) {
           alert('ERROR: ' + err);
@@ -35252,8 +35288,6 @@ var FormSection = function (_Component) {
           deviceList: devices
         });
       });
-
-      console.log("current section: " + JSON.stringify(this.props.currentSection));
     }
   }, {
     key: 'updateSection',
@@ -35354,6 +35388,104 @@ var FormSection = function (_Component) {
       });
     }
   }, {
+    key: 'updateAppSelection',
+    value: function updateAppSelection(event) {
+      var _this4 = this;
+
+      this.setState({
+        selectedApp: event.target.value
+      }, function () {
+        // get software sensor list 
+        if (_this4.state.selectedApp != "" && _this4.state.selectedApp != "none") {
+          _this4.state.appList.forEach(function (app) {
+            if (app.application == _this4.state.selectedApp) {
+              _this4.setState({
+                swsensorListforSelectedApp: app.softwareSensor,
+                supportedDevices: app.supportedDevices
+              });
+            }
+          });
+        }
+      });
+    }
+  }, {
+    key: 'updateSoftwareSensor',
+    value: function updateSoftwareSensor(event) {
+      var _this5 = this;
+
+      var options = event.target.options;
+      var sensors = [];
+      for (var i = 0; i < options.length; i++) {
+        if (options[i].selected) {
+          sensors.push(options[i].value);
+        }
+      }
+      console.log(sensors);
+
+      this.setState({
+        selectedSWSeneors: sensors
+      }, function () {
+        console.log("selected sw sensors: " + _this5.state.selectedSWSeneors);
+      });
+    }
+  }, {
+    key: 'updateSelectedDevicesforApp',
+    value: function updateSelectedDevicesforApp(event) {
+      var _this6 = this;
+
+      var options = event.target.options;
+      var devices = [];
+      for (var i = 0; i < options.length; i++) {
+        if (options[i].selected) {
+          devices.push(options[i].value);
+        }
+      }
+
+      this.setState({
+        selectedDeviceforApp: devices
+      }, function () {
+        console.log("devices running the app: " + _this6.state.selectedDeviceforApp);
+      });
+    }
+  }, {
+    key: 'addAnotherApp',
+    value: function addAnotherApp(event) {
+      var context = this.state.text;
+      console.log("context: " + context);
+      if (context == "<p><strong>Data Collection</strong></p>") context += "This study uses " + this.state.selectedApp + " on ";else context += "This study also uses " + this.state.selectedApp + " on ";
+      var devices = this.state.selectedDeviceforApp;
+      var sensors = this.state.selectedSWSeneors;
+
+      if (devices.length == 1) context += devices[0];else {
+        for (var i = 0; i < devices.length - 1; i++) {
+          context += devices[i] + ", ";
+        }
+        context += "and " + devices[devices.length - 1];
+      }
+
+      context += " to collect ";
+      if (sensors.length == 1) context += sensors[0] + " data.";else {
+        for (var i = 0; i < sensors.length - 1; i++) {
+          context += sensors[i] + ", ";
+        }
+        context += "and " + sensors[sensors.length - 1] + " data.";
+      }
+
+      this.setState({
+        text: context,
+        selectedSWSeneors: [],
+        selectedDeviceforApp: [],
+        selectedApp: ""
+      });
+    }
+  }, {
+    key: 'addAdditionalSensors',
+    value: function addAdditionalSensors(event) {
+      this.setState({
+        addAdditionalSensor: true
+      });
+    }
+  }, {
     key: 'addSensor',
     value: function addSensor(event) {
       // generate context to display in the section
@@ -35398,7 +35530,7 @@ var FormSection = function (_Component) {
   }, {
     key: 'updateDeviceSelection',
     value: function updateDeviceSelection(event) {
-      var _this4 = this;
+      var _this7 = this;
 
       var updatedSelectedDevice = Object.assign('', this.state.selectedDevice);
       updatedSelectedDevice = event.target.value;
@@ -35415,13 +35547,13 @@ var FormSection = function (_Component) {
 
         // console.log(JSON.stringify(response.body.results))
         var results = response.body.results;
-        var sensors = Object.assign([], _this4.state.deviceSensorList);
+        var sensors = Object.assign([], _this7.state.deviceSensorList);
 
         results.forEach(function (devicesensor) {
           if (sensors.indexOf(devicesensor.sensorName)) sensors.push(devicesensor.sensorName);
         });
 
-        _this4.setState({
+        _this7.setState({
           deviceSensorList: sensors,
           selectedDevice: updatedSelectedDevice
         });
@@ -35430,7 +35562,7 @@ var FormSection = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this5 = this;
+      var _this8 = this;
 
       var modules = {
         toolbar: [[{ 'header': [1, 2, false] }], ['bold', 'italic', 'underline', 'strike', 'blockquote'], [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }], ['link', 'image'], ['clean']]
@@ -35443,6 +35575,30 @@ var FormSection = function (_Component) {
       var sensors = this.state.deviceSensorList;
 
       var section = this.props.currentSection.title;
+
+      var appOptions = this.state.apps.map(function (app, i) {
+        return _react2.default.createElement(
+          'option',
+          { value: app, key: i },
+          app
+        );
+      });
+
+      var swsensorOptions = this.state.swsensorListforSelectedApp.map(function (sensor, i) {
+        return _react2.default.createElement(
+          'option',
+          { value: sensor, key: i },
+          sensor
+        );
+      });
+
+      var supportedDevicesOptions = this.state.supportedDevices.map(function (device, i) {
+        return _react2.default.createElement(
+          'option',
+          { value: device, key: i },
+          device
+        );
+      });
 
       var deviceOptions = this.state.deviceList.map(function (device, i) {
         return _react2.default.createElement(
@@ -35471,7 +35627,7 @@ var FormSection = function (_Component) {
             attr
           ),
           ': ',
-          _this5.state.currentAttributes[attr]
+          _this8.state.currentAttributes[attr]
         );
       });
 
@@ -35493,107 +35649,184 @@ var FormSection = function (_Component) {
             { className: 'form-group', style: formStyle.formgroup },
             _react2.default.createElement(
               'label',
-              { htmlFor: 'device', style: { float: 'left', marginRight: 5 + 'px' } },
-              'Select device:'
+              { htmlFor: 'app', style: { float: 'left', marginRight: 5 + 'px' } },
+              'Select application:'
             ),
             _react2.default.createElement(
               'select',
-              { className: 'form-control', id: 'device', style: formStyle.selectionBox,
-                onChange: this.updateDeviceSelection.bind(this), value: this.state.selectedDevice },
+              { className: 'form-control', id: 'app', style: formStyle.selectionBox,
+                onChange: this.updateAppSelection.bind(this), value: this.state.selectedApp },
               _react2.default.createElement(
                 'option',
                 { value: '', key: '' },
-                '--- Select a device ---'
+                '--- Select an application ---'
               ),
-              deviceOptions
-            ),
-            _react2.default.createElement('br', null),
-            _react2.default.createElement('br', null),
-            _react2.default.createElement(
-              'label',
-              { htmlFor: 'sensor', style: { float: 'left', marginRight: 5 + 'px' } },
-              'Select sensor to add:'
-            ),
-            _react2.default.createElement(
-              'select',
-              { className: 'form-control', id: 'sensor', style: formStyle.selectionBox,
-                onChange: this.updateSensorSelection.bind(this), value: this.state.selectedSensor },
               _react2.default.createElement(
                 'option',
-                { value: '', key: '' },
-                '--- Select a sensor ---'
+                { value: 'none', key: 'none' },
+                'No application'
               ),
-              sensorOptions
+              appOptions
             ),
+            _react2.default.createElement('br', null),
             _react2.default.createElement('br', null),
             _react2.default.createElement('hr', { style: _styles2.default.universal.hr }),
-            this.state.selectedSensor != "" && _react2.default.createElement(
+            this.state.selectedApp != "" && this.state.selectedApp != "none" && _react2.default.createElement(
               'div',
-              { className: 'attriList', style: { marginLeft: 20 + 'px' } },
-              this.state.currentAttributes != {} && _react2.default.createElement(
-                'div',
-                { className: 'finalizedAttrList' },
+              { className: 'form-group', style: formStyle.formgroup },
+              _react2.default.createElement(
+                'label',
+                { htmlFor: 'swsensor' },
+                'Data collected from application (select all that applied):'
+              ),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement(
+                'select',
+                { multiple: true, className: 'form-control', id: 'swsensor', style: formStyle.selectionBox,
+                  onChange: this.updateSoftwareSensor.bind(this), value: this.state.selectedSWSeneors },
+                swsensorOptions
+              ),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement(
+                'label',
+                { htmlFor: 'appdevice' },
+                'Device running the application (select all that applied):'
+              ),
+              _react2.default.createElement(
+                'select',
+                { multiple: true, className: 'form-control', id: 'supportedDevice', style: formStyle.selectionBox,
+                  onChange: this.updateSelectedDevicesforApp.bind(this), value: this.state.selectedDeviceforApp },
+                supportedDevicesOptions
+              ),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement(
+                'button',
+                { className: 'btn btn-primary', onClick: this.addAnotherApp.bind(this) },
+                'Add another application'
+              ),
+              _react2.default.createElement(
+                'button',
+                { className: 'btn btn-primary', style: { marginLeft: 10 + 'px' },
+                  onClick: this.addAdditionalSensors.bind(this) },
+                'Add additional sensors'
+              ),
+              _react2.default.createElement('hr', { style: _styles2.default.universal.hr })
+            ),
+            (this.state.selectedApp == "none" || this.state.addAdditionalSensor == true) && _react2.default.createElement(
+              'div',
+              { className: 'form-group' },
+              _react2.default.createElement(
+                'label',
+                { htmlFor: 'device', style: { float: 'left', marginRight: 5 + 'px' } },
+                'Select device:'
+              ),
+              _react2.default.createElement(
+                'select',
+                { className: 'form-control', id: 'device', style: formStyle.selectionBox,
+                  onChange: this.updateDeviceSelection.bind(this), value: this.state.selectedDevice },
                 _react2.default.createElement(
-                  'ul',
-                  { style: formStyle.list },
-                  attributeList
+                  'option',
+                  { value: '', key: '' },
+                  '--- Select a device ---'
+                ),
+                deviceOptions
+              ),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement(
+                'label',
+                { htmlFor: 'sensor', style: { float: 'left', marginRight: 5 + 'px' } },
+                'Select sensor to add:'
+              ),
+              _react2.default.createElement(
+                'select',
+                { className: 'form-control', id: 'sensor', style: formStyle.selectionBox,
+                  onChange: this.updateSensorSelection.bind(this), value: this.state.selectedSensor },
+                _react2.default.createElement(
+                  'option',
+                  { value: '', key: '' },
+                  '--- Select a sensor ---'
+                ),
+                sensorOptions
+              ),
+              _react2.default.createElement('br', null),
+              _react2.default.createElement('hr', { style: _styles2.default.universal.hr }),
+              this.state.selectedSensor != "" && _react2.default.createElement(
+                'div',
+                { className: 'attriList', style: { marginLeft: 20 + 'px' } },
+                this.state.currentAttributes != {} && _react2.default.createElement(
+                  'div',
+                  { className: 'finalizedAttrList' },
+                  _react2.default.createElement(
+                    'ul',
+                    { style: formStyle.list },
+                    attributeList
+                  )
+                ),
+                _react2.default.createElement('br', null),
+                _react2.default.createElement(
+                  'div',
+                  { className: 'knownAttr' },
+                  _react2.default.createElement(
+                    'select',
+                    { className: 'form-control', style: formStyle.attribute,
+                      value: this.state.attrName, onChange: this.updateAttrName.bind(this) },
+                    _react2.default.createElement(
+                      'option',
+                      { value: '', key: '' },
+                      '---Select an attribute---'
+                    ),
+                    _react2.default.createElement(
+                      'option',
+                      { value: 'sampling rate', key: 'sampling rate' },
+                      'sampling rate'
+                    ),
+                    _react2.default.createElement(
+                      'option',
+                      { value: 'continuous', key: 'continuous' },
+                      'continuous'
+                    )
+                  ),
+                  _react2.default.createElement('input', { className: 'form-control', placeholder: 'attribute value', style: formStyle.attribute,
+                    value: this.state.attrValue, onChange: this.updateAttrValue.bind(this) }),
+                  _react2.default.createElement(
+                    'button',
+                    { className: 'btn btn-primary', onClick: this.addAttr.bind(this) },
+                    'Add attribute'
+                  ),
+                  _react2.default.createElement('br', null),
+                  _react2.default.createElement('br', null)
+                ),
+                _react2.default.createElement(
+                  'div',
+                  { className: 'customizedAttr' },
+                  _react2.default.createElement('input', { className: 'form-control', placeholder: 'attribute name', style: formStyle.attribute,
+                    value: this.state.attrNameC, onChange: this.updateAttrNameC.bind(this) }),
+                  _react2.default.createElement('input', { className: 'form-control', placeholder: 'attribute value', style: formStyle.attribute,
+                    value: this.state.attrValueC, onChange: this.updateAttrValueC.bind(this) }),
+                  _react2.default.createElement(
+                    'button',
+                    { className: 'btn btn-primary', onClick: this.addCustomizedAttr.bind(this) },
+                    'Add attribute'
+                  ),
+                  _react2.default.createElement('br', null)
                 )
               ),
               _react2.default.createElement('br', null),
               _react2.default.createElement(
-                'div',
-                { className: 'knownAttr' },
-                _react2.default.createElement(
-                  'select',
-                  { className: 'form-control', style: formStyle.attribute,
-                    value: this.state.attrName, onChange: this.updateAttrName.bind(this) },
-                  _react2.default.createElement(
-                    'option',
-                    { value: '', key: '' },
-                    '---Select an attribute---'
-                  ),
-                  _react2.default.createElement(
-                    'option',
-                    { value: 'sampling rate', key: 'sampling rate' },
-                    'sampling rate'
-                  ),
-                  _react2.default.createElement(
-                    'option',
-                    { value: 'continuous', key: 'continuous' },
-                    'continuous'
-                  )
-                ),
-                _react2.default.createElement('input', { className: 'form-control', placeholder: 'attribute value', style: formStyle.attribute,
-                  value: this.state.attrValue, onChange: this.updateAttrValue.bind(this) }),
-                _react2.default.createElement(
-                  'button',
-                  { className: 'btn btn-primary', onClick: this.addAttr.bind(this) },
-                  'Add attribute'
-                ),
-                _react2.default.createElement('br', null),
-                _react2.default.createElement('br', null)
-              ),
-              _react2.default.createElement(
-                'div',
-                { className: 'customizedAttr' },
-                _react2.default.createElement('input', { className: 'form-control', placeholder: 'attribute name', style: formStyle.attribute,
-                  value: this.state.attrNameC, onChange: this.updateAttrNameC.bind(this) }),
-                _react2.default.createElement('input', { className: 'form-control', placeholder: 'attribute value', style: formStyle.attribute,
-                  value: this.state.attrValueC, onChange: this.updateAttrValueC.bind(this) }),
-                _react2.default.createElement(
-                  'button',
-                  { className: 'btn btn-primary', onClick: this.addCustomizedAttr.bind(this),
-                    style: { fontSize: 12 + 'px' } },
-                  'Add Customized Attribute'
-                ),
-                _react2.default.createElement('br', null)
-              ),
-              _react2.default.createElement('hr', { style: _styles2.default.universal.hr })
-            ),
-            _react2.default.createElement(
-              'button',
-              { className: 'btn btn-primary', onClick: this.addSensor.bind(this) },
-              'Add Sensor'
+                'button',
+                { className: 'btn btn-primary', onClick: this.addSensor.bind(this) },
+                'Add Sensor'
+              )
             )
           ),
           _react2.default.createElement(
@@ -35677,12 +35910,34 @@ var JSONSchemaForm = function (_Component) {
 
     _this.state = {
       switchToReview: false,
-      formData: {}
+      formData: {},
+      softwareSensors: []
     };
     return _this;
   }
 
   _createClass(JSONSchemaForm, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var _this2 = this;
+
+      _superagent2.default.get('/api/swsensor').query(null).set('Accept', 'application/json').end(function (err, response) {
+        if (err) {
+          alert('ERROR: ' + err);
+          return;
+        }
+
+        console.log(JSON.stringify(response.body.results));
+        var results = response.body.results;
+        var sensors = Object.assign([], _this2.state.softwareSensors);
+        for (var i = 0; i < results.length; i++) {
+          sensors.push(results[i].sensor);
+        }_this2.setState({
+          softwareSensors: sensors
+        });
+      });
+    }
+  }, {
     key: "submit",
     value: function submit(formData) {
       this.props.onChange(true);
@@ -35694,7 +35949,18 @@ var JSONSchemaForm = function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this3 = this;
+
+      var software_sensor_schema = {
+        title: "Software Sensor Form",
+        type: "object",
+        properties: {
+          sensor: {
+            type: "string",
+            title: "Data Collected"
+          }
+        }
+      };
 
       var device_sensor_schema = {
         title: "Device Sensor Form",
@@ -35716,32 +35982,46 @@ var JSONSchemaForm = function (_Component) {
         title: "Sensor Inference Form",
         type: "object",
         properties: {
-          sensorList: {
+          reference: {
+            type: "string",
+            title: "Reference"
+          },
+          deviceList: {
             type: "array",
-            title: "Sensor List",
+            title: "Device List",
             items: {
               type: "object",
               properties: {
-                device: {
+                deviceType: {
                   type: "string",
+                  enum: ["Phone", "Watch", "Shoes"],
                   title: "Device"
                 },
-                name: {
-                  type: "string",
-                  title: "Sensor Name"
-                },
-                attributes: {
+                sensorList: {
                   type: "array",
+                  title: "Sensor List",
                   items: {
                     type: "object",
                     properties: {
-                      attriName: {
+                      sensorName: {
                         type: "string",
-                        title: "Attribute"
+                        title: "Sensor Name"
                       },
-                      value: {
-                        type: "string",
-                        title: "Value"
+                      attributes: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            attriName: {
+                              type: "string",
+                              title: "Attribute"
+                            },
+                            value: {
+                              type: "string",
+                              title: "Value"
+                            }
+                          }
+                        }
                       }
                     }
                   }
@@ -35749,26 +36029,19 @@ var JSONSchemaForm = function (_Component) {
               }
             }
           },
-          inferenceList: {
-            type: "array",
-            title: "Inference List",
-            items: {
-              type: "object",
-              properties: {
-                inferenceName: {
-                  type: "string",
-                  title: "Inference"
-                },
-                description: {
-                  type: "string",
-                  title: "Description"
-                }
+          inference: {
+            type: "object",
+            title: "Inference",
+            properties: {
+              inferenceName: {
+                type: "string",
+                title: "Inference"
+              },
+              description: {
+                type: "string",
+                title: "Description"
               }
             }
-          },
-          reference: {
-            type: "string",
-            title: "Reference"
           }
         }
       };
@@ -35788,17 +36061,44 @@ var JSONSchemaForm = function (_Component) {
         }
       };
 
+      var app_sensor_schema = {
+        title: "Application Sensor Form",
+        type: "object",
+        properties: {
+          application: {
+            type: "string",
+            title: "Application"
+          },
+          softwareSensor: {
+            type: "array",
+            items: {
+              type: "string",
+              enum: this.state.softwareSensors
+            }
+          },
+          supportedDevices: {
+            type: "array",
+            items: {
+              type: "string",
+              enum: ["Phone", "Watch", "Shoes"]
+            }
+          }
+        }
+      };
+
       var log = function log(type) {
         return console.log.bind(console, type);
       };
       var onSubmit = function onSubmit(_ref) {
         var formData = _ref.formData;
-        return _this2.submit({ formData: formData });
+        return _this3.submit({ formData: formData });
       };
       var schema = this.props.collection.schema;
       var schemaDict = { 'device_sensor_schema': device_sensor_schema,
         'sensor_inference_schema': sensor_inference_schema,
-        'inference_description_schema': inference_description_schema
+        'inference_description_schema': inference_description_schema,
+        'app_sensor_schema': app_sensor_schema,
+        'software_sensor_schema': software_sensor_schema
       };
 
       return _react2.default.createElement(
@@ -35882,60 +36182,63 @@ var Review = function (_Component) {
 	}, {
 		key: "submit",
 		value: function submit() {
-			var _this2 = this;
+			// if(this.props.collection.action == '/api/sensorinference'){
+			// 	// console.log(JSON.stringify(this.state.formData))
+			// 	let updatedFormData = Object.assign({}, this.state.formData)
 
-			if (this.props.collection.action == '/api/sensorinference') {
-				// console.log(JSON.stringify(this.state.formData))
-				var updatedFormData = Object.assign({}, this.state.formData);
+			// 	// console.log("sensorList: " + JSON.stringify(updatedFormData.sensorList))
+			// 	updatedFormData.sensorList.forEach((sensor) => {
+			// 		// console.log("sensor: " + sensor)
+			// 		let device = sensor["device"]
+			// 		let sensorName = sensor["name"]
+			// 		// console.log("device: " + device)
+			// 		// console.log("sensor: " + sensorName)
 
-				// console.log("sensorList: " + JSON.stringify(updatedFormData.sensorList))
-				updatedFormData.sensorList.forEach(function (sensor) {
-					// console.log("sensor: " + sensor)
-					var device = sensor["device"];
-					var sensorName = sensor["name"];
-					// console.log("device: " + device)
-					// console.log("sensor: " + sensorName)
+			// 		//get sensorID from device sensor table
+			// 		superagent   
+			// 		.get('/api/devicesensor')
+			// 		.query({device: device, sensorName: sensorName})
+			// 		.set('Accept', 'application/json')
+			// 		.end((err, response) => {
+			// 			if(err){
+			// 			  alert('ERROR: '+err)
+			// 			  return
+			// 			}
+			// 			// console.log("result: " + JSON.stringify(response.body.results))
+			// 			let sensorID = response.body.results[0]["_id"]
+			// 			// console.log("sensorID: " + sensorID)
 
-					//get sensorID from device sensor table
-					_superagent2.default.get('/api/devicesensor').query({ device: device, sensorName: sensorName }).set('Accept', 'application/json').end(function (err, response) {
-						if (err) {
-							alert('ERROR: ' + err);
-							return;
-						}
-						// console.log("result: " + JSON.stringify(response.body.results))
-						var sensorID = response.body.results[0]["_id"];
-						// console.log("sensorID: " + sensorID)
+			// 			sensor["sensorID"] = sensorID
+			// 			delete sensor.device
+			// 			delete sensor.name
 
-						sensor["sensorID"] = sensorID;
-						delete sensor.device;
-						delete sensor.name;
+			// 			this.setState({
+			// 				formData: updatedFormData
+			// 			})
 
-						_this2.setState({
-							formData: updatedFormData
-						});
-
-						console.log("data submitted: " + JSON.stringify(_this2.state.formData));
-						fetch(_this2.props.collection.action, {
-							method: 'POST',
-							headers: {
-								'Accept': 'application/json',
-								'Content-Type': 'application/json'
-							},
-							body: JSON.stringify(_this2.state.formData)
-						});
-					});
-				});
-			} else {
-				console.log("data submitted: " + JSON.stringify(this.state.formData));
-				fetch(this.props.collection.action, {
-					method: 'POST',
-					headers: {
-						'Accept': 'application/json',
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify(this.state.formData)
-				});
-			}
+			// 			console.log("data submitted: " + JSON.stringify(this.state.formData))
+			// 			fetch(this.props.collection.action, {
+			// 		      method: 'POST',
+			// 		      headers: {
+			// 		        'Accept': 'application/json',
+			// 		        'Content-Type': 'application/json'
+			// 		      },
+			// 		      body: JSON.stringify(this.state.formData)
+			// 		    })
+			// 		})
+			// 	})
+			// }
+			// else {
+			console.log("data submitted: " + JSON.stringify(this.state.formData));
+			fetch(this.props.collection.action, {
+				method: 'POST',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(this.state.formData)
+			});
+			// }
 		}
 	}, {
 		key: "render",

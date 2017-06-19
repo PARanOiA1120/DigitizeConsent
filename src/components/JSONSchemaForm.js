@@ -12,8 +12,34 @@ class JSONSchemaForm extends Component {
 
     this.state = {
       switchToReview: false,
-      formData: {}
+      formData: {},
+      softwareSensors: []
     }
+  }
+
+  componentDidMount(){
+    superagent
+      .get('/api/swsensor')
+      .query(null)
+      .set('Accept', 'application/json')
+      .end((err, response) => {
+        if(err){
+          alert('ERROR: '+err)
+          return
+        }
+
+        console.log(JSON.stringify(response.body.results))
+        let results = response.body.results
+        let sensors = Object.assign([], this.state.softwareSensors)
+        for(var i=0; i<results.length; i++)
+          sensors.push(results[i].sensor)
+
+        this.setState({ 
+          softwareSensors: sensors
+        })
+      })
+
+
   }
 
   submit(formData){
@@ -26,6 +52,18 @@ class JSONSchemaForm extends Component {
   }
 
   render (){
+    const software_sensor_schema = {
+      title: "Software Sensor Form",
+      type: "object",
+      properties:{
+        sensor:{
+          type: "string",
+          title: "Data Collected"
+        }
+      }
+    }
+
+
     const device_sensor_schema = {
       title: "Device Sensor Form",
       type: "object",
@@ -46,59 +84,66 @@ class JSONSchemaForm extends Component {
       title: "Sensor Inference Form",
       type: "object",
       properties: {
-        sensorList: {
+        reference: {
+          type: "string",
+          title: "Reference"
+        },
+        deviceList: {
           type: "array",
-          title: "Sensor List",
+          title: "Device List",
           items: {
             type: "object",
             properties: {              
-              device: {
+              deviceType: {
                 type: "string",
+                enum: ["Phone", "Watch", "Shoes"],
                 title: "Device"
               },
-              name: {
-                type: "string",
-                title: "Sensor Name"
-              },
-              attributes: {
-                type: "array",
+              sensorList: {
+                type:"array",
+                title: "Sensor List",
                 items: {
                   type: "object",
                   properties: {
-                    attriName: {
+                    sensorName: {
                       type: "string",
-                      title: "Attribute"
+                      title: "Sensor Name"
                     },
-                    value: {
-                      type: "string",
-                      title: "Value"
-                    }
+                    attributes: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          attriName: {
+                            type: "string",
+                            title: "Attribute"
+                          },
+                          value: {
+                            type: "string",
+                            title: "Value"
+                          }
+                        }
+                      }
+                    } 
                   }
                 }
-              } 
-            }
-          }
-        },
-        inferenceList: {
-          type: "array",
-          title: "Inference List", 
-          items: {
-            type: "object",
-            properties: {
-              inferenceName: {
-                  type: "string",
-                  title: "Inference"
-              },
-              description: {
-                  type: "string",
-                  title: "Description"
               }
             }
           }
         },
-        reference: {
-          type: "string",
-          title: "Reference"
+        inference: {
+          type: "object",
+          title: "Inference", 
+          properties: {
+            inferenceName: {
+                type: "string",
+                title: "Inference"
+            },
+            description: {
+                type: "string",
+                title: "Description"
+            }
+          }
         }
       }
     }
@@ -118,13 +163,40 @@ class JSONSchemaForm extends Component {
       }
     }
 
+    const app_sensor_schema = {
+      title: "Application Sensor Form",
+      type: "object",
+      properties: {
+        application: {
+          type: "string",
+          title: "Application"
+        },
+        softwareSensor: {
+          type: "array",
+          items: {
+            type: "string",
+            enum: this.state.softwareSensors
+          }
+        },
+        supportedDevices: {
+          type: "array",
+          items: {
+            type: "string",
+            enum: ["Phone", "Watch", "Shoes"],
+          }
+        }
+      }
+    }
+
 
     const log = (type) => console.log.bind(console, type);
     const onSubmit = ({formData}) => this.submit({formData})
     const schema = this.props.collection.schema
     const schemaDict = {'device_sensor_schema': device_sensor_schema, 
                         'sensor_inference_schema': sensor_inference_schema, 
-                        'inference_description_schema': inference_description_schema
+                        'inference_description_schema': inference_description_schema,
+                        'app_sensor_schema': app_sensor_schema,
+                        'software_sensor_schema': software_sensor_schema
                       }
 
     return(
