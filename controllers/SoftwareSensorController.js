@@ -1,22 +1,22 @@
-var App = require('../models/AppSensor')
+var SWSensor = require('../models/SoftwareSensor')
 
 module.exports = {
 	find:function(params, callback){
-		App.find(params, function(err, appsensors){
+		SWSensor.find(params, function(err, swsensors){
 			if(err){
 				callback(err, null)
 				return 
 			}
-			callback(null, appsensors)
+			callback(null, swsensors)
 		})
 	},
 	create: function(params, callback){
-		App.create(params, function(err, appsensor){
+		SWSensor.create(params, function(err, swsensor){
 			if(err){
 				callback(err, null)
 				return
 			}
-			callback(null, appsensor)
+			callback(null, swsensor)
 		})
 	}
 }

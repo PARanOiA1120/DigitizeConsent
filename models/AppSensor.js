@@ -4,7 +4,7 @@ var mongoose = require('mongoose')
 var AppSensorSchema = new mongoose.Schema({
 	application: String,
 	softwareSensor: Array,
-	// supportedDevices: Array,
+	supportedDevices: Array,
 })
 
 

@@ -12,8 +12,34 @@ class JSONSchemaForm extends Component {
 
     this.state = {
       switchToReview: false,
-      formData: {}
+      formData: {},
+      softwareSensors: []
     }
+  }
+
+  componentDidMount(){
+    superagent
+      .get('/api/swsensor')
+      .query(null)
+      .set('Accept', 'application/json')
+      .end((err, response) => {
+        if(err){
+          alert('ERROR: '+err)
+          return
+        }
+
+        console.log(JSON.stringify(response.body.results))
+        let results = response.body.results
+        let sensors = Object.assign([], this.state.softwareSensors)
+        for(var i=0; i<results.length; i++)
+          sensors.push(results[i].sensor)
+
+        this.setState({ 
+          softwareSensors: sensors
+        })
+      })
+
+
   }
 
   submit(formData){
@@ -26,6 +52,18 @@ class JSONSchemaForm extends Component {
   }
 
   render (){
+    const software_sensor_schema = {
+      title: "Software Sensor Form",
+      type: "object",
+      properties:{
+        sensor:{
+          type: "string",
+          title: "Data Collected"
+        }
+      }
+    }
+
+
     const device_sensor_schema = {
       title: "Device Sensor Form",
       type: "object",
@@ -137,6 +175,14 @@ class JSONSchemaForm extends Component {
           type: "array",
           items: {
             type: "string",
+            enum: this.state.softwareSensors
+          }
+        },
+        supportedDevices: {
+          type: "array",
+          items: {
+            type: "string",
+            enum: ["Phone", "Watch", "Shoes"],
           }
         }
       }
@@ -149,7 +195,8 @@ class JSONSchemaForm extends Component {
     const schemaDict = {'device_sensor_schema': device_sensor_schema, 
                         'sensor_inference_schema': sensor_inference_schema, 
                         'inference_description_schema': inference_description_schema,
-                        'app_sensor_schema': app_sensor_schema
+                        'app_sensor_schema': app_sensor_schema,
+                        'software_sensor_schema': software_sensor_schema
                       }
 
     return(

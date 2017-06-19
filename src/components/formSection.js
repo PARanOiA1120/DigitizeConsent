@@ -15,7 +15,9 @@ class FormSection extends Component {
       selectedApp:'',
 
       swsensorListforSelectedApp: [],
+      supportedDevices: [],
       selectedSWSeneors:[],
+      selectedDeviceforApp: [],
       
       deviceList: [], // a list of all devices
       deviceSensorList: [], // a list of all sensors of the selected device
@@ -202,10 +204,12 @@ class FormSection extends Component {
       // get software sensor list 
       if(this.state.selectedApp != "" && this.state.selectedApp != "none"){
         this.state.appList.forEach((app) => {
-          if(app.application == this.state.selectedApp)
+          if(app.application == this.state.selectedApp){
             this.setState({
-              swsensorListforSelectedApp: app.softwareSensor
+              swsensorListforSelectedApp: app.softwareSensor,
+              supportedDevices: app.supportedDevices
             })
+          }
         })
       }
     })
@@ -226,6 +230,18 @@ class FormSection extends Component {
     }, () => {
       console.log("selected sw sensors: " + this.state.selectedSWSeneors)
     })
+  }
+
+  updateDevicesforApp(event){
+
+  }
+
+  addAnotherApp(event){
+
+  }
+
+  addAdditionalSensors(event){
+
   }
 
 
@@ -345,6 +361,12 @@ class FormSection extends Component {
       )
     })
 
+    const supportedDevicesOptions = this.state.supportedDevices.map((device, i) => {
+      return (
+        <option value={device} key={i}>{device}</option>
+      )
+    })
+
 
     const deviceOptions = this.state.deviceList.map((device, i) => {
       return (
@@ -378,7 +400,7 @@ class FormSection extends Component {
           
           {section == "Data Collection" && 
             <div className="form-group" style={formStyle.formgroup}>
-              <label htmlFor="app" style={{float:'left', marginRight:5+'px'}}>Select application (Optional):</label>
+              <label htmlFor="app" style={{float:'left', marginRight:5+'px'}}>Select application:</label>
               <select className="form-control" id="app" style={formStyle.selectionBox}
                 onChange={this.updateAppSelection.bind(this)} value={this.state.selectedApp}>
                 <option value="" key="">--- Select an application ---</option>
@@ -390,21 +412,32 @@ class FormSection extends Component {
 
               {this.state.selectedApp != "" && this.state.selectedApp != "none" &&
                 <div className="form-group" style={formStyle.formgroup}>
-                  <label htmlFor="swsensor">Data collected from application:</label>
+                  <label htmlFor="swsensor">Data collected from application (select all that applied):</label>
                   <br/>
                   <select multiple className="form-control" id="swsensor" style={formStyle.selectionBox}
                     onChange={this.updateSoftwareSensor.bind(this)} value={this.state.selectedSWSeneors}>
                     {swsensorOptions}
                   </select>
-                  <br/>
-                  <br/>
-                  <br/>
-                  <br/>
+                  <br/><br/><br/><br/><br/>
+                  
+                  <label htmlFor="appdevice">Device running the application (select all that applied):</label>
+                  <select multiple className="form-control" id="supportedDevice" style={formStyle.selectionBox}
+                    onChange={this.updateDevicesforApp.bind(this)} value="this.state.supportedDevices">
+                    {supportedDevicesOptions}
+                  </select>
+
+                  <br/><br/><br/><br/><br/><br/>
+                  <button className="btn btn-primary" onClick={this.addAnotherApp.bind(this)}>Add another application</button>
+                  <button className="btn btn-primary" style={{marginLeft:10+'px'}} 
+                    onClick={this.addAdditionalSensors.bind(this)}>Add additional sensors</button>
+                  <hr style={styles.universal.hr} />
                 </div>
               }
 
-              {this.state.selectedApp != "" &&
-                <div className="form-group" style={formStyle.formgroup}>
+
+              {this.state.selectedApp == "none" &&              
+                <div className="form-group">
+                  <hr style={styles.universal.hr}/>
                   <label htmlFor="device" style={{float:'left', marginRight:5+'px'}}>Select device:</label>
                   <select className="form-control" id="device" style={formStyle.selectionBox}
                     onChange={this.updateDeviceSelection.bind(this)} value={this.state.selectedDevice}>
@@ -423,7 +456,7 @@ class FormSection extends Component {
                   <br/>
                   <hr style={styles.universal.hr} />
 
-                  { this.state.selectedSensor != "" &&
+                  {this.state.selectedSensor != "" &&
                     <div className="attriList" style={{marginLeft: 20 + 'px'}}>
                       {this.state.currentAttributes != {} && 
                         <div className="finalizedAttrList">
@@ -453,17 +486,14 @@ class FormSection extends Component {
                           value={this.state.attrNameC} onChange={this.updateAttrNameC.bind(this)}/>
                         <input className="form-control" placeholder="attribute value" style={formStyle.attribute}
                           value={this.state.attrValueC} onChange={this.updateAttrValueC.bind(this)}/>
-                        <button className="btn btn-primary" onClick={this.addCustomizedAttr.bind(this)} 
-                        style={{fontSize:12+'px'}}>Add Customized Attribute</button>
+                        <button className="btn btn-primary" onClick={this.addCustomizedAttr.bind(this)}>Add attribute</button>
                         <br/>
                       </div>
-
-                      <hr style={styles.universal.hr} />
                     </div>
                   } 
                   <button className="btn btn-primary" onClick={this.addSensor.bind(this)}>Add Sensor</button>
                 </div>
-              } 
+              }  
             </div> 
           } 
           
