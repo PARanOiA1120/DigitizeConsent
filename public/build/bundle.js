@@ -35202,6 +35202,7 @@ var FormSection = function (_Component) {
       selectedSWSeneors: [],
       selectedDeviceforApp: [],
 
+      addAdditionalSensor: false,
       deviceList: [], // a list of all devices
       deviceSensorList: [], // a list of all sensors of the selected device
       selectedDevice: '',
@@ -35428,14 +35429,62 @@ var FormSection = function (_Component) {
       });
     }
   }, {
-    key: 'updateDevicesforApp',
-    value: function updateDevicesforApp(event) {}
+    key: 'updateSelectedDevicesforApp',
+    value: function updateSelectedDevicesforApp(event) {
+      var _this6 = this;
+
+      var options = event.target.options;
+      var devices = [];
+      for (var i = 0; i < options.length; i++) {
+        if (options[i].selected) {
+          devices.push(options[i].value);
+        }
+      }
+
+      this.setState({
+        selectedDeviceforApp: devices
+      }, function () {
+        console.log("devices running the app: " + _this6.state.selectedDeviceforApp);
+      });
+    }
   }, {
     key: 'addAnotherApp',
-    value: function addAnotherApp(event) {}
+    value: function addAnotherApp(event) {
+      var context = this.state.text;
+      console.log("context: " + context);
+      if (context == "<p><strong>Data Collection</strong></p>") context += "This study uses " + this.state.selectedApp + " on ";else context += "This study also uses " + this.state.selectedApp + " on ";
+      var devices = this.state.selectedDeviceforApp;
+      var sensors = this.state.selectedSWSeneors;
+
+      if (devices.length == 1) context += devices[0];else {
+        for (var i = 0; i < devices.length - 1; i++) {
+          context += devices[i] + ", ";
+        }
+        context += "and " + devices[devices.length - 1];
+      }
+
+      context += " to collect ";
+      if (sensors.length == 1) context += sensors[0] + " data.";else {
+        for (var i = 0; i < sensors.length - 1; i++) {
+          context += sensors[i] + ", ";
+        }
+        context += "and " + sensors[sensors.length - 1] + " data.";
+      }
+
+      this.setState({
+        text: context,
+        selectedSWSeneors: [],
+        selectedDeviceforApp: [],
+        selectedApp: ""
+      });
+    }
   }, {
     key: 'addAdditionalSensors',
-    value: function addAdditionalSensors(event) {}
+    value: function addAdditionalSensors(event) {
+      this.setState({
+        addAdditionalSensor: true
+      });
+    }
   }, {
     key: 'addSensor',
     value: function addSensor(event) {
@@ -35481,7 +35530,7 @@ var FormSection = function (_Component) {
   }, {
     key: 'updateDeviceSelection',
     value: function updateDeviceSelection(event) {
-      var _this6 = this;
+      var _this7 = this;
 
       var updatedSelectedDevice = Object.assign('', this.state.selectedDevice);
       updatedSelectedDevice = event.target.value;
@@ -35498,13 +35547,13 @@ var FormSection = function (_Component) {
 
         // console.log(JSON.stringify(response.body.results))
         var results = response.body.results;
-        var sensors = Object.assign([], _this6.state.deviceSensorList);
+        var sensors = Object.assign([], _this7.state.deviceSensorList);
 
         results.forEach(function (devicesensor) {
           if (sensors.indexOf(devicesensor.sensorName)) sensors.push(devicesensor.sensorName);
         });
 
-        _this6.setState({
+        _this7.setState({
           deviceSensorList: sensors,
           selectedDevice: updatedSelectedDevice
         });
@@ -35513,7 +35562,7 @@ var FormSection = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this7 = this;
+      var _this8 = this;
 
       var modules = {
         toolbar: [[{ 'header': [1, 2, false] }], ['bold', 'italic', 'underline', 'strike', 'blockquote'], [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }], ['link', 'image'], ['clean']]
@@ -35578,7 +35627,7 @@ var FormSection = function (_Component) {
             attr
           ),
           ': ',
-          _this7.state.currentAttributes[attr]
+          _this8.state.currentAttributes[attr]
         );
       });
 
@@ -35621,6 +35670,7 @@ var FormSection = function (_Component) {
             ),
             _react2.default.createElement('br', null),
             _react2.default.createElement('br', null),
+            _react2.default.createElement('hr', { style: _styles2.default.universal.hr }),
             this.state.selectedApp != "" && this.state.selectedApp != "none" && _react2.default.createElement(
               'div',
               { className: 'form-group', style: formStyle.formgroup },
@@ -35649,7 +35699,7 @@ var FormSection = function (_Component) {
               _react2.default.createElement(
                 'select',
                 { multiple: true, className: 'form-control', id: 'supportedDevice', style: formStyle.selectionBox,
-                  onChange: this.updateDevicesforApp.bind(this), value: 'this.state.supportedDevices' },
+                  onChange: this.updateSelectedDevicesforApp.bind(this), value: this.state.selectedDeviceforApp },
                 supportedDevicesOptions
               ),
               _react2.default.createElement('br', null),
@@ -35671,10 +35721,9 @@ var FormSection = function (_Component) {
               ),
               _react2.default.createElement('hr', { style: _styles2.default.universal.hr })
             ),
-            this.state.selectedApp == "none" && _react2.default.createElement(
+            (this.state.selectedApp == "none" || this.state.addAdditionalSensor == true) && _react2.default.createElement(
               'div',
               { className: 'form-group' },
-              _react2.default.createElement('hr', { style: _styles2.default.universal.hr }),
               _react2.default.createElement(
                 'label',
                 { htmlFor: 'device', style: { float: 'left', marginRight: 5 + 'px' } },
@@ -35772,6 +35821,7 @@ var FormSection = function (_Component) {
                   _react2.default.createElement('br', null)
                 )
               ),
+              _react2.default.createElement('br', null),
               _react2.default.createElement(
                 'button',
                 { className: 'btn btn-primary', onClick: this.addSensor.bind(this) },

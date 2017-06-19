@@ -19,6 +19,7 @@ class FormSection extends Component {
       selectedSWSeneors:[],
       selectedDeviceforApp: [],
       
+      addAdditionalSensor: false,
       deviceList: [], // a list of all devices
       deviceSensorList: [], // a list of all sensors of the selected device
       selectedDevice: '',
@@ -232,15 +233,65 @@ class FormSection extends Component {
     })
   }
 
-  updateDevicesforApp(event){
+
+  updateSelectedDevicesforApp(event){
+    var options = event.target.options
+    var devices = []
+    for(var i=0; i<options.length; i++){
+      if(options[i].selected){
+        devices.push(options[i].value)
+      }
+    }
+
+    this.setState({
+      selectedDeviceforApp: devices
+    }, () => {
+      console.log("devices running the app: " + this.state.selectedDeviceforApp)
+    })
 
   }
 
   addAnotherApp(event){
+    var context = this.state.text
+    console.log("context: " + context)
+    if(context == "<p><strong>Data Collection</strong></p>")
+      context += "This study uses " + this.state.selectedApp + " on "
+    else
+      context += "This study also uses " + this.state.selectedApp + " on "
+    var devices = this.state.selectedDeviceforApp
+    var sensors = this.state.selectedSWSeneors
 
+    if(devices.length == 1)
+      context += devices[0]
+    else{
+      for(var i=0; i<devices.length-1; i++){
+        context += devices[i] + ", "
+      }
+      context += "and " + devices[devices.length-1]
+    }
+
+    context += " to collect "
+    if(sensors.length == 1)
+      context += sensors[0] + " data."
+    else{
+      for(var i=0; i<sensors.length-1; i++){
+        context += sensors[i] + ", "
+      }
+      context += "and " + sensors[sensors.length-1] + " data."
+    }
+
+    this.setState({
+      text: context,
+      selectedSWSeneors: [],
+      selectedDeviceforApp:[],
+      selectedApp: ""
+    })
   }
 
   addAdditionalSensors(event){
+    this.setState({
+      addAdditionalSensor: true
+    })
 
   }
 
@@ -409,6 +460,7 @@ class FormSection extends Component {
               </select>
               <br/>
               <br/>
+              <hr style={styles.universal.hr} />
 
               {this.state.selectedApp != "" && this.state.selectedApp != "none" &&
                 <div className="form-group" style={formStyle.formgroup}>
@@ -422,7 +474,7 @@ class FormSection extends Component {
                   
                   <label htmlFor="appdevice">Device running the application (select all that applied):</label>
                   <select multiple className="form-control" id="supportedDevice" style={formStyle.selectionBox}
-                    onChange={this.updateDevicesforApp.bind(this)} value="this.state.supportedDevices">
+                    onChange={this.updateSelectedDevicesforApp.bind(this)} value={this.state.selectedDeviceforApp}>
                     {supportedDevicesOptions}
                   </select>
 
@@ -435,9 +487,9 @@ class FormSection extends Component {
               }
 
 
-              {this.state.selectedApp == "none" &&              
+              {(this.state.selectedApp == "none" || this.state.addAdditionalSensor == true) &&              
                 <div className="form-group">
-                  <hr style={styles.universal.hr}/>
+             
                   <label htmlFor="device" style={{float:'left', marginRight:5+'px'}}>Select device:</label>
                   <select className="form-control" id="device" style={formStyle.selectionBox}
                     onChange={this.updateDeviceSelection.bind(this)} value={this.state.selectedDevice}>
@@ -491,6 +543,7 @@ class FormSection extends Component {
                       </div>
                     </div>
                   } 
+                  <br/>
                   <button className="btn btn-primary" onClick={this.addSensor.bind(this)}>Add Sensor</button>
                 </div>
               }  
