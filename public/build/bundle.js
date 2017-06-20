@@ -35175,6 +35175,8 @@ var _superagent2 = _interopRequireDefault(_superagent);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -35189,7 +35191,7 @@ var FormSection = function (_Component) {
 
     var _this = _possibleConstructorReturn(this, (FormSection.__proto__ || Object.getPrototypeOf(FormSection)).call(this, props));
 
-    _this.state = {
+    _this.state = _defineProperty({
       section: {},
       text: '',
 
@@ -35218,8 +35220,10 @@ var FormSection = function (_Component) {
       attrName: "",
       attrValue: "",
       attrNameC: "", // attribute name and value for customized attributes
-      attrValueC: ""
-    };
+      attrValueC: "",
+
+      queryData: {}
+    }, 'currentSensor', {});
 
     // must write in this way bc quill doesn't support handler for text change
     // https://github.com/quilljs/quill/issues/1134
@@ -35256,14 +35260,14 @@ var FormSection = function (_Component) {
           return;
         }
 
-        console.log(JSON.stringify(response.body.results));
+        // console.log(JSON.stringify(response.body.results))
         var results = response.body.results;
         var apps = Object.assign([], _this2.state.apps);
         results.forEach(function (app) {
           apps.push(app.application);
         });
 
-        console.log("apps: " + apps);
+        // console.log("apps: " + apps)
 
         _this2.setState({
           appList: results,
@@ -35281,7 +35285,7 @@ var FormSection = function (_Component) {
         var results = response.body.results;
         var devices = Object.assign([], _this2.state.deviceList);
         results.forEach(function (devicesensor) {
-          if (devices.indexOf(devicesensor.device)) devices.push(devicesensor.device);
+          if (devices.indexOf(devicesensor.device) == -1) devices.push(devicesensor.device);
         });
 
         _this2.setState({
@@ -35292,8 +35296,6 @@ var FormSection = function (_Component) {
   }, {
     key: 'updateSection',
     value: function updateSection(content) {
-      var _this3 = this;
-
       var updatedSection = Object.assign({}, this.state.section);
       updatedSection["content"] = content;
 
@@ -35303,13 +35305,13 @@ var FormSection = function (_Component) {
       this.setState({
         section: updatedSection
       }, function () {
-        console.log("updated section: " + JSON.stringify(_this3.state.section));
+        // console.log("updated section: " + JSON.stringify(this.state.section))
       });
     }
   }, {
     key: 'updateSensorSelection',
     value: function updateSensorSelection(event) {
-      console.log('update sensor selection: ' + event.target.value);
+      // console.log('update sensor selection: ' + event.target.value)
       var updatedSensor = Object.assign("", this.state.selectedSensor);
       updatedSensor = event.target.value;
 
@@ -35320,7 +35322,7 @@ var FormSection = function (_Component) {
   }, {
     key: 'updateAttrName',
     value: function updateAttrName(event) {
-      console.log("update arrtibute name: " + event.target);
+      // console.log("update arrtibute name: " + event.target)
       this.setState({
         attrName: event.target.value,
         attrNameC: "",
@@ -35368,6 +35370,7 @@ var FormSection = function (_Component) {
 
       this.setState({
         currentAttributes: updatedCurrentAttr,
+        attrForSearch: updatedAttrForSearch,
         attrName: "",
         attrValue: ""
       });
@@ -35390,16 +35393,16 @@ var FormSection = function (_Component) {
   }, {
     key: 'updateAppSelection',
     value: function updateAppSelection(event) {
-      var _this4 = this;
+      var _this3 = this;
 
       this.setState({
         selectedApp: event.target.value
       }, function () {
         // get software sensor list 
-        if (_this4.state.selectedApp != "" && _this4.state.selectedApp != "none") {
-          _this4.state.appList.forEach(function (app) {
-            if (app.application == _this4.state.selectedApp) {
-              _this4.setState({
+        if (_this3.state.selectedApp != "" && _this3.state.selectedApp != "none") {
+          _this3.state.appList.forEach(function (app) {
+            if (app.application == _this3.state.selectedApp) {
+              _this3.setState({
                 swsensorListforSelectedApp: app.softwareSensor,
                 supportedDevices: app.supportedDevices
               });
@@ -35411,8 +35414,6 @@ var FormSection = function (_Component) {
   }, {
     key: 'updateSoftwareSensor',
     value: function updateSoftwareSensor(event) {
-      var _this5 = this;
-
       var options = event.target.options;
       var sensors = [];
       for (var i = 0; i < options.length; i++) {
@@ -35420,19 +35421,17 @@ var FormSection = function (_Component) {
           sensors.push(options[i].value);
         }
       }
-      console.log(sensors);
+      // console.log(sensors)
 
       this.setState({
         selectedSWSeneors: sensors
       }, function () {
-        console.log("selected sw sensors: " + _this5.state.selectedSWSeneors);
+        // console.log("selected sw sensors: " + this.state.selectedSWSeneors)
       });
     }
   }, {
     key: 'updateSelectedDevicesforApp',
     value: function updateSelectedDevicesforApp(event) {
-      var _this6 = this;
-
       var options = event.target.options;
       var devices = [];
       for (var i = 0; i < options.length; i++) {
@@ -35444,14 +35443,40 @@ var FormSection = function (_Component) {
       this.setState({
         selectedDeviceforApp: devices
       }, function () {
-        console.log("devices running the app: " + _this6.state.selectedDeviceforApp);
+        // console.log("devices running the app: " + this.state.selectedDeviceforApp)
       });
     }
   }, {
     key: 'addAnotherApp',
     value: function addAnotherApp(event) {
+      var _this4 = this;
+
+      var queryData = this.state.queryData;
+      // add app-sensor info to query data
+      this.state.selectedDeviceforApp.forEach(function (device) {
+        _this4.state.selectedSWSeneors.forEach(function (sensor) {
+          var sensorObj = {};
+          sensorObj["sensorName"] = sensor;
+
+          if (queryData[device]) {
+            if (queryData[device].map(function (sensor) {
+              return sensor.sensorName;
+            }).indexOf(sensor) == -1) queryData[device].push(sensorObj);
+          } else {
+            queryData[device] = [];
+            queryData[device].push(sensorObj);
+          }
+        });
+      });
+
+      this.setState({
+        queryData: queryData
+      }, function () {
+        console.log("queryData: " + JSON.stringify(_this4.state.queryData));
+      });
+
+      // update context in the editor
       var context = this.state.text;
-      console.log("context: " + context);
       if (context == "<p><strong>Data Collection</strong></p>") context += "This study uses " + this.state.selectedApp + " on ";else context += "This study also uses " + this.state.selectedApp + " on ";
       var devices = this.state.selectedDeviceforApp;
       var sensors = this.state.selectedSWSeneors;
@@ -35507,7 +35532,7 @@ var FormSection = function (_Component) {
       updatedSensor["device"] = this.state.selectedDevice;
       updatedSensor["sensor"] = this.state.selectedSensor;
       updatedSensor["attributes"] = this.state.attrForSearch;
-      console.log('add sensor: ' + JSON.stringify(updatedSensor));
+      // console.log('add sensor: ' + JSON.stringify(updatedSensor))
 
       var updatedSensorList = Object.assign([], this.state.sensorList);
       updatedSensorList.push(updatedSensor);
@@ -35520,17 +35545,81 @@ var FormSection = function (_Component) {
         selectedSensor: "",
         currentAttributes: {},
         attrForSearch: {}
+      }, function () {
+        // console.log("sensor list for query: " + JSON.stringify(this.state.sensorList))
       });
     }
   }, {
     key: 'generateRisks',
     value: function generateRisks(event) {
-      this.props.addSection("Risk&Protection");
+      // generate query data
+      var sensorList = this.state.sensorList;
+      var queryData = this.state.queryData;
+      sensorList.forEach(function (devicesensor) {
+        var device = devicesensor["device"];
+        var sensor = devicesensor["sensor"];
+        var attributes = devicesensor["attributes"];
+        var sensorObj = {};
+        sensorObj["sensorName"] = sensor;
+        sensorObj["attributes"] = attributes;
+        if (queryData[device]) {
+          if (queryData[device].map(function (s) {
+            return s.sensorName;
+          }).indexOf(sensor) == -1) {
+            queryData[device].push(sensorObj);
+          } else {
+            var index = queryData[device].map(function (s) {
+              return s.sensorName;
+            }).indexOf(sensor);
+            var attriList = queryData[device][index]["attributes"];
+            for (var attr in attributes) {
+              attriList[attr] = attributes[attr];
+            }
+          }
+        } else {
+          queryData[device] = [];
+          queryData[device].push(sensorObj);
+        }
+      });
+
+      this.setState({
+        queryData: queryData
+      }, function () {
+        console.log("queryData: " + JSON.stringify(queryData));
+        //query DB
+        var numDevices = Object.keys(queryData).length + 1;
+
+        _superagent2.default.get('/api/sensorinference').query({ $where: "this.deviceList.length < " + numDevices }).set('Accept', 'application/json').end(function (err, response) {
+          if (err) {
+            alert('ERROR: ' + err);
+            return;
+          }
+
+          // find match from results
+          var inferences = response.body.results;
+          var validInferences = [];
+          // level 1: check if every device in the results is in queryData
+          inferences.forEach(function (inference) {
+            var add = true;
+            inference["deviceList"].forEach(function (device) {
+              var deviceType = device["deviceType"];
+              if (Object.keys(queryData).indexOf(deviceType) == -1) add = false;
+            });
+            if (add == true) validInferences.push(inference);
+          });
+          console.log("valid inference after device check: " + JSON.stringify(validInferences));
+
+          //level 2: check if sensor in valid inference appeared in queryData
+
+        });
+      });
+
+      this.props.addSection("Risk and Protection");
     }
   }, {
     key: 'updateDeviceSelection',
     value: function updateDeviceSelection(event) {
-      var _this7 = this;
+      var _this5 = this;
 
       var updatedSelectedDevice = Object.assign('', this.state.selectedDevice);
       updatedSelectedDevice = event.target.value;
@@ -35547,13 +35636,13 @@ var FormSection = function (_Component) {
 
         // console.log(JSON.stringify(response.body.results))
         var results = response.body.results;
-        var sensors = Object.assign([], _this7.state.deviceSensorList);
+        var sensors = Object.assign([], _this5.state.deviceSensorList);
 
         results.forEach(function (devicesensor) {
           if (sensors.indexOf(devicesensor.sensorName)) sensors.push(devicesensor.sensorName);
         });
 
-        _this7.setState({
+        _this5.setState({
           deviceSensorList: sensors,
           selectedDevice: updatedSelectedDevice
         });
@@ -35562,7 +35651,7 @@ var FormSection = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this8 = this;
+      var _this6 = this;
 
       var modules = {
         toolbar: [[{ 'header': [1, 2, false] }], ['bold', 'italic', 'underline', 'strike', 'blockquote'], [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }], ['link', 'image'], ['clean']]
@@ -35627,7 +35716,7 @@ var FormSection = function (_Component) {
             attr
           ),
           ': ',
-          _this8.state.currentAttributes[attr]
+          _this6.state.currentAttributes[attr]
         );
       });
 
