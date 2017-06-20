@@ -35609,8 +35609,29 @@ var FormSection = function (_Component) {
           });
           console.log("valid inference after device check: " + JSON.stringify(validInferences));
 
-          //level 2: check if sensor in valid inference appeared in queryData
-
+          //level 2: check if sensors in validInferences appear under device in queryData
+          var validInferences2 = [];
+          validInferences.forEach(function (inference) {
+            var add = true;
+            inference["deviceList"].forEach(function (device) {
+              // get device sensor object from queryData
+              var deviceType = device["deviceType"];
+              var sensorList = queryData[deviceType];
+              for (var i in device["sensorList"]) {
+                var sensorObj = device["sensorList"][i];
+                var sensorName = sensorObj.sensorName.split('(')[0];
+                if (sensorList.map(function (s) {
+                  return s.sensorName;
+                }).indexOf(sensorName) == -1) {
+                  console.log("sensor does not found in queryData: " + sensorName);
+                  add = false;
+                  break;
+                }
+              }
+            });
+            if (add == true) validInferences2.push(inference);
+          });
+          console.log("valid inference after sensor check: " + JSON.stringify(validInferences2));
         });
       });
 
