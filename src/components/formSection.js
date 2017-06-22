@@ -38,7 +38,7 @@ class FormSection extends Component {
       attrValueC: "",
 
       queryData: {},
-      currentSensor: {}
+      queryResults: []
     }
 
     // must write in this way bc quill doesn't support handler for text change
@@ -450,11 +450,50 @@ class FormSection extends Component {
         })
         console.log("valid inference after sensor check: " + JSON.stringify(validInferences2))
 
+        // level 3: check if attributes match
+        var validInferences3 = []
+        for(var i in validInferences2){
+          var inference = validInferences2[i]
+          var add = true
+          for(var j in inference["deviceList"]){
+            var device = inference["deviceList"][j]
+            var sensorListQD = queryData[device["deviceType"]]
+            for(var k in device["sensorList"]){
+              var sensor = device["sensorList"][k]
+              var sensorName = sensor["sensorName"].split('(')[0]
+              var attributes = sensor["attributes"]
+              
+              var index = sensorListQD.map((s) => s.sensorName).indexOf(sensorName)
+              var sensorQD = sensorListQD[index]
+              var attributesQD = sensorQD["attributes"]
 
+              for(var a in attributes){
+                var attrName = attributes[a]["attriName"].split('(')[0]
+                var attrValue = attributes[a]["value"]
+                if(!attributesQD[attrName] || attrValue != attributesQD[attrName]){
+                  console.log("wrong attr value: " + attrValue)
+                  add = false
+                  break
+                }
+              }
+
+              if(add == false)
+                break
+            }
+            if(add == false)
+              break
+          }
+          if(add == true)
+            validInferences3.push(inference)
+        }
+        console.log("valid inference after attributes check: " + JSON.stringify(validInferences3))
+        this.setState({
+          queryResults: validInferences3
+        }, () => {
+          this.props.addRiskSection("Risk and Protection", this.state.queryResults)
+        })
       })
     })
-
-    this.props.addSection("Risk and Protection")
   }
 
   updateDeviceSelection(event) {
