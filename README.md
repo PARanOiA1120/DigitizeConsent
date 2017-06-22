@@ -1,5 +1,7 @@
 # DigitizeConsent
-Consent form digitization for human subjects research as required by IRB
+Consent form digitization for human subjects research as required by IRB.
+
+Current state of the art requires the study designer to manully draft the consent form, manully send the form out to study participants, and manually pass the data to third party researchers, etc. Nothing is kept tracked of. More importantly, the study designer may be unaware of risks of sharing data with others, and the research scientist who may be analyzing anonymized data may not be aware of the terms of agreement with the participants. To address the issues mentioned above, we create this consent form digitization system to reduce the human effort in generating consent forms while keeping track of the agreements when data is shared to third party entities. The consent form generator also prompts the study designer to be aware of the privacy risks exist in the study, and propose protection against those risks. 
 
 ## Install Node.js, React, Express, Mongodb, and related packages
 - Install Node.js
