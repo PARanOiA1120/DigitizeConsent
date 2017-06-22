@@ -35,7 +35,10 @@ class FormSection extends Component {
       attrName: "",
       attrValue: "",
       attrNameC: "", // attribute name and value for customized attributes
-      attrValueC: ""
+      attrValueC: "",
+
+      queryData: {},
+      queryResults: []
     }
 
     // must write in this way bc quill doesn't support handler for text change
@@ -73,14 +76,14 @@ class FormSection extends Component {
         return
       }
 
-      console.log(JSON.stringify(response.body.results))
+      // console.log(JSON.stringify(response.body.results))
       let results = response.body.results
       let apps = Object.assign([], this.state.apps)
       results.forEach((app) => {
           apps.push(app.application)
       })
 
-      console.log("apps: " + apps)
+      // console.log("apps: " + apps)
 
       this.setState({ 
         appList: results,
@@ -102,7 +105,7 @@ class FormSection extends Component {
       let results = response.body.results
       let devices = Object.assign([], this.state.deviceList)
       results.forEach((devicesensor) => {
-        if(devices.indexOf(devicesensor.device))
+        if(devices.indexOf(devicesensor.device) == -1)
           devices.push(devicesensor.device)
       })
 
@@ -123,12 +126,12 @@ class FormSection extends Component {
     this.setState({
       section: updatedSection
     }, () => {
-      console.log("updated section: " + JSON.stringify(this.state.section))
+      // console.log("updated section: " + JSON.stringify(this.state.section))
     })
   }
 
   updateSensorSelection(event){
-    console.log('update sensor selection: ' + event.target.value)
+    // console.log('update sensor selection: ' + event.target.value)
     let updatedSensor = Object.assign("", this.state.selectedSensor)
     updatedSensor = event.target.value
 
@@ -138,7 +141,7 @@ class FormSection extends Component {
   }
 
   updateAttrName(event) {
-    console.log("update arrtibute name: " + event.target)
+    // console.log("update arrtibute name: " + event.target)
     this.setState({
       attrName: event.target.value,
       attrNameC: "",
@@ -180,6 +183,7 @@ class FormSection extends Component {
 
     this.setState({
       currentAttributes: updatedCurrentAttr,
+      attrForSearch: updatedAttrForSearch,
       attrName: "",
       attrValue: ""
     })
@@ -224,12 +228,12 @@ class FormSection extends Component {
         sensors.push(options[i].value)
       }
     }
-    console.log(sensors)
+    // console.log(sensors)
 
     this.setState({
       selectedSWSeneors: sensors
     }, () => {
-      console.log("selected sw sensors: " + this.state.selectedSWSeneors)
+      // console.log("selected sw sensors: " + this.state.selectedSWSeneors)
     })
   }
 
@@ -246,14 +250,38 @@ class FormSection extends Component {
     this.setState({
       selectedDeviceforApp: devices
     }, () => {
-      console.log("devices running the app: " + this.state.selectedDeviceforApp)
+      // console.log("devices running the app: " + this.state.selectedDeviceforApp)
     })
 
   }
 
   addAnotherApp(event){
+    var queryData = this.state.queryData
+    // add app-sensor info to query data
+    this.state.selectedDeviceforApp.forEach((device) => {
+      this.state.selectedSWSeneors.forEach((sensor) => {
+        var sensorObj = {}
+        sensorObj["sensorName"] = sensor
+
+        if(queryData[device]){
+          if(queryData[device].map((sensor) => sensor.sensorName).indexOf(sensor) == -1)
+            queryData[device].push(sensorObj)
+        }
+        else{
+          queryData[device] = []
+          queryData[device].push(sensorObj)
+        }
+      })
+    })
+
+    this.setState({
+      queryData: queryData
+    }, () => {
+      console.log("queryData: " + JSON.stringify(this.state.queryData))
+    })
+
+    // update context in the editor
     var context = this.state.text
-    console.log("context: " + context)
     if(context == "<p><strong>Data Collection</strong></p>")
       context += "This study uses " + this.state.selectedApp + " on "
     else
@@ -319,7 +347,7 @@ class FormSection extends Component {
     updatedSensor["device"] = this.state.selectedDevice
     updatedSensor["sensor"] = this.state.selectedSensor
     updatedSensor["attributes"] = this.state.attrForSearch
-    console.log('add sensor: ' + JSON.stringify(updatedSensor))
+    // console.log('add sensor: ' + JSON.stringify(updatedSensor))
 
     let updatedSensorList = Object.assign([], this.state.sensorList)
     updatedSensorList.push(updatedSensor)
@@ -332,11 +360,140 @@ class FormSection extends Component {
       selectedSensor: "",
       currentAttributes: {},
       attrForSearch: {}, 
+    }, () => {
+      // console.log("sensor list for query: " + JSON.stringify(this.state.sensorList))
     })
   }
 
   generateRisks(event) {
-    this.props.addSection("Risk&Protection")
+    // generate query data
+    var sensorList = this.state.sensorList
+    var queryData = this.state.queryData
+    sensorList.forEach((devicesensor) => {
+      var device = devicesensor["device"]
+      var sensor = devicesensor["sensor"]
+      var attributes = devicesensor["attributes"]
+      var sensorObj = {}
+      sensorObj["sensorName"] = sensor
+      sensorObj["attributes"] = attributes
+      if(queryData[device]){
+        if(queryData[device].map((s) => s.sensorName).indexOf(sensor) == -1){
+          queryData[device].push(sensorObj)
+        }
+        else{
+          var index = queryData[device].map((s) => s.sensorName).indexOf(sensor)
+          var attriList = queryData[device][index]["attributes"]
+          for(var attr in attributes){
+              attriList[attr] = attributes[attr]
+          }
+        }
+      }
+      else{
+        queryData[device] = []
+        queryData[device].push(sensorObj)
+      }
+    })
+
+    this.setState({
+      queryData: queryData
+    }, () => {
+      console.log("queryData: " + JSON.stringify(queryData))
+      //query DB
+      var numDevices = Object.keys(queryData).length + 1
+
+      superagent
+      .get('/api/sensorinference')
+      .query({$where: "this.deviceList.length < " + numDevices})
+      .set('Accept', 'application/json')
+      .end((err, response) => {
+        if(err){
+          alert('ERROR: '+err)
+          return
+        }
+
+        // find match from results
+        var inferences = response.body.results
+        var validInferences = []
+        // level 1: check if every device in the results is in queryData
+        inferences.forEach((inference) => {
+          var add = true
+          inference["deviceList"].forEach((device) => {
+            var deviceType = device["deviceType"]
+            if(Object.keys(queryData).indexOf(deviceType) == -1)
+              add = false
+          })
+          if(add == true)
+            validInferences.push(inference)
+        })
+        console.log("valid inference after device check: " + JSON.stringify(validInferences))
+
+        //level 2: check if sensors in validInferences appear under device in queryData
+        var validInferences2 = []
+        validInferences.forEach((inference) => {
+          var add = true
+          inference["deviceList"].forEach((device) => {
+            // get device sensor object from queryData
+            var deviceType = device["deviceType"]
+            var sensorList = queryData[deviceType]
+            for(var i in device["sensorList"]){
+              var sensorObj = device["sensorList"][i]
+              var sensorName = sensorObj.sensorName.split('(')[0]
+              if(sensorList.map((s) => s.sensorName).indexOf(sensorName) == -1){
+                console.log("sensor does not found in queryData: " + sensorName)
+                add = false
+                break
+              }
+            }
+          })
+          if(add == true)
+            validInferences2.push(inference)
+        })
+        console.log("valid inference after sensor check: " + JSON.stringify(validInferences2))
+
+        // level 3: check if attributes match
+        var validInferences3 = []
+        for(var i in validInferences2){
+          var inference = validInferences2[i]
+          var add = true
+          for(var j in inference["deviceList"]){
+            var device = inference["deviceList"][j]
+            var sensorListQD = queryData[device["deviceType"]]
+            for(var k in device["sensorList"]){
+              var sensor = device["sensorList"][k]
+              var sensorName = sensor["sensorName"].split('(')[0]
+              var attributes = sensor["attributes"]
+              
+              var index = sensorListQD.map((s) => s.sensorName).indexOf(sensorName)
+              var sensorQD = sensorListQD[index]
+              var attributesQD = sensorQD["attributes"]
+
+              for(var a in attributes){
+                var attrName = attributes[a]["attriName"].split('(')[0]
+                var attrValue = attributes[a]["value"]
+                if(!attributesQD[attrName] || attrValue != attributesQD[attrName]){
+                  console.log("wrong attr value: " + attrValue)
+                  add = false
+                  break
+                }
+              }
+
+              if(add == false)
+                break
+            }
+            if(add == false)
+              break
+          }
+          if(add == true)
+            validInferences3.push(inference)
+        }
+        console.log("valid inference after attributes check: " + JSON.stringify(validInferences3))
+        this.setState({
+          queryResults: validInferences3
+        }, () => {
+          this.props.addRiskSection("Risk and Protection", this.state.queryResults)
+        })
+      })
+    })
   }
 
   updateDeviceSelection(event) {

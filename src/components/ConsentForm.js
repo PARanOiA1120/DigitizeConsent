@@ -69,11 +69,17 @@ class ConsentForm extends Component {
 		
 	}
 
-	addRiskSection(title){
+	addRiskSection(title, inferences){
 		const index = _.findIndex(this.state.sectionList, ['title', title])
 		const selectedSection = this.state.sectionList[index]
+		var content = ""
 		// console.log('added section: ' + JSON.stringify(selectedSection))
-		selectedSection["content"] = "GPS sensor on iPhone7 can reveal location information."
+		inferences.forEach((inference) => {
+			// console.log("inference: " + JSON.stringify(inference))
+			content += inference["inference"]["description"] + '<br/>'
+		})
+
+		selectedSection["content"] = content
 
 		let updatedSections = Object.assign([], this.state.selectedSectionList)
 		updatedSections.push(selectedSection)
@@ -164,7 +170,7 @@ class ConsentForm extends Component {
 
 		const sectionList = this.state.selectedSectionList.map((section, i) => {
 			return (
-				<li key={i}><Section currentSection={section} addSection={this.addRiskSection.bind(this)} onChange={this.updateSection.bind(this, i)}></Section></li>
+				<li key={i}><Section currentSection={section} addRiskSection={this.addRiskSection.bind(this)} onChange={this.updateSection.bind(this, i)}></Section></li>
 			)
 		})
 

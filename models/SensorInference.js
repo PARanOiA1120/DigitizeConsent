@@ -5,7 +5,8 @@ var SensorInferenceSchema = new mongoose.Schema({
 	deviceList: [{
 		deviceType: String,
 		sensorList: [{
-			sensorID: String,
+			// sensorID: String,
+			sensorName: String,
 			attributes: [{
 				attriName: String,
 				value: String,
@@ -14,7 +15,8 @@ var SensorInferenceSchema = new mongoose.Schema({
 	}],
 	inference: {
 		inferenceID: String,
-		inferenceName: String
+		inferenceName: String,
+		description: String
 	}
 })
 

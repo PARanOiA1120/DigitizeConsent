@@ -13,11 +13,15 @@ class JSONSchemaForm extends Component {
     this.state = {
       switchToReview: false,
       formData: {},
-      softwareSensors: []
+      softwareSensors: [],
+      devices: [],
+      devicesensors: []
     }
   }
 
   componentDidMount(){
+
+    // get the list of all software sensors
     superagent
       .get('/api/swsensor')
       .query(null)
@@ -28,7 +32,6 @@ class JSONSchemaForm extends Component {
           return
         }
 
-        console.log(JSON.stringify(response.body.results))
         let results = response.body.results
         let sensors = Object.assign([], this.state.softwareSensors)
         for(var i=0; i<results.length; i++)
@@ -39,7 +42,49 @@ class JSONSchemaForm extends Component {
         })
       })
 
+    // get the list of device
+    superagent
+      .get('/api/device')
+      .query(null)
+      .set('Accept', 'application/json')
+      .end((err, response) => {
+        if(err){
+          alert('ERROR: ' + err)
+          return
+        }
 
+        let results = response.body.results
+        let devices = Object.assign([], this.state.devices)
+        for(var i=0; i<results.length; i++)
+          devices.push(results[i].device)
+
+        this.setState({
+          devices: devices
+        })
+      })
+
+    // get the list of hardware sensors
+    superagent
+      .get('/api/devicesensor')
+      .query(null)
+      .set('Accept', 'application/json')
+      .end((err, response) => {
+        if(err){
+          alert('ERROR: ' + err)
+          return
+        }
+
+        let results = response.body.results
+        let devicesensors = Object.assign([], this.state.devicesensors)
+        for(var i=0; i<results.length; i++){
+          var sensor = results[i].sensorName + "(" + results[i].device + ")"
+          devicesensors.push(sensor)
+        }
+
+        this.setState({
+          devicesensors: devicesensors
+        })
+      })
   }
 
   submit(formData){
@@ -53,7 +98,7 @@ class JSONSchemaForm extends Component {
 
   render (){
     const software_sensor_schema = {
-      title: "Software Sensor Form",
+      title: "Add Software Sensor",
       type: "object",
       properties:{
         sensor:{
@@ -63,14 +108,26 @@ class JSONSchemaForm extends Component {
       }
     }
 
+    const device_schema = {
+      title: "Add Device",
+      type: "object",
+      properties:{
+        device:{
+          type: "string",
+          title: "Device Name"
+        }
+      }
+    }
+
 
     const device_sensor_schema = {
-      title: "Device Sensor Form",
+      title: "Add Raw Sensor from Device",
       type: "object",
       required: ["device"],
       properties: {
         device: {
             type: "string",
+            enum: this.state.devices,
             title: "Device"
         },
         sensorName: {
@@ -81,7 +138,7 @@ class JSONSchemaForm extends Component {
     }
 
     const sensor_inference_schema = {
-      title: "Sensor Inference Form",
+      title: "Add Sensor Inference",
       type: "object",
       properties: {
         reference: {
@@ -96,7 +153,7 @@ class JSONSchemaForm extends Component {
             properties: {              
               deviceType: {
                 type: "string",
-                enum: ["Phone", "Watch", "Shoes"],
+                enum: this.state.devices,
                 title: "Device"
               },
               sensorList: {
@@ -107,6 +164,7 @@ class JSONSchemaForm extends Component {
                   properties: {
                     sensorName: {
                       type: "string",
+                      enum: this.state.devicesensors.concat(this.state.softwareSensors),
                       title: "Sensor Name"
                     },
                     attributes: {
@@ -149,7 +207,7 @@ class JSONSchemaForm extends Component {
     }
 
     const inference_description_schema = {
-      title: "Inference Description Form",
+      title: "Add Inference Description",
       type: "object",
       properties: {
         inferenceName: {
@@ -164,7 +222,7 @@ class JSONSchemaForm extends Component {
     }
 
     const app_sensor_schema = {
-      title: "Application Sensor Form",
+      title: "Add Software Sensor from App",
       type: "object",
       properties: {
         application: {
@@ -182,7 +240,7 @@ class JSONSchemaForm extends Component {
           type: "array",
           items: {
             type: "string",
-            enum: ["Phone", "Watch", "Shoes"],
+            enum: this.state.devices,
           }
         }
       }
@@ -192,7 +250,9 @@ class JSONSchemaForm extends Component {
     const log = (type) => console.log.bind(console, type);
     const onSubmit = ({formData}) => this.submit({formData})
     const schema = this.props.collection.schema
-    const schemaDict = {'device_sensor_schema': device_sensor_schema, 
+    const schemaDict = {
+                        'device_schema': device_schema,
+                        'device_sensor_schema': device_sensor_schema, 
                         'sensor_inference_schema': sensor_inference_schema, 
                         'inference_description_schema': inference_description_schema,
                         'app_sensor_schema': app_sensor_schema,

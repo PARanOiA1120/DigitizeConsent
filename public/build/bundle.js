@@ -34408,13 +34408,19 @@ var ConsentForm = function (_Component) {
 		}
 	}, {
 		key: 'addRiskSection',
-		value: function addRiskSection(title) {
+		value: function addRiskSection(title, inferences) {
 			var _this4 = this;
 
 			var index = _.findIndex(this.state.sectionList, ['title', title]);
 			var selectedSection = this.state.sectionList[index];
+			var content = "";
 			// console.log('added section: ' + JSON.stringify(selectedSection))
-			selectedSection["content"] = "GPS sensor on iPhone7 can reveal location information.";
+			inferences.forEach(function (inference) {
+				// console.log("inference: " + JSON.stringify(inference))
+				content += inference["inference"]["description"] + '<br/>';
+			});
+
+			selectedSection["content"] = content;
 
 			var updatedSections = Object.assign([], this.state.selectedSectionList);
 			updatedSections.push(selectedSection);
@@ -34540,7 +34546,7 @@ var ConsentForm = function (_Component) {
 				return _react2.default.createElement(
 					'li',
 					{ key: i },
-					_react2.default.createElement(_FormSection2.default, { currentSection: section, addSection: _this8.addRiskSection.bind(_this8), onChange: _this8.updateSection.bind(_this8, i) })
+					_react2.default.createElement(_FormSection2.default, { currentSection: section, addRiskSection: _this8.addRiskSection.bind(_this8), onChange: _this8.updateSection.bind(_this8, i) })
 				);
 			});
 
@@ -34668,7 +34674,7 @@ var CreateDBEntry = function (_Component) {
 		var _this = _possibleConstructorReturn(this, (CreateDBEntry.__proto__ || Object.getPrototypeOf(CreateDBEntry)).call(this));
 
 		_this.state = {
-			collectionList: [{ title: 'Software-Sensor', action: '/api/swsensor', schema: 'software_sensor_schema' }, { title: 'App-Sensor', action: '/api/appsensor', schema: 'app_sensor_schema' }, { title: 'Device-Sensor', action: '/api/devicesensor', schema: 'device_sensor_schema' }, { title: 'Sensor-Inference', action: '/api/sensorinference', schema: 'sensor_inference_schema' }, { title: 'Inference-Description', action: '/api/inferencedescription', schema: 'inference_description_schema' }],
+			collectionList: [{ title: 'Device', action: '/api/device', schema: 'device_schema' }, { title: 'Software-Sensor', action: '/api/swsensor', schema: 'software_sensor_schema' }, { title: 'App-Sensor', action: '/api/appsensor', schema: 'app_sensor_schema' }, { title: 'Device-Sensor', action: '/api/devicesensor', schema: 'device_sensor_schema' }, { title: 'Sensor-Inference', action: '/api/sensorinference', schema: 'sensor_inference_schema' }, { title: 'Inference-Description', action: '/api/inferencedescription', schema: 'inference_description_schema' }],
 			selectedCollection: {},
 			switchToReview: false
 		};
@@ -35218,7 +35224,10 @@ var FormSection = function (_Component) {
       attrName: "",
       attrValue: "",
       attrNameC: "", // attribute name and value for customized attributes
-      attrValueC: ""
+      attrValueC: "",
+
+      queryData: {},
+      queryResults: []
     };
 
     // must write in this way bc quill doesn't support handler for text change
@@ -35256,14 +35265,14 @@ var FormSection = function (_Component) {
           return;
         }
 
-        console.log(JSON.stringify(response.body.results));
+        // console.log(JSON.stringify(response.body.results))
         var results = response.body.results;
         var apps = Object.assign([], _this2.state.apps);
         results.forEach(function (app) {
           apps.push(app.application);
         });
 
-        console.log("apps: " + apps);
+        // console.log("apps: " + apps)
 
         _this2.setState({
           appList: results,
@@ -35281,7 +35290,7 @@ var FormSection = function (_Component) {
         var results = response.body.results;
         var devices = Object.assign([], _this2.state.deviceList);
         results.forEach(function (devicesensor) {
-          if (devices.indexOf(devicesensor.device)) devices.push(devicesensor.device);
+          if (devices.indexOf(devicesensor.device) == -1) devices.push(devicesensor.device);
         });
 
         _this2.setState({
@@ -35292,8 +35301,6 @@ var FormSection = function (_Component) {
   }, {
     key: 'updateSection',
     value: function updateSection(content) {
-      var _this3 = this;
-
       var updatedSection = Object.assign({}, this.state.section);
       updatedSection["content"] = content;
 
@@ -35303,13 +35310,13 @@ var FormSection = function (_Component) {
       this.setState({
         section: updatedSection
       }, function () {
-        console.log("updated section: " + JSON.stringify(_this3.state.section));
+        // console.log("updated section: " + JSON.stringify(this.state.section))
       });
     }
   }, {
     key: 'updateSensorSelection',
     value: function updateSensorSelection(event) {
-      console.log('update sensor selection: ' + event.target.value);
+      // console.log('update sensor selection: ' + event.target.value)
       var updatedSensor = Object.assign("", this.state.selectedSensor);
       updatedSensor = event.target.value;
 
@@ -35320,7 +35327,7 @@ var FormSection = function (_Component) {
   }, {
     key: 'updateAttrName',
     value: function updateAttrName(event) {
-      console.log("update arrtibute name: " + event.target);
+      // console.log("update arrtibute name: " + event.target)
       this.setState({
         attrName: event.target.value,
         attrNameC: "",
@@ -35368,6 +35375,7 @@ var FormSection = function (_Component) {
 
       this.setState({
         currentAttributes: updatedCurrentAttr,
+        attrForSearch: updatedAttrForSearch,
         attrName: "",
         attrValue: ""
       });
@@ -35390,16 +35398,16 @@ var FormSection = function (_Component) {
   }, {
     key: 'updateAppSelection',
     value: function updateAppSelection(event) {
-      var _this4 = this;
+      var _this3 = this;
 
       this.setState({
         selectedApp: event.target.value
       }, function () {
         // get software sensor list 
-        if (_this4.state.selectedApp != "" && _this4.state.selectedApp != "none") {
-          _this4.state.appList.forEach(function (app) {
-            if (app.application == _this4.state.selectedApp) {
-              _this4.setState({
+        if (_this3.state.selectedApp != "" && _this3.state.selectedApp != "none") {
+          _this3.state.appList.forEach(function (app) {
+            if (app.application == _this3.state.selectedApp) {
+              _this3.setState({
                 swsensorListforSelectedApp: app.softwareSensor,
                 supportedDevices: app.supportedDevices
               });
@@ -35411,8 +35419,6 @@ var FormSection = function (_Component) {
   }, {
     key: 'updateSoftwareSensor',
     value: function updateSoftwareSensor(event) {
-      var _this5 = this;
-
       var options = event.target.options;
       var sensors = [];
       for (var i = 0; i < options.length; i++) {
@@ -35420,19 +35426,17 @@ var FormSection = function (_Component) {
           sensors.push(options[i].value);
         }
       }
-      console.log(sensors);
+      // console.log(sensors)
 
       this.setState({
         selectedSWSeneors: sensors
       }, function () {
-        console.log("selected sw sensors: " + _this5.state.selectedSWSeneors);
+        // console.log("selected sw sensors: " + this.state.selectedSWSeneors)
       });
     }
   }, {
     key: 'updateSelectedDevicesforApp',
     value: function updateSelectedDevicesforApp(event) {
-      var _this6 = this;
-
       var options = event.target.options;
       var devices = [];
       for (var i = 0; i < options.length; i++) {
@@ -35444,14 +35448,40 @@ var FormSection = function (_Component) {
       this.setState({
         selectedDeviceforApp: devices
       }, function () {
-        console.log("devices running the app: " + _this6.state.selectedDeviceforApp);
+        // console.log("devices running the app: " + this.state.selectedDeviceforApp)
       });
     }
   }, {
     key: 'addAnotherApp',
     value: function addAnotherApp(event) {
+      var _this4 = this;
+
+      var queryData = this.state.queryData;
+      // add app-sensor info to query data
+      this.state.selectedDeviceforApp.forEach(function (device) {
+        _this4.state.selectedSWSeneors.forEach(function (sensor) {
+          var sensorObj = {};
+          sensorObj["sensorName"] = sensor;
+
+          if (queryData[device]) {
+            if (queryData[device].map(function (sensor) {
+              return sensor.sensorName;
+            }).indexOf(sensor) == -1) queryData[device].push(sensorObj);
+          } else {
+            queryData[device] = [];
+            queryData[device].push(sensorObj);
+          }
+        });
+      });
+
+      this.setState({
+        queryData: queryData
+      }, function () {
+        console.log("queryData: " + JSON.stringify(_this4.state.queryData));
+      });
+
+      // update context in the editor
       var context = this.state.text;
-      console.log("context: " + context);
       if (context == "<p><strong>Data Collection</strong></p>") context += "This study uses " + this.state.selectedApp + " on ";else context += "This study also uses " + this.state.selectedApp + " on ";
       var devices = this.state.selectedDeviceforApp;
       var sensors = this.state.selectedSWSeneors;
@@ -35507,7 +35537,7 @@ var FormSection = function (_Component) {
       updatedSensor["device"] = this.state.selectedDevice;
       updatedSensor["sensor"] = this.state.selectedSensor;
       updatedSensor["attributes"] = this.state.attrForSearch;
-      console.log('add sensor: ' + JSON.stringify(updatedSensor));
+      // console.log('add sensor: ' + JSON.stringify(updatedSensor))
 
       var updatedSensorList = Object.assign([], this.state.sensorList);
       updatedSensorList.push(updatedSensor);
@@ -35520,17 +35550,144 @@ var FormSection = function (_Component) {
         selectedSensor: "",
         currentAttributes: {},
         attrForSearch: {}
+      }, function () {
+        // console.log("sensor list for query: " + JSON.stringify(this.state.sensorList))
       });
     }
   }, {
     key: 'generateRisks',
     value: function generateRisks(event) {
-      this.props.addSection("Risk&Protection");
+      var _this5 = this;
+
+      // generate query data
+      var sensorList = this.state.sensorList;
+      var queryData = this.state.queryData;
+      sensorList.forEach(function (devicesensor) {
+        var device = devicesensor["device"];
+        var sensor = devicesensor["sensor"];
+        var attributes = devicesensor["attributes"];
+        var sensorObj = {};
+        sensorObj["sensorName"] = sensor;
+        sensorObj["attributes"] = attributes;
+        if (queryData[device]) {
+          if (queryData[device].map(function (s) {
+            return s.sensorName;
+          }).indexOf(sensor) == -1) {
+            queryData[device].push(sensorObj);
+          } else {
+            var index = queryData[device].map(function (s) {
+              return s.sensorName;
+            }).indexOf(sensor);
+            var attriList = queryData[device][index]["attributes"];
+            for (var attr in attributes) {
+              attriList[attr] = attributes[attr];
+            }
+          }
+        } else {
+          queryData[device] = [];
+          queryData[device].push(sensorObj);
+        }
+      });
+
+      this.setState({
+        queryData: queryData
+      }, function () {
+        console.log("queryData: " + JSON.stringify(queryData));
+        //query DB
+        var numDevices = Object.keys(queryData).length + 1;
+
+        _superagent2.default.get('/api/sensorinference').query({ $where: "this.deviceList.length < " + numDevices }).set('Accept', 'application/json').end(function (err, response) {
+          if (err) {
+            alert('ERROR: ' + err);
+            return;
+          }
+
+          // find match from results
+          var inferences = response.body.results;
+          var validInferences = [];
+          // level 1: check if every device in the results is in queryData
+          inferences.forEach(function (inference) {
+            var add = true;
+            inference["deviceList"].forEach(function (device) {
+              var deviceType = device["deviceType"];
+              if (Object.keys(queryData).indexOf(deviceType) == -1) add = false;
+            });
+            if (add == true) validInferences.push(inference);
+          });
+          console.log("valid inference after device check: " + JSON.stringify(validInferences));
+
+          //level 2: check if sensors in validInferences appear under device in queryData
+          var validInferences2 = [];
+          validInferences.forEach(function (inference) {
+            var add = true;
+            inference["deviceList"].forEach(function (device) {
+              // get device sensor object from queryData
+              var deviceType = device["deviceType"];
+              var sensorList = queryData[deviceType];
+              for (var i in device["sensorList"]) {
+                var sensorObj = device["sensorList"][i];
+                var sensorName = sensorObj.sensorName.split('(')[0];
+                if (sensorList.map(function (s) {
+                  return s.sensorName;
+                }).indexOf(sensorName) == -1) {
+                  console.log("sensor does not found in queryData: " + sensorName);
+                  add = false;
+                  break;
+                }
+              }
+            });
+            if (add == true) validInferences2.push(inference);
+          });
+          console.log("valid inference after sensor check: " + JSON.stringify(validInferences2));
+
+          // level 3: check if attributes match
+          var validInferences3 = [];
+          for (var i in validInferences2) {
+            var inference = validInferences2[i];
+            var add = true;
+            for (var j in inference["deviceList"]) {
+              var device = inference["deviceList"][j];
+              var sensorListQD = queryData[device["deviceType"]];
+              for (var k in device["sensorList"]) {
+                var sensor = device["sensorList"][k];
+                var sensorName = sensor["sensorName"].split('(')[0];
+                var attributes = sensor["attributes"];
+
+                var index = sensorListQD.map(function (s) {
+                  return s.sensorName;
+                }).indexOf(sensorName);
+                var sensorQD = sensorListQD[index];
+                var attributesQD = sensorQD["attributes"];
+
+                for (var a in attributes) {
+                  var attrName = attributes[a]["attriName"].split('(')[0];
+                  var attrValue = attributes[a]["value"];
+                  if (!attributesQD[attrName] || attrValue != attributesQD[attrName]) {
+                    console.log("wrong attr value: " + attrValue);
+                    add = false;
+                    break;
+                  }
+                }
+
+                if (add == false) break;
+              }
+              if (add == false) break;
+            }
+            if (add == true) validInferences3.push(inference);
+          }
+          console.log("valid inference after attributes check: " + JSON.stringify(validInferences3));
+          _this5.setState({
+            queryResults: validInferences3
+          }, function () {
+            _this5.props.addRiskSection("Risk and Protection", _this5.state.queryResults);
+          });
+        });
+      });
     }
   }, {
     key: 'updateDeviceSelection',
     value: function updateDeviceSelection(event) {
-      var _this7 = this;
+      var _this6 = this;
 
       var updatedSelectedDevice = Object.assign('', this.state.selectedDevice);
       updatedSelectedDevice = event.target.value;
@@ -35547,13 +35704,13 @@ var FormSection = function (_Component) {
 
         // console.log(JSON.stringify(response.body.results))
         var results = response.body.results;
-        var sensors = Object.assign([], _this7.state.deviceSensorList);
+        var sensors = Object.assign([], _this6.state.deviceSensorList);
 
         results.forEach(function (devicesensor) {
           if (sensors.indexOf(devicesensor.sensorName)) sensors.push(devicesensor.sensorName);
         });
 
-        _this7.setState({
+        _this6.setState({
           deviceSensorList: sensors,
           selectedDevice: updatedSelectedDevice
         });
@@ -35562,7 +35719,7 @@ var FormSection = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this8 = this;
+      var _this7 = this;
 
       var modules = {
         toolbar: [[{ 'header': [1, 2, false] }], ['bold', 'italic', 'underline', 'strike', 'blockquote'], [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }], ['link', 'image'], ['clean']]
@@ -35627,7 +35784,7 @@ var FormSection = function (_Component) {
             attr
           ),
           ': ',
-          _this8.state.currentAttributes[attr]
+          _this7.state.currentAttributes[attr]
         );
       });
 
@@ -35911,7 +36068,9 @@ var JSONSchemaForm = function (_Component) {
     _this.state = {
       switchToReview: false,
       formData: {},
-      softwareSensors: []
+      softwareSensors: [],
+      devices: [],
+      devicesensors: []
     };
     return _this;
   }
@@ -35921,19 +36080,54 @@ var JSONSchemaForm = function (_Component) {
     value: function componentDidMount() {
       var _this2 = this;
 
+      // get the list of all software sensors
       _superagent2.default.get('/api/swsensor').query(null).set('Accept', 'application/json').end(function (err, response) {
         if (err) {
           alert('ERROR: ' + err);
           return;
         }
 
-        console.log(JSON.stringify(response.body.results));
         var results = response.body.results;
         var sensors = Object.assign([], _this2.state.softwareSensors);
         for (var i = 0; i < results.length; i++) {
           sensors.push(results[i].sensor);
         }_this2.setState({
           softwareSensors: sensors
+        });
+      });
+
+      // get the list of device
+      _superagent2.default.get('/api/device').query(null).set('Accept', 'application/json').end(function (err, response) {
+        if (err) {
+          alert('ERROR: ' + err);
+          return;
+        }
+
+        var results = response.body.results;
+        var devices = Object.assign([], _this2.state.devices);
+        for (var i = 0; i < results.length; i++) {
+          devices.push(results[i].device);
+        }_this2.setState({
+          devices: devices
+        });
+      });
+
+      // get the list of hardware sensors
+      _superagent2.default.get('/api/devicesensor').query(null).set('Accept', 'application/json').end(function (err, response) {
+        if (err) {
+          alert('ERROR: ' + err);
+          return;
+        }
+
+        var results = response.body.results;
+        var devicesensors = Object.assign([], _this2.state.devicesensors);
+        for (var i = 0; i < results.length; i++) {
+          var sensor = results[i].sensorName + "(" + results[i].device + ")";
+          devicesensors.push(sensor);
+        }
+
+        _this2.setState({
+          devicesensors: devicesensors
         });
       });
     }
@@ -35952,7 +36146,7 @@ var JSONSchemaForm = function (_Component) {
       var _this3 = this;
 
       var software_sensor_schema = {
-        title: "Software Sensor Form",
+        title: "Add Software Sensor",
         type: "object",
         properties: {
           sensor: {
@@ -35962,13 +36156,25 @@ var JSONSchemaForm = function (_Component) {
         }
       };
 
+      var device_schema = {
+        title: "Add Device",
+        type: "object",
+        properties: {
+          device: {
+            type: "string",
+            title: "Device Name"
+          }
+        }
+      };
+
       var device_sensor_schema = {
-        title: "Device Sensor Form",
+        title: "Add Raw Sensor from Device",
         type: "object",
         required: ["device"],
         properties: {
           device: {
             type: "string",
+            enum: this.state.devices,
             title: "Device"
           },
           sensorName: {
@@ -35979,7 +36185,7 @@ var JSONSchemaForm = function (_Component) {
       };
 
       var sensor_inference_schema = {
-        title: "Sensor Inference Form",
+        title: "Add Sensor Inference",
         type: "object",
         properties: {
           reference: {
@@ -35994,7 +36200,7 @@ var JSONSchemaForm = function (_Component) {
               properties: {
                 deviceType: {
                   type: "string",
-                  enum: ["Phone", "Watch", "Shoes"],
+                  enum: this.state.devices,
                   title: "Device"
                 },
                 sensorList: {
@@ -36005,6 +36211,7 @@ var JSONSchemaForm = function (_Component) {
                     properties: {
                       sensorName: {
                         type: "string",
+                        enum: this.state.devicesensors.concat(this.state.softwareSensors),
                         title: "Sensor Name"
                       },
                       attributes: {
@@ -36047,7 +36254,7 @@ var JSONSchemaForm = function (_Component) {
       };
 
       var inference_description_schema = {
-        title: "Inference Description Form",
+        title: "Add Inference Description",
         type: "object",
         properties: {
           inferenceName: {
@@ -36062,7 +36269,7 @@ var JSONSchemaForm = function (_Component) {
       };
 
       var app_sensor_schema = {
-        title: "Application Sensor Form",
+        title: "Add Software Sensor from App",
         type: "object",
         properties: {
           application: {
@@ -36080,7 +36287,7 @@ var JSONSchemaForm = function (_Component) {
             type: "array",
             items: {
               type: "string",
-              enum: ["Phone", "Watch", "Shoes"]
+              enum: this.state.devices
             }
           }
         }
@@ -36094,7 +36301,9 @@ var JSONSchemaForm = function (_Component) {
         return _this3.submit({ formData: formData });
       };
       var schema = this.props.collection.schema;
-      var schemaDict = { 'device_sensor_schema': device_sensor_schema,
+      var schemaDict = {
+        'device_schema': device_schema,
+        'device_sensor_schema': device_sensor_schema,
         'sensor_inference_schema': sensor_inference_schema,
         'inference_description_schema': inference_description_schema,
         'app_sensor_schema': app_sensor_schema,
