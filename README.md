@@ -22,3 +22,8 @@ Current state of the art requires the study designer to manully draft the consen
   - In the project root directory, run ```nodemon```.
 - Start webpack: ```webpack -w```.
 
+## Presentation Slides
+https://docs.google.com/presentation/d/1ZfEp880_Ih8y8vWAyiAExVkn6fmBr3YiakLgA2aWwKI/edit?usp=sharing
+
+## Demo Video
+https://drive.google.com/a/g.ucla.edu/file/d/0B43qfJfyhlkVNXNaWDY3MGRmMWc/view?usp=sharing
