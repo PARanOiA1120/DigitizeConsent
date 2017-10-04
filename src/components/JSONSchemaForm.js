@@ -143,7 +143,7 @@ class JSONSchemaForm extends Component {
       properties: {
         reference: {
           type: "string",
-          title: "Reference"
+          title: "Reference (e.g. papers, any kind of source you get this inference)"
         },
         deviceList: {
           type: "array",
@@ -231,6 +231,7 @@ class JSONSchemaForm extends Component {
         },
         softwareSensor: {
           type: "array",
+          title: "Software Sensor (data collected from software application)",
           items: {
             type: "string",
             enum: this.state.softwareSensors
@@ -238,6 +239,7 @@ class JSONSchemaForm extends Component {
         },
         supportedDevices: {
           type: "array",
+          title: "Supported Devices",
           items: {
             type: "string",
             enum: this.state.devices,

@@ -7,12 +7,12 @@ class CreateDBEntry extends Component{
 		super()
 		this.state = {
 			collectionList: [
-				{title: 'Device', action: '/api/device', schema: 'device_schema'},
-				{title: 'Software-Sensor', action: '/api/swsensor', schema: 'software_sensor_schema'},
-				{title: 'App-Sensor', action: '/api/appsensor', schema: 'app_sensor_schema'},
-				{title: 'Device-Sensor', action: '/api/devicesensor', schema: 'device_sensor_schema'},
-				{title: 'Sensor-Inference', action: '/api/sensorinference', schema: 'sensor_inference_schema'},
-				{title: 'Inference-Description', action: '/api/inferencedescription', schema: 'inference_description_schema'},
+				{title: 'Device (add a new device)', action: '/api/device', schema: 'device_schema'},
+				{title: 'Device Sensor (add a raw sensor to a specific device)', action: '/api/devicesensor', schema: 'device_sensor_schema'},
+				{title: 'Software Sensor (add a new type of data that can be collected from software applications)', action: '/api/swsensor', schema: 'software_sensor_schema'},
+				{title: 'Application (add a new application along with the types of data collected and devices supported)', action: '/api/appsensor', schema: 'app_sensor_schema'},
+				{title: 'Sensor Inference (add a new inference with the devices and sensors produce that inference)', action: '/api/sensorinference', schema: 'sensor_inference_schema'},
+				{title: 'Inference Description (add keyword and inference description mapping)', action: '/api/inferencedescription', schema: 'inference_description_schema'},
 			],
 			selectedCollection: {},
 			switchToReview: false
@@ -53,7 +53,7 @@ class CreateDBEntry extends Component{
 					:
 					<select className="form-control" id="db" style={formStyle.selectionBox}
 						onChange={this.updateSelection.bind(this)}>
-						<option>-------------- Select a Table --------------</option>
+						<option>-------------- Select a Form --------------</option>
 						{options}
 					</select>
 				}
