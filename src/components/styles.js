@@ -1,18 +1,20 @@
 export default {
 	universal: {
 		hr: {
-			borderColor: 'lightgrey', 
+			borderColor: 'lightgrey',
 			width:95+'%'
 		}
 
 	},
 	navBar: {
-		width:100+'%', 
-		padding:0, 
-		margin:0, 
-		background:'#f9f9f9', 
-		fontSize:14, 
-		fontWeight:500
+		width:100+'%',
+		padding:0,
+		margin:0,
+		background:'#f9f9f9',
+		fontSize:14,
+		fontWeight:500,
+		fontColor:'white',
+		boxShadow: '3px 3px 3px lightgrey'
 	},
 	form: {
 		container: {
@@ -47,12 +49,12 @@ export default {
 			marginLeft:"40%"
 		},
 		formgroup: {
-			width:95+'%', 
-			marginLeft:'auto', 
+			width:95+'%',
+			marginLeft:'auto',
 			marginRight:'auto',
 		},
 		label: {
-			float:'left', 
+			float:'left',
 			marginRight:2+'%',
 			fontSize: 15
 		},

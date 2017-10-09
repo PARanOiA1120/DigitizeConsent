@@ -7,19 +7,34 @@ class App extends Component {
 
 	constructor(){
 		super()
+		this.state = {
+			isSignedIn: false,
+			user_email: ''
+		}
 	}
 
 
 	componentDidMount() {
 	}
 
+	updateSingnInStatus(status) {
+		this.setState({
+			isSignedIn: true
+		}, () => {
+			console.log("sign in status: " + this.state.isSignedIn);
+		})
+	}
+
 
 	render(){
 		return (
 			<div>
-
-				<Login />
-
+  			{this.state.isSignedIn == false &&
+					<Login updateSingnInStatus={this.updateSingnInStatus.bind(this)}/>
+				}
+				{this.state.isSignedIn == true &&
+					<Homepage />
+				}
 			</div>
 		);
 	}
