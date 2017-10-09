@@ -74,10 +74,16 @@ class ConsentForm extends Component {
 		const selectedSection = this.state.sectionList[index]
 		var content = ""
 		// console.log('added section: ' + JSON.stringify(selectedSection))
-		inferences.forEach((inference) => {
-			// console.log("inference: " + JSON.stringify(inference))
-			content += inference["inference"]["description"] + '<br/>'
-		})
+
+		if(inferences.length == 0){
+			content += "There are no known privacy risks for the data being collected in this study."
+		} else {
+			inferences.forEach((inference) => {
+				// console.log("inference: " + JSON.stringify(inference))
+				content += inference["inference"]["description"] + '<br/>'
+			})
+
+		}
 
 		selectedSection["content"] = content
 

@@ -1,56 +1,43 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-import ConsentForm from './components/ConsentForm'
-import NavBar from './components/NavBar'
-import CreateDBEntry from './components/CreateDBEntry'
+import Homepage from './components/Homepage'
+import Login from './components/Login'
 
 class App extends Component {
 
 	constructor(){
 		super()
 		this.state = {
-			tab: ""
+			isSignedIn: false,
+			user_email: ''
 		}
 	}
 
-	updateTab(tab){
-		let updatedTab = Object.assign("", this.state.tab)
-		updatedTab = tab
-
-		this.setState({
-			tab: updatedTab
-		})
-	}
 
 	componentDidMount() {
-		const url = location.href.substr(location.href.lastIndexOf('/') + 1)
-		if (url == "#addData"){
-			this.updateTab("addData")
-		} else if (url == "#searchDB"){
-			this.updateTab("searchDB")
-		} else {
-			this.updateTab("consentForm")
-		}
+	}
+
+	updateSingnInStatus(status) {
+		this.setState({
+			isSignedIn: true
+		}, () => {
+			console.log("sign in status: " + this.state.isSignedIn);
+		})
 	}
 
 
 	render(){
-
 		return (
 			<div>
-				<NavBar currentTab={this.state.tab} onChange={this.updateTab.bind(this)}/>
-
-				{this.state.tab == "consentForm" &&
-					<ConsentForm/>	
+  			{this.state.isSignedIn == false &&
+					<Login updateSingnInStatus={this.updateSingnInStatus.bind(this)}/>
 				}
-
-				{this.state.tab == "addData" &&
-					<CreateDBEntry />
-
-				}		
+				{this.state.isSignedIn == true &&
+					<Homepage />
+				}
 			</div>
 		);
 	}
 }
 
-ReactDOM.render(<App />, document.getElementById('root')) 
+ReactDOM.render(<App />, document.getElementById('root'))

@@ -75,15 +75,20 @@ class Review extends Component {
 		// 	})
 		// }
 		// else {
-			console.log("data submitted: " + JSON.stringify(this.state.formData))
-			fetch(this.props.collection.action, {
-		      method: 'POST',
-		      headers: {
-		        'Accept': 'application/json',
-		        'Content-Type': 'application/json'
-		      },
-		      body: JSON.stringify(this.state.formData)
-		    })
+
+			superagent
+			.post(this.props.collection.action)
+			.send(this.state.formData)
+			.set('Accept', 'application/json')
+			.end((err, response) => {
+				if(err){
+					alert('ERROR: '+err)
+					return
+				}
+
+				alert("Data submitted. Thanks for your contribution!")
+				window.location.href="http://localhost:3000/"
+			})
 		// }
 	}
 

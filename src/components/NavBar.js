@@ -23,7 +23,7 @@ class NavBar extends Component {
 
 	toggleConsentForm(){
 		document.getElementById('consentForm').className = "active";
-		document.getElementById('searchDB').className = "searchDB"; 
+		document.getElementById('searchDB').className = "searchDB";
 		document.getElementById('addData').className = "addData";
 
 		this.updateTab("consentForm")
@@ -31,7 +31,7 @@ class NavBar extends Component {
 
 	toggleSearchDB(){
 		document.getElementById('consentForm').className = "consentForm";
-		document.getElementById('searchDB').className = "active"; 
+		document.getElementById('searchDB').className = "active";
 		document.getElementById('addData').className = "addData";
 
 		this.updateTab("searchDB")
@@ -39,7 +39,7 @@ class NavBar extends Component {
 
 	toggleAddData(){
 		document.getElementById('consentForm').className = "consentForm";
-		document.getElementById('searchDB').className = "searchDB"; 
+		document.getElementById('searchDB').className = "searchDB";
 		document.getElementById('addData').className = "active";
 
 		this.updateTab("addData")

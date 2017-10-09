@@ -13,6 +13,7 @@ class FormSection extends Component {
       appList: [], //appsensor objects
       apps: [], //app name list
       selectedApp:'',
+      
 
       swsensorListforSelectedApp: [],
       supportedDevices: [],
@@ -37,6 +38,8 @@ class FormSection extends Component {
       attrNameC: "", // attribute name and value for customized attributes
       attrValueC: "",
 
+      trustedAppList: [],
+      trustedDeviceList: [],
       queryData: {},
       queryResults: []
     }
@@ -263,6 +266,23 @@ class FormSection extends Component {
         var sensorObj = {}
         sensorObj["sensorName"] = sensor
 
+        var trustedApps = this.state.trustedAppList
+        if(trustedApps.indexOf(this.state.selectedApp) == -1){
+          trustedApps.push(this.state.selectedApp)
+        }
+
+        var trustedDevices = this.state.trustedDeviceList
+        this.state.selectedDeviceforApp.forEach((device) => {
+          if(trustedDevices.indexOf(device) == -1){
+            trustedDevices.push(device)
+          }
+        })
+
+        this.setState({
+          trustedAppList: trustedApps,
+          trustedDeviceList: trustedDevices
+        })
+
         if(queryData[device]){
           if(queryData[device].map((sensor) => sensor.sensorName).indexOf(sensor) == -1)
             queryData[device].push(sensorObj)
@@ -327,17 +347,30 @@ class FormSection extends Component {
   addSensor(event){
     // generate context to display in the section
     let updatedSectionContent = this.state.section.content
-    updatedSectionContent += "The study uses " + this.state.selectedSensor + " on " + this.state.selectedDevice + " with attribute "
+    updatedSectionContent += "This study uses " + this.state.selectedSensor + " on " + this.state.selectedDevice
+
+    //update trusted devices
+    let trustedDevices = this.state.trustedDeviceList
+    if(trustedDevices.indexOf(this.state.selectedDevice) == -1){
+      trustedDevices.push(this.state.selectedDevice)
+
+      this.setState({
+        trustedDeviceList: trustedDevices
+      })
+    }
 
     let attributes = this.state.currentAttributes
-    let i = 1
-    Object.keys(attributes).map(function(key){
-      if(i == 1)
-        updatedSectionContent += key + " set to " + attributes[key]
-      else
-        updatedSectionContent += ", " + key + " set to " + attributes[key];
-      i += 1
-    })
+    if(attributes.length > 0){
+      updatedSectionContent += " with attribute "
+      let i = 1
+      Object.keys(attributes).map(function(key){
+        if(i == 1)
+          updatedSectionContent += key + " set to " + attributes[key]
+        else
+          updatedSectionContent += ", " + key + " set to " + attributes[key];
+        i += 1
+      })
+    }
 
     updatedSectionContent += "."
     this.updateSection(updatedSectionContent)
@@ -366,6 +399,50 @@ class FormSection extends Component {
   }
 
   generateRisks(event) {
+    // specify trusted entities
+    let context = this.state.text
+
+    let trustedApps = this.state.trustedAppList
+    let trustedDevices = this.state.trustedDeviceList
+
+    console.log("trustedDevices: " + trustedDevices)
+
+    if(trustedApps.length != 0 || trustedDevices.length != 0){
+      if(trustedApps.length > 0){
+        context += "<br/><p><strong>Trusted Entities</p></strong>"
+        context += "This study uses services from "
+        trustedApps.forEach((app) => {
+          context += app + ", "
+        })
+
+        if(trustedDevices.length > 0){
+          context += "and the "
+          trustedDevices.forEach((device) => {
+            context += device + ", "
+          })
+          context = context.slice(0, -2) + ' manufacturer.'
+        } else {
+          context = context.slice(0, -2) + '.'
+        }
+      } else {
+        if(trustedDevices.length > 0){
+          context += "<br/><p><strong>Trusted Entities</p></strong>"
+          context += "This study uses the "
+          trustedDevices.forEach((device) => {
+            context += device + ", "
+          })
+          context = context.slice(0, -2) + ' manufacturer.'
+        }
+      }
+
+      context += ' We trust that they will not collect any private information and misuse it.'
+
+      this.setState({
+        text: context
+      })
+    }
+
+
     // generate query data
     var sensorList = this.state.sensorList
     var queryData = this.state.queryData
@@ -621,7 +698,7 @@ class FormSection extends Component {
 
               {this.state.selectedApp != "" && this.state.selectedApp != "none" &&
                 <div className="form-group" style={formStyle.formgroup}>
-                  <label htmlFor="swsensor">Data collected from application (select all that applied):</label>
+                  <label htmlFor="swsensor">Data collected from application (select all that apply):</label>
                   <br/>
                   <select multiple className="form-control" id="swsensor" style={formStyle.selectionBox}
                     onChange={this.updateSoftwareSensor.bind(this)} value={this.state.selectedSWSeneors}>
@@ -629,7 +706,7 @@ class FormSection extends Component {
                   </select>
                   <br/><br/><br/><br/><br/>
                   
-                  <label htmlFor="appdevice">Device running the application (select all that applied):</label>
+                  <label htmlFor="appdevice">Device running the application (select all that apply):</label>
                   <select multiple className="form-control" id="supportedDevice" style={formStyle.selectionBox}
                     onChange={this.updateSelectedDevicesforApp.bind(this)} value={this.state.selectedDeviceforApp}>
                     {supportedDevicesOptions}
