@@ -13223,13 +13223,13 @@ var Login = function (_React$Component) {
 
       _axios2.default.get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + access_token).then(function (result) {
         // console.log(result);
-        _this2.props.setSingnInStatus(true);
 
         // save user login data to localStorage
         _this2.setUserProfile(result.data);
         _this2.setIdToken(id_token);
+        _this2.props.setSingnInStatus(true);
       }).catch(function (error) {
-        alert("ERROR: " + error.response.status);
+        alert("ERROR: " + error);
         return;
       });
     }
@@ -13380,6 +13380,7 @@ var NavBar = function (_Component) {
 			this.setState({
 				isSignedIn: this.props.isSignedIn
 			});
+			// this.getUserProfile();
 			var url = location.href.substr(location.href.lastIndexOf('/') + 1);
 			if (url == "#addData") {
 				this.toggleAddData();
@@ -13389,6 +13390,15 @@ var NavBar = function (_Component) {
 				this.updateTab("consentForm");
 			}
 		}
+		//
+		// getUserProfile(){
+		// 	this.setState({
+		// 		userProfile: JSON.parse(localStorage.getItem('profile') || '{}')
+		// 	}, () => {
+		// 		console.log("current user: " + JSON.stringify(this.state.userProfile));
+		// 	})
+		// }
+
 	}, {
 		key: 'toggleConsentForm',
 		value: function toggleConsentForm() {
@@ -13429,8 +13439,15 @@ var NavBar = function (_Component) {
 			});
 		}
 	}, {
+		key: 'logout',
+		value: function logout() {
+			this.props.logout();
+		}
+	}, {
 		key: 'render',
 		value: function render() {
+			var profile = JSON.parse(localStorage.getItem('profile'));
+			console.log(profile);
 			return _react2.default.createElement(
 				'nav',
 				{ className: 'navbar navbar-default', style: _styles2.default.navBar },
@@ -13458,7 +13475,7 @@ var NavBar = function (_Component) {
 							'mProv'
 						)
 					),
-					this.state.isSignedIn == true && _react2.default.createElement(
+					_react2.default.createElement(
 						'div',
 						{ className: 'collapse navbar-collapse', id: 'bs-example-navbar-collapse-1' },
 						_react2.default.createElement(
@@ -13489,6 +13506,38 @@ var NavBar = function (_Component) {
 									'a',
 									{ href: '#searchDB' },
 									'Search Database'
+								)
+							)
+						),
+						_react2.default.createElement(
+							'ul',
+							{ className: 'nav navbar-nav navbar-right' },
+							_react2.default.createElement(
+								'li',
+								{ className: 'dropdown', style: { float: 'right' } },
+								_react2.default.createElement(
+									'a',
+									{ href: '#', className: 'dropdown-toggle', 'data-toggle': 'dropdown', role: 'button', 'aria-haspopup': 'true', 'aria-expanded': 'false' },
+									' ',
+									profile.name,
+									' ',
+									_react2.default.createElement('span', { className: 'caret' })
+								),
+								_react2.default.createElement(
+									'ul',
+									{ className: 'dropdown-menu' },
+									_react2.default.createElement(
+										'li',
+										null,
+										'\xA0 ',
+										profile.email
+									),
+									_react2.default.createElement('li', { role: 'separator', className: 'divider' }),
+									_react2.default.createElement(
+										'li',
+										{ onClick: this.logout.bind(this) },
+										'\xA0 Sign Out'
+									)
 								)
 							)
 						)
@@ -32750,7 +32799,7 @@ Url.prototype.parseHost = function() {
 
 
 Object.defineProperty(exports, "__esModule", {
-	value: true
+  value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -32784,56 +32833,62 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var Homepage = function (_Component) {
-	_inherits(Homepage, _Component);
+  _inherits(Homepage, _Component);
 
-	function Homepage() {
-		_classCallCheck(this, Homepage);
+  function Homepage() {
+    _classCallCheck(this, Homepage);
 
-		var _this = _possibleConstructorReturn(this, (Homepage.__proto__ || Object.getPrototypeOf(Homepage)).call(this));
+    var _this = _possibleConstructorReturn(this, (Homepage.__proto__ || Object.getPrototypeOf(Homepage)).call(this));
 
-		_this.state = {
-			tab: ""
-		};
-		return _this;
-	}
+    _this.state = {
+      tab: ""
+    };
+    return _this;
+  }
 
-	_createClass(Homepage, [{
-		key: 'updateTab',
-		value: function updateTab(tab) {
-			var updatedTab = Object.assign("", this.state.tab);
-			updatedTab = tab;
+  _createClass(Homepage, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var url = location.href.substr(location.href.lastIndexOf('/') + 1);
+      if (url == "#addData") {
+        this.updateTab("addData");
+      } else if (url == "#searchDB") {
+        this.updateTab("searchDB");
+      } else {
+        this.updateTab("consentForm");
+      }
+    }
+  }, {
+    key: 'updateTab',
+    value: function updateTab(tab) {
+      var updatedTab = Object.assign("", this.state.tab);
+      updatedTab = tab;
 
-			this.setState({
-				tab: updatedTab
-			});
-		}
-	}, {
-		key: 'componentDidMount',
-		value: function componentDidMount() {
-			var url = location.href.substr(location.href.lastIndexOf('/') + 1);
-			if (url == "#addData") {
-				this.updateTab("addData");
-			} else if (url == "#searchDB") {
-				this.updateTab("searchDB");
-			} else {
-				this.updateTab("consentForm");
-			}
-		}
-	}, {
-		key: 'render',
-		value: function render() {
-			return _react2.default.createElement(
-				'div',
-				null,
-				_react2.default.createElement(_NavBar2.default, { currentTab: this.state.tab, onChange: this.updateTab.bind(this), isSignedIn: this.props.isSignedIn }),
-				this.state.tab == "consentForm" && _react2.default.createElement(_ConsentForm2.default, null),
-				this.state.tab == "addData" && _react2.default.createElement(_CreateDBEntry2.default, null),
-				this.state.tab == "searchDB" && _react2.default.createElement('br', null)
-			);
-		}
-	}]);
+      this.setState({
+        tab: updatedTab
+      });
+    }
+  }, {
+    key: 'logout',
+    value: function logout() {
+      this.props.logout();
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'div',
+        null,
+        _react2.default.createElement(_NavBar2.default, { currentTab: this.state.tab, onChange: this.updateTab.bind(this), isSignedIn: this.props.isSignedIn,
+          logout: this.logout.bind(this) }),
+        this.state.tab == "consentForm" && _react2.default.createElement(_ConsentForm2.default, null),
+        this.state.tab == "addData" && _react2.default.createElement(_CreateDBEntry2.default, null),
+        this.state.tab == "searchDB" && _react2.default.createElement('br', null)
+      );
+    }
+  }]);
 
-	return Homepage;
+  return Homepage;
 }(_react.Component);
 
 exports.default = Homepage;
@@ -32884,36 +32939,25 @@ var App = function (_Component) {
 		var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
 
 		_this.state = {
-			isSignedIn: false,
-			userProfile: {}
+			isSignedIn: false
 		};
-		_this.isLoggedIn();
 		return _this;
 	}
 
 	_createClass(App, [{
 		key: 'componentDidMount',
-		value: function componentDidMount() {}
+		value: function componentDidMount() {
+			this.isLoggedIn();
+		}
 	}, {
 		key: 'setSingnInStatus',
 		value: function setSingnInStatus(status) {
 			var _this2 = this;
 
 			this.setState({
-				isSignedIn: true
+				isSignedIn: status
 			}, function () {
 				console.log("sign in status: " + _this2.state.isSignedIn);
-			});
-		}
-	}, {
-		key: 'getUserProfile',
-		value: function getUserProfile() {
-			var _this3 = this;
-
-			this.setState({
-				userProfile: JSON.parse(localStorage.getItem('profile') || '{}')
-			}, function () {
-				console.log(_this3.state.userProfile);
 			});
 		}
 	}, {
@@ -32924,7 +32968,7 @@ var App = function (_Component) {
 	}, {
 		key: 'isLoggedIn',
 		value: function isLoggedIn() {
-			var _this4 = this;
+			var _this3 = this;
 
 			var id_token = this.getIdToken();
 			console.log("id token: " + id_token);
@@ -32935,23 +32979,24 @@ var App = function (_Component) {
 				_axios2.default.get("https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + id_token).then(function (result) {
 					console.log(result);
 					if (result.status == 200) {
-						_this4.setSingnInStatus(true);
-						_this4.getUserProfile();
+						_this3.setSingnInStatus(true);
 					} else {
-						_this4.setSingnInStatus(false);
+						_this3.setSingnInStatus(false);
 					}
 				}).catch(function (error) {
-					_this4.setSingnInStatus(false);
+					_this3.setSingnInStatus(false);
+					_this3.logout();
 					console.log(error);
-					return;
 				});
 			}
 		}
 	}, {
 		key: 'logout',
 		value: function logout() {
+			console.log("logging out...");
 			localStorage.removeItem('profile');
 			localStorage.removeItem('id_token');
+			window.location.reload();
 		}
 	}, {
 		key: 'render',
@@ -32960,7 +33005,7 @@ var App = function (_Component) {
 				'div',
 				null,
 				this.state.isSignedIn == false && _react2.default.createElement(_Login2.default, { setSingnInStatus: this.setSingnInStatus.bind(this) }),
-				this.state.isSignedIn == true && _react2.default.createElement(_Homepage2.default, { isSignedIn: this.state.isSignedIn })
+				this.state.isSignedIn == true && _react2.default.createElement(_Homepage2.default, { isSignedIn: this.state.isSignedIn, logout: this.logout.bind(this) })
 			);
 		}
 	}]);

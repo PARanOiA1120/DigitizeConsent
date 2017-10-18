@@ -7,7 +7,7 @@ class NavBar extends Component {
 		super()
 		this.state = {
 			currentTab: "",
-			isSignedIn: false
+			isSignedIn: false,
 		}
 	}
 
@@ -15,6 +15,7 @@ class NavBar extends Component {
 		this.setState({
 			isSignedIn: this.props.isSignedIn
 		})
+		// this.getUserProfile();
 		const url = location.href.substr(location.href.lastIndexOf('/') + 1)
 		if (url == "#addData"){
 			this.toggleAddData()
@@ -24,6 +25,14 @@ class NavBar extends Component {
 			this.updateTab("consentForm")
 		}
 	}
+	//
+	// getUserProfile(){
+	// 	this.setState({
+	// 		userProfile: JSON.parse(localStorage.getItem('profile') || '{}')
+	// 	}, () => {
+	// 		console.log("current user: " + JSON.stringify(this.state.userProfile));
+	// 	})
+	// }
 
 	toggleConsentForm(){
 		document.getElementById('consentForm').className = "active";
@@ -58,32 +67,45 @@ class NavBar extends Component {
 		this.setState ({
 			currentTab: updatedTab
 		})
+	}
 
+	logout() {
+		this.props.logout();
 	}
 
 	render(){
+		const profile = JSON.parse(localStorage.getItem('profile'));
+		console.log(profile);
 		return(
 			<nav className="navbar navbar-default" style={styles.navBar}>
 				<div className="container-fluid">
 					<div className="navbar-header">
-      					<button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-        					<span className="sr-only">Toggle navigation</span>
-        					<span className="icon-bar"></span>
-        					<span className="icon-bar"></span>
-        					<span className="icon-bar"></span>
-      					</button>
-      					<a className="navbar-brand" href="#">mProv</a>
-    				</div>
+  					<button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+    					<span className="sr-only">Toggle navigation</span>
+    					<span className="icon-bar"></span>
+    					<span className="icon-bar"></span>
+    					<span className="icon-bar"></span>
+  					</button>
+  					<a className="navbar-brand" href="#">mProv</a>
+    			</div>
 
-						{ this.state.isSignedIn == true &&
-					    <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-					      <ul className="nav navbar-nav">
-					        <li onClick={ this.toggleConsentForm.bind(this)} className="active" id="consentForm"><a href="">Consent Form Generator</a></li>
-					        <li onClick={ this.toggleAddData.bind(this)} id="addData"><a href="#addData">Create Data Record</a></li>
-					        <li onClick={ this.toggleSearchDB.bind(this)} id="searchDB"><a href="#searchDB">Search Database</a></li>
+			    <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			      <ul className="nav navbar-nav">
+			        <li onClick={ this.toggleConsentForm.bind(this)} className="active" id="consentForm"><a href="">Consent Form Generator</a></li>
+			        <li onClick={ this.toggleAddData.bind(this)} id="addData"><a href="#addData">Create Data Record</a></li>
+			        <li onClick={ this.toggleSearchDB.bind(this)} id="searchDB"><a href="#searchDB">Search Database</a></li>
+						</ul>
+						<ul className="nav navbar-nav navbar-right">
+							<li className="dropdown" style={{float: 'right'}}>
+								<a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> { profile.name } <span className="caret"></span></a>
+								<ul className="dropdown-menu">
+									<li>&nbsp; { profile.email }</li>
+									<li role="separator" className="divider"></li>
+									<li onClick={ this.logout.bind(this) }>&nbsp; Sign Out</li>
 								</ul>
-					    </div>
-						}
+							</li>
+						</ul>
+			    </div>
 				</div>
 			</nav>
 		)

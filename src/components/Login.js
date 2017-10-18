@@ -23,15 +23,15 @@ class Login extends React.Component{
       .get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + access_token)
       .then((result) => {
         // console.log(result);
-        this.props.setSingnInStatus(true);
 
         // save user login data to localStorage
         this.setUserProfile(result.data);
         this.setIdToken(id_token);
+        this.props.setSingnInStatus(true);
 
       })
       .catch((error) => {
-        alert("ERROR: " + error.response.status);
+        alert("ERROR: " + error);
         return;
       });
   }
@@ -50,7 +50,6 @@ class Login extends React.Component{
 
     return (
       <div style={{backgroundColor:'#f9f9f9', height:100+'%'}}>
-
         <div className="container" style={{marginTop:30, height: 'calc(100vh - 52px)'}}>
           <div className="intro" style={{width:70+'%', float:'left'}}>
             <h2>Digitize Your Consent Form</h2>

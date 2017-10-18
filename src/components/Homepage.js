@@ -12,15 +12,6 @@ class Homepage extends Component {
 		}
 	}
 
-	updateTab(tab){
-		let updatedTab = Object.assign("", this.state.tab)
-		updatedTab = tab
-
-		this.setState({
-			tab: updatedTab
-		})
-	}
-
 	componentDidMount() {
 		const url = location.href.substr(location.href.lastIndexOf('/') + 1)
 		if (url == "#addData"){
@@ -32,10 +23,24 @@ class Homepage extends Component {
 		}
 	}
 
+  updateTab(tab){
+    let updatedTab = Object.assign("", this.state.tab)
+    updatedTab = tab
+
+    this.setState({
+      tab: updatedTab
+    })
+  }
+
+  logout() {
+    this.props.logout();
+  }
+
   render(){
     return (
       <div>
-        <NavBar currentTab={this.state.tab} onChange={this.updateTab.bind(this)} isSignedIn={this.props.isSignedIn}/>
+        <NavBar currentTab={this.state.tab} onChange={this.updateTab.bind(this)} isSignedIn={this.props.isSignedIn}
+          logout={ this.logout.bind(this) }/>
 
         {this.state.tab == "consentForm" &&
           <ConsentForm/>

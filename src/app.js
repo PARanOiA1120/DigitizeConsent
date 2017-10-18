@@ -9,29 +9,19 @@ class App extends Component {
 	constructor(){
 		super()
 		this.state = {
-			isSignedIn: false,
-			userProfile: {}
+			isSignedIn: false
 		}
-		this.isLoggedIn();
 	}
 
 	componentDidMount() {
-
+		this.isLoggedIn();
 	}
 
 	setSingnInStatus(status) {
 		this.setState({
-			isSignedIn: true
+			isSignedIn: status
 		}, () => {
 			console.log("sign in status: " + this.state.isSignedIn);
-		})
-	}
-
-	getUserProfile(){
-		this.setState({
-			userProfile: JSON.parse(localStorage.getItem('profile') || '{}')
-		}, () => {
-			console.log(this.state.userProfile);
 		})
 	}
 
@@ -52,22 +42,23 @@ class App extends Component {
 					console.log(result);
 					if(result.status == 200 ){
 						this.setSingnInStatus(true);
-						this.getUserProfile();
 					} else {
 						this.setSingnInStatus(false);
 					}
 				})
 				.catch((error) => {
 					this.setSingnInStatus(false);
+					this.logout();
 					console.log(error);
-					return;
 				})
 		}
 	}
 
 	logout() {
+		console.log("logging out...");
 		localStorage.removeItem('profile');
 		localStorage.removeItem('id_token');
+		window.location.reload();
 	}
 
 
@@ -75,10 +66,10 @@ class App extends Component {
 		return (
 			<div>
   			{this.state.isSignedIn == false &&
-					<Login setSingnInStatus={this.setSingnInStatus.bind(this)}/>
+					<Login setSingnInStatus={ this.setSingnInStatus.bind(this) }/>
 				}
 				{this.state.isSignedIn == true &&
-					<Homepage isSignedIn={this.state.isSignedIn}/>
+					<Homepage isSignedIn={ this.state.isSignedIn } logout={ this.logout.bind(this)} />
 				}
 			</div>
 		);
