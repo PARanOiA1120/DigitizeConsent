@@ -6,11 +6,15 @@ class NavBar extends Component {
 	constructor(){
 		super()
 		this.state = {
-			currentTab: ""
+			currentTab: "",
+			isSignedIn: false
 		}
 	}
 
 	componentDidMount() {
+		this.setState({
+			isSignedIn: this.props.isSignedIn
+		})
 		const url = location.href.substr(location.href.lastIndexOf('/') + 1)
 		if (url == "#addData"){
 			this.toggleAddData()
@@ -71,13 +75,15 @@ class NavBar extends Component {
       					<a className="navbar-brand" href="#">mProv</a>
     				</div>
 
-				    <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-				      <ul className="nav navbar-nav">
-				        <li onClick={ this.toggleConsentForm.bind(this)} className="active" id="consentForm"><a href="">Consent Form Generator</a></li>
-				        <li onClick={ this.toggleAddData.bind(this)} id="addData"><a href="#addData">Create Data Record</a></li>
-				        <li onClick={ this.toggleSearchDB.bind(this)} id="searchDB"><a href="#searchDB">Search Database</a></li>
-				      </ul>
-				    </div>
+						{ this.state.isSignedIn == true &&
+					    <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					      <ul className="nav navbar-nav">
+					        <li onClick={ this.toggleConsentForm.bind(this)} className="active" id="consentForm"><a href="">Consent Form Generator</a></li>
+					        <li onClick={ this.toggleAddData.bind(this)} id="addData"><a href="#addData">Create Data Record</a></li>
+					        <li onClick={ this.toggleSearchDB.bind(this)} id="searchDB"><a href="#searchDB">Search Database</a></li>
+								</ul>
+					    </div>
+						}
 				</div>
 			</nav>
 		)

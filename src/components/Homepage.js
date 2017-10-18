@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom'
 import ConsentForm from './ConsentForm'
 import NavBar from './NavBar'
 import CreateDBEntry from './CreateDBEntry'
-import Login from './Login'
 
 class Homepage extends Component {
   constructor(){
@@ -36,7 +35,7 @@ class Homepage extends Component {
   render(){
     return (
       <div>
-        <NavBar currentTab={this.state.tab} onChange={this.updateTab.bind(this)}/>
+        <NavBar currentTab={this.state.tab} onChange={this.updateTab.bind(this)} isSignedIn={this.props.isSignedIn}/>
 
         {this.state.tab == "consentForm" &&
           <ConsentForm/>
@@ -45,7 +44,7 @@ class Homepage extends Component {
           <CreateDBEntry />
         }
         {this.state.tab == "searchDB" &&
-          <Login />
+          <br/>
         }
       </div>
     );

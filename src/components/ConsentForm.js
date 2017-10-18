@@ -32,10 +32,10 @@ class ConsentForm extends Component {
 				return
 			}
 
-			console.log(JSON.stringify(response.body.results))
+			// console.log(JSON.stringify(response.body.results))
 			let results = response.body.results
 
-			this.setState({ 
+			this.setState({
 				sectionList: results
 			})
 		})
@@ -56,7 +56,7 @@ class ConsentForm extends Component {
 		const index = _.findIndex(this.state.sectionList, ['title', this.state.selected])
 		const selectedSection = this.state.sectionList[index]
 		// console.log('added section: ' + JSON.stringify(selectedSection))
-		
+
 		let updatedSections = Object.assign([], this.state.selectedSectionList)
 		updatedSections.push(selectedSection)
 
@@ -66,7 +66,7 @@ class ConsentForm extends Component {
 			this.updateFullText()
 		})
 
-		
+
 	}
 
 	addRiskSection(title, inferences){
@@ -148,7 +148,7 @@ class ConsentForm extends Component {
 			// content += "</p>"
 			content += '<br/>'
 		}
-	
+
 		content += this.state.full_text
 
 		let updatedFormContent = Object.assign("", this.state.context)
@@ -189,11 +189,11 @@ class ConsentForm extends Component {
 
 					<div className="form-group" style={formStyle.formgroup}>
 						<label style={formStyle.label}>Title: </label>
-						<input className="form-control" style={{width: 40+'%'}} 
+						<input className="form-control" style={{width: 40+'%'}}
 							onChange={this.updateTitle.bind(this)}
 							value={this.state.title}
 							/>
-						
+
 						<hr style={universalStyle.hr}/>
 
 						<label htmlFor="section" style={formStyle.label}>Select section to add:</label>
@@ -213,13 +213,13 @@ class ConsentForm extends Component {
 					</div>
 
 				</div>
-				
+
 				<div className="rightpanel" style={formStyle.rightpanel}>
 					<h4 style={formStyle.header}>Consent Form Viewer</h4>
 					<div style={formStyle.preview}>
 						<ContentPreview content={this.state.context} />
 					</div>
-					
+
 					<DownloadPDF content={this.state.context} />
 				</div>
 			</div>

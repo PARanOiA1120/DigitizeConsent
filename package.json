@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "axios": "^0.16.2",
     "babel-preset-es2015": "^6.24.1",
     "body-parser": "~1.17.1",
     "cookie-parser": "~1.4.3",

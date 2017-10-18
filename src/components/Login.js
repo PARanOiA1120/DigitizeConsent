@@ -3,20 +3,47 @@ import { render } from "react-dom";
 import superagent from 'superagent';
 import { GoogleLogin } from 'react-google-login-component';
 import NavBar from './NavBar'
+import axios from 'axios';
 
 class Login extends React.Component{
   constructor (props, context) {
     super(props, context);
     this.state={
+      profile: {},
+
     }
   }
 
   responseGoogle (googleUser) {
-    var id_token = googleUser.getAuthResponse().id_token;
-    console.log(googleUser.getAuthResponse());
-    //anything else you want to do(save to localStorage)...
-    this.props.updateSingnInStatus(true);
+    var res = googleUser.getAuthResponse();
+    var id_token = res.id_token;
+    var access_token = res.access_token;
+
+    axios
+      .get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + access_token)
+      .then((result) => {
+        // console.log(result);
+        this.props.setSingnInStatus(true);
+
+        // save user login data to localStorage
+        this.setUserProfile(result.data);
+        this.setIdToken(id_token);
+
+      })
+      .catch((error) => {
+        alert("ERROR: " + error.response.status);
+        return;
+      });
   }
+
+  setUserProfile(profile) {
+    localStorage.setItem('profile', JSON.stringify(profile));
+  }
+
+  setIdToken(token) {
+    localStorage.setItem('id_token', token);
+  }
+
 
   render () {
     const google_logo = <span><span className='fa fa-google fa-2x' style={{color:'white', float:'left', marginLeft:20+'px'}}></span><span style={{float:'right', marginRight:40+'px'}}>Sign in with Google</span></span>;
