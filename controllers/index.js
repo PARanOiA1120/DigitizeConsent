@@ -5,6 +5,7 @@ var InferenceController = require('./InferenceController')
 var AppSensorController = require('./AppSensorController')
 var SoftwareSensorController = require('./SoftwareSensorController')
 var DeviceController = require('./DeviceController')
+var UserController = require('./UserController')
 
 module.exports = {
 	formsection: FormSectionController,
@@ -13,5 +14,6 @@ module.exports = {
 	inferencedescription: InferenceController,
 	appsensor: AppSensorController,
 	swsensor: SoftwareSensorController,
-	device: DeviceController
+	device: DeviceController,
+	user: UserController
 }

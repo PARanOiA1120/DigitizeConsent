@@ -22,13 +22,40 @@ class Login extends React.Component{
     axios
       .get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + access_token)
       .then((result) => {
-        // console.log(result);
-
         // save user login data to localStorage
         this.setUserProfile(result.data);
         this.setIdToken(id_token);
         this.props.setSingnInStatus(true);
 
+        // check if user is our in the Database
+        var googleid = result.data.id;
+        superagent
+          .get('/api/user/')
+          .query({id: googleid})
+          .set('Accept', 'application/json')
+          .end((err, response) => {
+            if(err){
+              console.log("ERROR: " + err);
+              return
+            }
+
+            // if it's the first login, store user profile into db
+            console.log(response.body.results.length);
+            if(response.body.results.length == 0) {
+              superagent
+                .post('/api/user')
+                .send(result.data)
+                .set('Accept', 'application/json')
+                .end((err, response) => {
+                  if(err){
+                    alert('ERROR: '+err)
+              		  return
+              	  }
+              		console.log("user added: " + JSON.stringify(response));
+              })
+
+            }
+          })
       })
       .catch((error) => {
         alert("ERROR: " + error);

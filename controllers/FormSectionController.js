@@ -6,7 +6,7 @@ module.exports = {
 		FormSection.find(params, function(err, sections){
 			if(err){
 				callback(err, null)
-				return 
+				return
 			}
 			callback(null, sections)
 		})
@@ -16,8 +16,8 @@ module.exports = {
 		FormSection.findById(id, function(err, section){
 			if(err){
 				callback(err, null)
-				return 
-			} 
+				return
+			}
 			callback(null, section)
 		})
 	},
@@ -58,9 +58,7 @@ module.exports = {
 				callback(err, null)
 				return
 			}
-			callback(null, null )			
+			callback(null, null )
 		})
 	}
-
-
 }
