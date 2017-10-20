@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import ConsentForm from './ConsentForm'
 import NavBar from './NavBar'
 import CreateDBEntry from './CreateDBEntry'
+import Profile from './Profile'
 
 class Homepage extends Component {
   constructor(){
@@ -14,12 +15,14 @@ class Homepage extends Component {
 
 	componentDidMount() {
 		const url = location.href.substr(location.href.lastIndexOf('/') + 1)
-		if (url == "#addData"){
-			this.updateTab("addData")
+		if (url == "consentForm") {
+      this.updateTab("consentForm");
+    } else if(url == "#addData"){
+			this.updateTab("addData");
 		} else if (url == "#searchDB"){
-			this.updateTab("searchDB")
+			this.updateTab("searchDB");
 		} else {
-			this.updateTab("consentForm")
+			this.updateTab("profile");
 		}
 	}
 
@@ -42,14 +45,17 @@ class Homepage extends Component {
         <NavBar currentTab={this.state.tab} onChange={this.updateTab.bind(this)} isSignedIn={this.props.isSignedIn}
           logout={ this.logout.bind(this) }/>
 
+        {this.state.tab == "profile" &&
+          <Profile />
+        }
         {this.state.tab == "consentForm" &&
-          <ConsentForm/>
+          <ConsentForm />
         }
         {this.state.tab == "addData" &&
           <CreateDBEntry />
         }
         {this.state.tab == "searchDB" &&
-          <br/>
+          <br />
         }
       </div>
     );

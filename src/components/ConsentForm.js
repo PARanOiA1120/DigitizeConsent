@@ -162,11 +162,9 @@ class ConsentForm extends Component {
 	}
 
 
-
-
 	render(){
-		const formStyle = styles.form
-		const universalStyle = styles.universal
+		const formStyle = styles.form;
+		const universalStyle = styles.universal;
 
 		const options = this.state.sectionList.map((section, i) => {
 			return (
@@ -179,7 +177,6 @@ class ConsentForm extends Component {
 				<li key={i}><Section currentSection={section} addRiskSection={this.addRiskSection.bind(this)} onChange={this.updateSection.bind(this, i)}></Section></li>
 			)
 		})
-
 
 		return(
 			<div className="container" style={formStyle.container}>

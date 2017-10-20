@@ -17,24 +17,28 @@ class NavBar extends Component {
 		})
 		// this.getUserProfile();
 		const url = location.href.substr(location.href.lastIndexOf('/') + 1)
-		if (url == "#addData"){
-			this.toggleAddData()
+		if (url == "#consentForm"){
+			this.toggleConsentForm();
+		} else if(url == "#addData"){
+			this.toggleAddData();
 		} else if (url == "#searchDB"){
-			this.toggleSearchDB()
+			this.toggleSearchDB();
 		} else {
-			this.updateTab("consentForm")
+			this.toggleProfile();
 		}
 	}
-	//
-	// getUserProfile(){
-	// 	this.setState({
-	// 		userProfile: JSON.parse(localStorage.getItem('profile') || '{}')
-	// 	}, () => {
-	// 		console.log("current user: " + JSON.stringify(this.state.userProfile));
-	// 	})
-	// }
+
+	toggleProfile() {
+		document.getElementById('profile').className = "active";
+		document.getElementById('consentForm').className = "consentForm";
+		document.getElementById('searchDB').className = "searchDB";
+		document.getElementById('addData').className = "addData";
+
+		this.updateTab("profile")
+	}
 
 	toggleConsentForm(){
+		document.getElementById('profile').className = "profile";
 		document.getElementById('consentForm').className = "active";
 		document.getElementById('searchDB').className = "searchDB";
 		document.getElementById('addData').className = "addData";
@@ -43,6 +47,7 @@ class NavBar extends Component {
 	}
 
 	toggleSearchDB(){
+		document.getElementById('profile').className = "profile";
 		document.getElementById('consentForm').className = "consentForm";
 		document.getElementById('searchDB').className = "active";
 		document.getElementById('addData').className = "addData";
@@ -51,6 +56,7 @@ class NavBar extends Component {
 	}
 
 	toggleAddData(){
+		document.getElementById('profile').className = "profile";
 		document.getElementById('consentForm').className = "consentForm";
 		document.getElementById('searchDB').className = "searchDB";
 		document.getElementById('addData').className = "active";
@@ -75,23 +81,18 @@ class NavBar extends Component {
 
 	render(){
 		const profile = JSON.parse(localStorage.getItem('profile'));
-		console.log(profile);
+
 		return(
 			<nav className="navbar navbar-default" style={styles.navBar}>
 				<div className="container-fluid">
 					<div className="navbar-header">
-  					<button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-    					<span className="sr-only">Toggle navigation</span>
-    					<span className="icon-bar"></span>
-    					<span className="icon-bar"></span>
-    					<span className="icon-bar"></span>
-  					</button>
-  					<a className="navbar-brand" href="#">mProv</a>
+  					<a className="navbar-brand" href="">mProv</a>
     			</div>
 
 			    <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			      <ul className="nav navbar-nav">
-			        <li onClick={ this.toggleConsentForm.bind(this)} className="active" id="consentForm"><a href="">Consent Form Generator</a></li>
+							<li onClick={ this.toggleProfile.bind(this) } className="active" id="profile"><a href="#profile">&nbsp;Profile&nbsp;</a></li>
+			        <li onClick={ this.toggleConsentForm.bind(this)} id="consentForm"><a href="#consentForm">Consent Form Generator</a></li>
 			        <li onClick={ this.toggleAddData.bind(this)} id="addData"><a href="#addData">Create Data Record</a></li>
 			        <li onClick={ this.toggleSearchDB.bind(this)} id="searchDB"><a href="#searchDB">Search Database</a></li>
 						</ul>

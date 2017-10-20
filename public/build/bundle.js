@@ -13893,26 +13893,30 @@ var NavBar = function (_Component) {
 			});
 			// this.getUserProfile();
 			var url = location.href.substr(location.href.lastIndexOf('/') + 1);
-			if (url == "#addData") {
+			if (url == "#consentForm") {
+				this.toggleConsentForm();
+			} else if (url == "#addData") {
 				this.toggleAddData();
 			} else if (url == "#searchDB") {
 				this.toggleSearchDB();
 			} else {
-				this.updateTab("consentForm");
+				this.toggleProfile();
 			}
 		}
-		//
-		// getUserProfile(){
-		// 	this.setState({
-		// 		userProfile: JSON.parse(localStorage.getItem('profile') || '{}')
-		// 	}, () => {
-		// 		console.log("current user: " + JSON.stringify(this.state.userProfile));
-		// 	})
-		// }
+	}, {
+		key: 'toggleProfile',
+		value: function toggleProfile() {
+			document.getElementById('profile').className = "active";
+			document.getElementById('consentForm').className = "consentForm";
+			document.getElementById('searchDB').className = "searchDB";
+			document.getElementById('addData').className = "addData";
 
+			this.updateTab("profile");
+		}
 	}, {
 		key: 'toggleConsentForm',
 		value: function toggleConsentForm() {
+			document.getElementById('profile').className = "profile";
 			document.getElementById('consentForm').className = "active";
 			document.getElementById('searchDB').className = "searchDB";
 			document.getElementById('addData').className = "addData";
@@ -13922,6 +13926,7 @@ var NavBar = function (_Component) {
 	}, {
 		key: 'toggleSearchDB',
 		value: function toggleSearchDB() {
+			document.getElementById('profile').className = "profile";
 			document.getElementById('consentForm').className = "consentForm";
 			document.getElementById('searchDB').className = "active";
 			document.getElementById('addData').className = "addData";
@@ -13931,6 +13936,7 @@ var NavBar = function (_Component) {
 	}, {
 		key: 'toggleAddData',
 		value: function toggleAddData() {
+			document.getElementById('profile').className = "profile";
 			document.getElementById('consentForm').className = "consentForm";
 			document.getElementById('searchDB').className = "searchDB";
 			document.getElementById('addData').className = "active";
@@ -13958,7 +13964,7 @@ var NavBar = function (_Component) {
 		key: 'render',
 		value: function render() {
 			var profile = JSON.parse(localStorage.getItem('profile'));
-			console.log(profile);
+
 			return _react2.default.createElement(
 				'nav',
 				{ className: 'navbar navbar-default', style: _styles2.default.navBar },
@@ -13969,20 +13975,8 @@ var NavBar = function (_Component) {
 						'div',
 						{ className: 'navbar-header' },
 						_react2.default.createElement(
-							'button',
-							{ type: 'button', className: 'navbar-toggle collapsed', 'data-toggle': 'collapse', 'data-target': '#bs-example-navbar-collapse-1', 'aria-expanded': 'false' },
-							_react2.default.createElement(
-								'span',
-								{ className: 'sr-only' },
-								'Toggle navigation'
-							),
-							_react2.default.createElement('span', { className: 'icon-bar' }),
-							_react2.default.createElement('span', { className: 'icon-bar' }),
-							_react2.default.createElement('span', { className: 'icon-bar' })
-						),
-						_react2.default.createElement(
 							'a',
-							{ className: 'navbar-brand', href: '#' },
+							{ className: 'navbar-brand', href: '' },
 							'mProv'
 						)
 					),
@@ -13994,10 +13988,19 @@ var NavBar = function (_Component) {
 							{ className: 'nav navbar-nav' },
 							_react2.default.createElement(
 								'li',
-								{ onClick: this.toggleConsentForm.bind(this), className: 'active', id: 'consentForm' },
+								{ onClick: this.toggleProfile.bind(this), className: 'active', id: 'profile' },
 								_react2.default.createElement(
 									'a',
-									{ href: '' },
+									{ href: '#profile' },
+									'\xA0Profile\xA0'
+								)
+							),
+							_react2.default.createElement(
+								'li',
+								{ onClick: this.toggleConsentForm.bind(this), id: 'consentForm' },
+								_react2.default.createElement(
+									'a',
+									{ href: '#consentForm' },
 									'Consent Form Generator'
 								)
 							),
@@ -33335,6 +33338,10 @@ var _CreateDBEntry = __webpack_require__(207);
 
 var _CreateDBEntry2 = _interopRequireDefault(_CreateDBEntry);
 
+var _Profile = __webpack_require__(503);
+
+var _Profile2 = _interopRequireDefault(_Profile);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -33361,12 +33368,14 @@ var Homepage = function (_Component) {
     key: 'componentDidMount',
     value: function componentDidMount() {
       var url = location.href.substr(location.href.lastIndexOf('/') + 1);
-      if (url == "#addData") {
+      if (url == "consentForm") {
+        this.updateTab("consentForm");
+      } else if (url == "#addData") {
         this.updateTab("addData");
       } else if (url == "#searchDB") {
         this.updateTab("searchDB");
       } else {
-        this.updateTab("consentForm");
+        this.updateTab("profile");
       }
     }
   }, {
@@ -33392,6 +33401,7 @@ var Homepage = function (_Component) {
         null,
         _react2.default.createElement(_NavBar2.default, { currentTab: this.state.tab, onChange: this.updateTab.bind(this), isSignedIn: this.props.isSignedIn,
           logout: this.logout.bind(this) }),
+        this.state.tab == "profile" && _react2.default.createElement(_Profile2.default, null),
         this.state.tab == "consentForm" && _react2.default.createElement(_ConsentForm2.default, null),
         this.state.tab == "addData" && _react2.default.createElement(_CreateDBEntry2.default, null),
         this.state.tab == "searchDB" && _react2.default.createElement('br', null)
@@ -81123,6 +81133,204 @@ function config (name) {
 /***/ (function(module, exports) {
 
 /* (ignored) */
+
+/***/ }),
+/* 503 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _styles = __webpack_require__(30);
+
+var _styles2 = _interopRequireDefault(_styles);
+
+var _superagent = __webpack_require__(47);
+
+var _superagent2 = _interopRequireDefault(_superagent);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Profile = function (_Component) {
+  _inherits(Profile, _Component);
+
+  function Profile() {
+    _classCallCheck(this, Profile);
+
+    var _this = _possibleConstructorReturn(this, (Profile.__proto__ || Object.getPrototypeOf(Profile)).call(this));
+
+    _this.state = {
+      userProfile: JSON.parse(localStorage.getItem('profile'))
+    };
+    return _this;
+  }
+
+  _createClass(Profile, [{
+    key: 'render',
+    value: function render() {
+      var formStyle = _styles2.default.form;
+      console.log(this.state.userProfile);
+
+      return _react2.default.createElement(
+        'div',
+        { className: 'container', style: formStyle.container },
+        _react2.default.createElement(
+          'div',
+          { className: 'userProfile', style: { width: 30 + '%', float: 'left', paddingLeft: 50 + 'px',
+              paddingTop: 10 + 'px', paddingButtom: 10 + 'px', marginTop: 70 + 'px',
+              borderRight: 'solid', borderWidth: 1 + 'px', borderColor: 'lightgrey', textAlign: "center" } },
+          _react2.default.createElement('img', { src: this.state.userProfile.picture,
+            style: { width: 200 + 'px', border: 'solid', borderColor: '#E8E4D9',
+              borderRadius: 0.5, margin: 'auto' } }),
+          _react2.default.createElement('br', null),
+          _react2.default.createElement('br', null),
+          _react2.default.createElement(
+            'p',
+            null,
+            _react2.default.createElement(
+              'span',
+              { style: { color: "grey" } },
+              'Name: '
+            ),
+            _react2.default.createElement(
+              'span',
+              { style: { fontWeight: "bold", color: "steelblue" } },
+              this.state.userProfile.name
+            )
+          ),
+          _react2.default.createElement(
+            'p',
+            null,
+            _react2.default.createElement(
+              'span',
+              { style: { color: "grey" } },
+              'Email: '
+            ),
+            _react2.default.createElement(
+              'span',
+              { style: { fontWeight: "bold", color: "steelblue" } },
+              this.state.userProfile.email
+            )
+          ),
+          _react2.default.createElement(
+            'p',
+            null,
+            _react2.default.createElement(
+              'span',
+              { style: { color: "grey" } },
+              'Consent Forms: '
+            ),
+            _react2.default.createElement(
+              'span',
+              { style: { fontWeight: "bold", color: "steelblue" } },
+              '1'
+            )
+          )
+        ),
+        _react2.default.createElement(
+          'div',
+          { className: 'myConsents', style: { width: 68 + '%', float: "right", marginTop: 70 + 'px', paddingLeft: 25 + 'px' } },
+          _react2.default.createElement(
+            'h4',
+            null,
+            'Your Consent Forms'
+          ),
+          _react2.default.createElement('br', null),
+          _react2.default.createElement(
+            'table',
+            { className: 'table table-hover', style: { width: 85 + '%', float: 'left' } },
+            _react2.default.createElement(
+              'thead',
+              null,
+              _react2.default.createElement(
+                'tr',
+                null,
+                _react2.default.createElement(
+                  'th',
+                  null,
+                  'Name'
+                ),
+                _react2.default.createElement(
+                  'th',
+                  null,
+                  'Time Created'
+                ),
+                _react2.default.createElement(
+                  'th',
+                  null,
+                  'Last Updated Time'
+                ),
+                _react2.default.createElement(
+                  'th',
+                  null,
+                  'Edit'
+                ),
+                _react2.default.createElement(
+                  'th',
+                  null,
+                  'Download'
+                )
+              )
+            ),
+            _react2.default.createElement(
+              'tbody',
+              null,
+              _react2.default.createElement(
+                'tr',
+                null,
+                _react2.default.createElement(
+                  'td',
+                  null,
+                  'test1'
+                ),
+                _react2.default.createElement(
+                  'td',
+                  null,
+                  'YYYY-MM-DD hh:mm'
+                ),
+                _react2.default.createElement(
+                  'td',
+                  null,
+                  'YYYY-MM-DD hh:mm'
+                ),
+                _react2.default.createElement(
+                  'td',
+                  null,
+                  'edit'
+                ),
+                _react2.default.createElement(
+                  'td',
+                  null,
+                  'download'
+                )
+              )
+            )
+          )
+        )
+      );
+    }
+  }]);
+
+  return Profile;
+}(_react.Component);
+
+exports.default = Profile;
 
 /***/ })
 /******/ ]);
