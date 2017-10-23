@@ -15,7 +15,7 @@ class Homepage extends Component {
 
 	componentDidMount() {
 		const url = location.href.substr(location.href.lastIndexOf('/') + 1)
-		if (url == "consentForm") {
+		if (url == "#consentForm") {
       this.updateTab("consentForm");
     } else if(url == "#addData"){
 			this.updateTab("addData");

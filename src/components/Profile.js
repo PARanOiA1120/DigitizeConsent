@@ -6,13 +6,52 @@ class Profile extends Component {
   constructor() {
     super();
     this.state = {
-      userProfile: JSON.parse(localStorage.getItem('profile'))
+      userProfile: JSON.parse(localStorage.getItem('profile')),
+      consentFormList: []
     }
+  }
+
+  componentDidMount() {
+    superagent
+      .get('/api/consentform')
+      .query({authorID: this.state.userProfile.id})
+      .set('Accept', 'application/json')
+      .end((err, response) => {
+        if(err){
+          console.log("ERROR: " + err);
+          return
+        }
+
+        this.setState({
+          consentFormList: response.body.results
+        })
+      })
+
   }
 
   render() {
 		const formStyle = styles.form;
     console.log(this.state.userProfile);
+
+    const formList = this.state.consentFormList.map((form, i) => {
+      return (
+        <tr key={i}>
+          <td>{ form["title"]} </td>
+          <td>{ form["timeCreated"].split('T')[0] }</td>
+          <td>{ form["lastUpdated"].split('T')[0] }</td>
+          <td>
+            <a className="btn btn-primary" style={{width:80, background:'white', color:'steelblue', borderColor:'steelblue'}}>
+              <span className="glyphicon glyphicon-edit" style={{fontWeight:'bold'}}>&nbsp;Edit</span>
+            </a>
+          </td>
+          <td>
+            <a className="btn btn-primary" style={{background:'white', color:'steelblue', borderColor:'steelblue'}}>
+              <span className="glyphicon glyphicon-download-alt" style={{fontWeight:'bold'}}>&nbsp;Download</span>
+            </a>
+          </td>
+        </tr>
+      )
+    })
 
     return(
       <div className="container" style={formStyle.container}>
@@ -34,24 +73,18 @@ class Profile extends Component {
           <h4>Your Consent Forms</h4>
           <br/>
 
-          <table className="table table-hover" style={{width:85+'%', float:'left'}}>
+          <table className="table table-hover" style={{width:85+'%', float:'left', textAlign:'center'}}>
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Time Created</th>
-                <th>Last Updated Time</th>
-                <th>Edit</th>
-                <th>Download</th>
+                <th style={{textAlign: 'center'}}>Name</th>
+                <th style={{textAlign: 'center'}}>Time Created</th>
+                <th style={{textAlign: 'center'}}>Last Updated Time</th>
+                <th style={{textAlign: 'center'}}>Edit</th>
+                <th style={{textAlign: 'center'}}>Download</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>test1</td>
-                <td>YYYY-MM-DD hh:mm</td>
-                <td>YYYY-MM-DD hh:mm</td>
-                <td>edit</td>
-                <td>download</td>
-              </tr>
+              { formList }
             </tbody>
           </table>
         </div>

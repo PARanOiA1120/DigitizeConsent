@@ -46,11 +46,11 @@ class DownloadPDF extends Component {
   render() {
     return (
       <div>
-        <button className="btn btn-primary" style={styles.form.centerButton} 
+        <button className="btn btn-primary" style={{float:'right'}} 
         onClick={this.pdfToHTML}>Generate PDF</button>
       </div>
     );
-  } 
+  }
 }
 
 export default DownloadPDF;

@@ -33368,7 +33368,7 @@ var Homepage = function (_Component) {
     key: 'componentDidMount',
     value: function componentDidMount() {
       var url = location.href.substr(location.href.lastIndexOf('/') + 1);
-      if (url == "consentForm") {
+      if (url == "#consentForm") {
         this.updateTab("consentForm");
       } else if (url == "#addData") {
         this.updateTab("addData");
@@ -34813,6 +34813,24 @@ var ConsentForm = function (_Component) {
 			});
 		}
 	}, {
+		key: 'saveForm',
+		value: function saveForm() {
+			var data = {
+				authorID: JSON.parse(localStorage.getItem('profile')).id,
+				title: this.state.title,
+				sections: this.state.selectedSectionList
+			};
+
+			_superagent2.default.post('/api/consentform').send(data).set('Accept', 'application/json').end(function (err, response) {
+				if (err) {
+					alert('ERROR: ' + err);
+					return;
+				}
+
+				console.log("form saved...");
+			});
+		}
+	}, {
 		key: 'render',
 		value: function render() {
 			var _this8 = this;
@@ -34907,7 +34925,16 @@ var ConsentForm = function (_Component) {
 						{ style: formStyle.preview },
 						_react2.default.createElement(_ContentPreview2.default, { content: this.state.context })
 					),
-					_react2.default.createElement(_DownloadPDF2.default, { content: this.state.context })
+					_react2.default.createElement(
+						'div',
+						{ style: { width: 30 + '%', margin: 'auto', marginTop: 35 + 'px' } },
+						_react2.default.createElement(
+							'button',
+							{ className: 'btn btn-primary', onClick: this.saveForm.bind(this), style: { float: 'left', width: 80 } },
+							'Save'
+						),
+						_react2.default.createElement(_DownloadPDF2.default, { content: this.state.context })
+					)
 				)
 			);
 		}
@@ -35162,7 +35189,7 @@ var DownloadPDF = function (_Component) {
         null,
         _react2.default.createElement(
           'button',
-          { className: 'btn btn-primary', style: _styles2.default.form.centerButton,
+          { className: 'btn btn-primary', style: { float: 'right' },
             onClick: this.pdfToHTML },
           'Generate PDF'
         )
@@ -81176,16 +81203,82 @@ var Profile = function (_Component) {
     var _this = _possibleConstructorReturn(this, (Profile.__proto__ || Object.getPrototypeOf(Profile)).call(this));
 
     _this.state = {
-      userProfile: JSON.parse(localStorage.getItem('profile'))
+      userProfile: JSON.parse(localStorage.getItem('profile')),
+      consentFormList: []
     };
     return _this;
   }
 
   _createClass(Profile, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var _this2 = this;
+
+      _superagent2.default.get('/api/consentform').query({ authorID: this.state.userProfile.id }).set('Accept', 'application/json').end(function (err, response) {
+        if (err) {
+          console.log("ERROR: " + err);
+          return;
+        }
+
+        _this2.setState({
+          consentFormList: response.body.results
+        });
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
       var formStyle = _styles2.default.form;
       console.log(this.state.userProfile);
+
+      var formList = this.state.consentFormList.map(function (form, i) {
+        return _react2.default.createElement(
+          'tr',
+          { key: i },
+          _react2.default.createElement(
+            'td',
+            null,
+            form["title"],
+            ' '
+          ),
+          _react2.default.createElement(
+            'td',
+            null,
+            form["timeCreated"].split('T')[0]
+          ),
+          _react2.default.createElement(
+            'td',
+            null,
+            form["lastUpdated"].split('T')[0]
+          ),
+          _react2.default.createElement(
+            'td',
+            null,
+            _react2.default.createElement(
+              'a',
+              { className: 'btn btn-primary', style: { width: 80, background: 'white', color: 'steelblue', borderColor: 'steelblue' } },
+              _react2.default.createElement(
+                'span',
+                { className: 'glyphicon glyphicon-edit', style: { fontWeight: 'bold' } },
+                '\xA0Edit'
+              )
+            )
+          ),
+          _react2.default.createElement(
+            'td',
+            null,
+            _react2.default.createElement(
+              'a',
+              { className: 'btn btn-primary', style: { background: 'white', color: 'steelblue', borderColor: 'steelblue' } },
+              _react2.default.createElement(
+                'span',
+                { className: 'glyphicon glyphicon-download-alt', style: { fontWeight: 'bold' } },
+                '\xA0Download'
+              )
+            )
+          )
+        );
+      });
 
       return _react2.default.createElement(
         'div',
@@ -81254,7 +81347,7 @@ var Profile = function (_Component) {
           _react2.default.createElement('br', null),
           _react2.default.createElement(
             'table',
-            { className: 'table table-hover', style: { width: 85 + '%', float: 'left' } },
+            { className: 'table table-hover', style: { width: 85 + '%', float: 'left', textAlign: 'center' } },
             _react2.default.createElement(
               'thead',
               null,
@@ -81263,27 +81356,27 @@ var Profile = function (_Component) {
                 null,
                 _react2.default.createElement(
                   'th',
-                  null,
+                  { style: { textAlign: 'center' } },
                   'Name'
                 ),
                 _react2.default.createElement(
                   'th',
-                  null,
+                  { style: { textAlign: 'center' } },
                   'Time Created'
                 ),
                 _react2.default.createElement(
                   'th',
-                  null,
+                  { style: { textAlign: 'center' } },
                   'Last Updated Time'
                 ),
                 _react2.default.createElement(
                   'th',
-                  null,
+                  { style: { textAlign: 'center' } },
                   'Edit'
                 ),
                 _react2.default.createElement(
                   'th',
-                  null,
+                  { style: { textAlign: 'center' } },
                   'Download'
                 )
               )
@@ -81291,35 +81384,7 @@ var Profile = function (_Component) {
             _react2.default.createElement(
               'tbody',
               null,
-              _react2.default.createElement(
-                'tr',
-                null,
-                _react2.default.createElement(
-                  'td',
-                  null,
-                  'test1'
-                ),
-                _react2.default.createElement(
-                  'td',
-                  null,
-                  'YYYY-MM-DD hh:mm'
-                ),
-                _react2.default.createElement(
-                  'td',
-                  null,
-                  'YYYY-MM-DD hh:mm'
-                ),
-                _react2.default.createElement(
-                  'td',
-                  null,
-                  'edit'
-                ),
-                _react2.default.createElement(
-                  'td',
-                  null,
-                  'download'
-                )
-              )
+              formList
             )
           )
         )

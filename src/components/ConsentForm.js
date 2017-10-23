@@ -161,6 +161,28 @@ class ConsentForm extends Component {
 		})
 	}
 
+	saveForm(){
+		var data = {
+			authorID: JSON.parse(localStorage.getItem('profile')).id,
+			title: this.state.title,
+			sections: this.state.selectedSectionList
+		}
+
+		superagent
+			.post('/api/consentform')
+			.send(data)
+			.set('Accept', 'application/json')
+			.end((err, response) => {
+				if(err){
+					alert('ERROR: '+err)
+					return
+				}
+
+				console.log("form saved...");
+			})
+
+	}
+
 
 	render(){
 		const formStyle = styles.form;
@@ -217,7 +239,10 @@ class ConsentForm extends Component {
 						<ContentPreview content={this.state.context} />
 					</div>
 
-					<DownloadPDF content={this.state.context} />
+					<div style={{width: 30+'%', margin:'auto', marginTop: 35+'px'}}>
+						<button className="btn btn-primary" onClick={ this.saveForm.bind(this) } style={{float:'left', width: 80}}>Save</button>
+						<DownloadPDF content={this.state.context} />
+					</div>
 				</div>
 			</div>
 		);
