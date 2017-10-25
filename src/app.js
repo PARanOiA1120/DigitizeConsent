@@ -1,8 +1,11 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
+import axios from 'axios'
+import { BrowserRouter as Router } from 'react-router-dom';
+
 import Homepage from './components/Homepage'
 import Login from './components/Login'
-import axios from 'axios'
+
 
 class App extends Component {
 
@@ -69,7 +72,9 @@ class App extends Component {
 					<Login setSingnInStatus={ this.setSingnInStatus.bind(this) }/>
 				}
 				{this.state.isSignedIn == true &&
-					<Homepage isSignedIn={ this.state.isSignedIn } logout={ this.logout.bind(this)} />
+					<Router>
+						<Homepage isSignedIn={ this.state.isSignedIn } logout={ this.logout.bind(this)} />
+					</Router>
 				}
 			</div>
 		);

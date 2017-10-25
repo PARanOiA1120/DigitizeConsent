@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import styles from './styles'
+import { Link } from 'react-router-dom'
 
 
 class NavBar extends Component {
@@ -86,15 +87,15 @@ class NavBar extends Component {
 			<nav className="navbar navbar-default" style={styles.navBar}>
 				<div className="container-fluid">
 					<div className="navbar-header">
-  					<a className="navbar-brand" href="">mProv</a>
+  					<Link to="/"><span className="navbar-brand">mProv</span></Link>
     			</div>
 
 			    <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			      <ul className="nav navbar-nav">
-							<li onClick={ this.toggleProfile.bind(this) } className="active" id="profile"><a href="#profile">&nbsp;Profile&nbsp;</a></li>
-			        <li onClick={ this.toggleConsentForm.bind(this)} id="consentForm"><a href="#consentForm">Consent Form Generator</a></li>
-			        <li onClick={ this.toggleAddData.bind(this)} id="addData"><a href="#addData">Create Data Record</a></li>
-			        <li onClick={ this.toggleSearchDB.bind(this)} id="searchDB"><a href="#searchDB">Search Database</a></li>
+							<li onClick={ this.toggleProfile.bind(this) } className="active" id="profile"><Link to="/profile">&nbsp;Profile&nbsp;</Link></li>
+			        <li onClick={ this.toggleConsentForm.bind(this)} id="consentForm"><Link to="/consentForm">Consent Form Generator</Link></li>
+			        <li onClick={ this.toggleAddData.bind(this)} id="addData"><Link to="/addData">Create Data Record</Link></li>
+			        <li onClick={ this.toggleSearchDB.bind(this)} id="searchDB"><Link to="/searchDB">Search Database</Link></li>
 						</ul>
 						<ul className="nav navbar-nav navbar-right">
 							<li className="dropdown" style={{float: 'right'}}>

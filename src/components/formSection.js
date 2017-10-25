@@ -1,37 +1,37 @@
 import React, { Component } from 'react'
-import ReactQuill, { Quill } from 'react-quill'
+import ReactQuill from 'react-quill'
 import styles from './styles'
 import superagent from 'superagent'
 
 class FormSection extends Component {
   constructor(props) {
     super(props)
-    this.state = { 
+    this.state = {
       section: {},
       text: '',
-      
+
       appList: [], //appsensor objects
       apps: [], //app name list
       selectedApp:'',
-      
+
 
       swsensorListforSelectedApp: [],
       supportedDevices: [],
       selectedSWSeneors:[],
       selectedDeviceforApp: [],
-      
+
       addAdditionalSensor: false,
       deviceList: [], // a list of all devices
       deviceSensorList: [], // a list of all sensors of the selected device
       selectedDevice: '',
-      
+
       selectedSensor: '',
       sensorList: [], // sensor list to query for risks, include device
       sensorRisks: [],
       currentSensor: {},
-      
+
       currentAttributes: {}, //all attributes
-      
+
       attrForSearch: {}, // attributes that have a match in the db
       attrName: "",
       attrValue: "",
@@ -68,7 +68,7 @@ class FormSection extends Component {
     })
 
 
-    //get application list 
+    //get application list
     superagent
     .get('/api/appsensor')
     .query(null)
@@ -88,7 +88,7 @@ class FormSection extends Component {
 
       // console.log("apps: " + apps)
 
-      this.setState({ 
+      this.setState({
         appList: results,
         apps: apps
       })
@@ -112,7 +112,7 @@ class FormSection extends Component {
           devices.push(devicesensor.device)
       })
 
-      this.setState({ 
+      this.setState({
         deviceList: devices
       })
     })
@@ -125,7 +125,7 @@ class FormSection extends Component {
 
     // send content updates back to the ConsentForm.js
     this.props.onChange(updatedSection)
-    
+
     this.setState({
       section: updatedSection
     }, () => {
@@ -209,7 +209,7 @@ class FormSection extends Component {
     this.setState({
       selectedApp: event.target.value
     }, () => {
-      // get software sensor list 
+      // get software sensor list
       if(this.state.selectedApp != "" && this.state.selectedApp != "none"){
         this.state.appList.forEach((app) => {
           if(app.application == this.state.selectedApp){
@@ -388,11 +388,11 @@ class FormSection extends Component {
     this.setState({
       text: updatedSectionContent, //update section text display
       sensorList: updatedSensorList,
-      // clear selectedDevice, selectedSensor, currentAttributes, and currentSensor 
+      // clear selectedDevice, selectedSensor, currentAttributes, and currentSensor
       selectedDevice: "",
       selectedSensor: "",
       currentAttributes: {},
-      attrForSearch: {}, 
+      attrForSearch: {},
     }, () => {
       // console.log("sensor list for query: " + JSON.stringify(this.state.sensorList))
     })
@@ -539,7 +539,7 @@ class FormSection extends Component {
               var sensor = device["sensorList"][k]
               var sensorName = sensor["sensorName"].split('(')[0]
               var attributes = sensor["attributes"]
-              
+
               var index = sensorListQD.map((s) => s.sensorName).indexOf(sensorName)
               var sensorQD = sensorListQD[index]
               var attributesQD = sensorQD["attributes"]
@@ -600,7 +600,7 @@ class FormSection extends Component {
           sensors.push(devicesensor.sensorName)
       })
 
-      this.setState({     
+      this.setState({
         deviceSensorList: sensors,
         selectedDevice: updatedSelectedDevice
       })
@@ -608,7 +608,7 @@ class FormSection extends Component {
     })
   }
 
- 
+
   render() {
     const modules = {
       toolbar: [
@@ -666,7 +666,7 @@ class FormSection extends Component {
     })
 
 
-    // TODO: make this part dynamic 
+    // TODO: make this part dynamic
     const attributeList = Object.keys(this.state.currentAttributes).map((attr) => {
       return (
         <li key={attr} style={{fontSize: 17 + 'px'}}>
@@ -674,7 +674,7 @@ class FormSection extends Component {
         </li>
       )
     })
-    
+
 
     return (
       <div>
@@ -682,8 +682,8 @@ class FormSection extends Component {
           <label style={formStyle.label}>{this.state.section.title}</label>
           <br/>
           <br/>
-          
-          {section == "Data Collection" && 
+
+          {section == "Data Collection" &&
             <div className="form-group" style={formStyle.formgroup}>
               <label htmlFor="app" style={{float:'left', marginRight:5+'px'}}>Select application:</label>
               <select className="form-control" id="app" style={formStyle.selectionBox}
@@ -705,7 +705,7 @@ class FormSection extends Component {
                     {swsensorOptions}
                   </select>
                   <br/><br/><br/><br/><br/>
-                  
+
                   <label htmlFor="appdevice">Device running the application (select all that apply):</label>
                   <select multiple className="form-control" id="supportedDevice" style={formStyle.selectionBox}
                     onChange={this.updateSelectedDevicesforApp.bind(this)} value={this.state.selectedDeviceforApp}>
@@ -714,16 +714,16 @@ class FormSection extends Component {
 
                   <br/><br/><br/><br/><br/><br/>
                   <button className="btn btn-primary" onClick={this.addAnotherApp.bind(this)}>Add another application</button>
-                  <button className="btn btn-primary" style={{marginLeft:10+'px'}} 
+                  <button className="btn btn-primary" style={{marginLeft:10+'px'}}
                     onClick={this.addAdditionalSensors.bind(this)}>Add additional sensors</button>
                   <hr style={styles.universal.hr} />
                 </div>
               }
 
 
-              {(this.state.selectedApp == "none" || this.state.addAdditionalSensor == true) &&              
+              {(this.state.selectedApp == "none" || this.state.addAdditionalSensor == true) &&
                 <div className="form-group">
-             
+
                   <label htmlFor="device" style={{float:'left', marginRight:5+'px'}}>Select device:</label>
                   <select className="form-control" id="device" style={formStyle.selectionBox}
                     onChange={this.updateDeviceSelection.bind(this)} value={this.state.selectedDevice}>
@@ -744,7 +744,7 @@ class FormSection extends Component {
 
                   {this.state.selectedSensor != "" &&
                     <div className="attriList" style={{marginLeft: 20 + 'px'}}>
-                      {this.state.currentAttributes != {} && 
+                      {this.state.currentAttributes != {} &&
                         <div className="finalizedAttrList">
                           <ul style={formStyle.list}>
                             {attributeList}
@@ -776,16 +776,16 @@ class FormSection extends Component {
                         <br/>
                       </div>
                     </div>
-                  } 
+                  }
                   <br/>
                   <button className="btn btn-primary" onClick={this.addSensor.bind(this)}>Add Sensor</button>
                 </div>
-              }  
-            </div> 
-          } 
-          
+              }
+            </div>
+          }
 
-          <ReactQuill theme="snow" 
+
+          <ReactQuill theme="snow"
                   value={this.state.text}
                   onChange={this.onChange}
                   modules={modules}
@@ -795,7 +795,7 @@ class FormSection extends Component {
             <div className="my-editing-area" style={{height: 200 + 'px'}}></div>
           </ReactQuill>
           <br/>
-          
+
           {section == "Data Collection" &&
             <button className="btn btn-primary" onClick={this.generateRisks.bind(this)}>Generate Risk&Protection</button>
           }

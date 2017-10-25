@@ -6,6 +6,10 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'mProv' });
 });
 
+router.get('*', (req, res) => {
+  res.render('index', { title: 'mProv' });
+});
+
 router.get('/create-form-section', function(req, res, next){
 	res.render('create-form-section', null);
 });
