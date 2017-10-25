@@ -10632,80 +10632,11 @@ var NavBar = function (_Component) {
 
 		var _this = _possibleConstructorReturn(this, (NavBar.__proto__ || Object.getPrototypeOf(NavBar)).call(this));
 
-		_this.state = {
-			currentTab: "",
-			isSignedIn: false
-		};
+		_this.state = {};
 		return _this;
 	}
 
 	_createClass(NavBar, [{
-		key: 'componentDidMount',
-		value: function componentDidMount() {
-			this.setState({
-				isSignedIn: this.props.isSignedIn
-			});
-			// this.getUserProfile();
-			// const url = location.href.substr(location.href.lastIndexOf('/') + 1)
-			// if (url == "#consentForm"){
-			// 	this.toggleConsentForm();
-			// } else if(url == "#addData"){
-			// 	this.toggleAddData();
-			// } else if (url == "#searchDB"){
-			// 	this.toggleSearchDB();
-			// } else {
-			// 	this.toggleProfile();
-			// }
-		}
-
-		// toggleProfile() {
-		// 	document.getElementById('profile').className = "active";
-		// 	document.getElementById('consentForm').className = "consentForm";
-		// 	document.getElementById('searchDB').className = "searchDB";
-		// 	document.getElementById('addData').className = "addData";
-		//
-		// 	this.updateTab("profile")
-		// }
-		//
-		// toggleConsentForm(){
-		// 	document.getElementById('profile').className = "profile";
-		// 	document.getElementById('consentForm').className = "active";
-		// 	document.getElementById('searchDB').className = "searchDB";
-		// 	document.getElementById('addData').className = "addData";
-		//
-		// 	this.updateTab("consentForm")
-		// }
-		//
-		// toggleSearchDB(){
-		// 	document.getElementById('profile').className = "profile";
-		// 	document.getElementById('consentForm').className = "consentForm";
-		// 	document.getElementById('searchDB').className = "active";
-		// 	document.getElementById('addData').className = "addData";
-		//
-		// 	this.updateTab("searchDB")
-		// }
-		//
-		// toggleAddData(){
-		// 	document.getElementById('profile').className = "profile";
-		// 	document.getElementById('consentForm').className = "consentForm";
-		// 	document.getElementById('searchDB').className = "searchDB";
-		// 	document.getElementById('addData').className = "active";
-		//
-		// 	this.updateTab("addData")
-		// }
-		//
-		// updateTab(tab){
-		// 	let updatedTab = Object.assign("", this.state.currentTab)
-		// 	updatedTab = tab
-		//
-		// 	this.props.onChange(updatedTab)
-		//
-		// 	this.setState ({
-		// 		currentTab: updatedTab
-		// 	})
-		// }
-
-	}, {
 		key: 'logout',
 		value: function logout() {
 			this.props.logout();
@@ -10744,8 +10675,9 @@ var NavBar = function (_Component) {
 								'li',
 								{ id: 'profile' },
 								_react2.default.createElement(
-									_reactRouterDom.Link,
-									{ to: '/profile', activeClassName: 'active' },
+									_reactRouterDom.NavLink,
+									{ to: '/profile', activeClassName: 'active',
+										activeStyle: { fontWeight: 'bold', fontSize: 15 + 'px', color: 'steelblue' } },
 									'\xA0Profile\xA0'
 								)
 							),
@@ -10753,8 +10685,9 @@ var NavBar = function (_Component) {
 								'li',
 								{ id: 'consentForm' },
 								_react2.default.createElement(
-									_reactRouterDom.Link,
-									{ to: '/consentForm', activeClassName: 'active' },
+									_reactRouterDom.NavLink,
+									{ to: '/consentForm', activeClassName: 'active',
+										activeStyle: { fontWeight: 'bold', fontSize: 15 + 'px', color: 'steelblue' } },
 									'Consent Form Generator'
 								)
 							),
@@ -10762,8 +10695,9 @@ var NavBar = function (_Component) {
 								'li',
 								{ id: 'addData' },
 								_react2.default.createElement(
-									_reactRouterDom.Link,
-									{ to: '/addData', activeClassName: 'active' },
+									_reactRouterDom.NavLink,
+									{ to: '/addData', activeClassName: 'active',
+										activeStyle: { fontWeight: 'bold', fontSize: 15 + 'px', color: 'steelblue' } },
 									'Create Data Record'
 								)
 							),
@@ -10771,8 +10705,9 @@ var NavBar = function (_Component) {
 								'li',
 								{ id: 'searchDB' },
 								_react2.default.createElement(
-									_reactRouterDom.Link,
-									{ to: '/searchDB', activeClassName: 'active' },
+									_reactRouterDom.NavLink,
+									{ to: '/searchDB', activeClassName: 'active',
+										activeStyle: { fontWeight: 'bold', fontSize: 15 + 'px', color: 'steelblue' } },
 									'Search Database'
 								)
 							)
@@ -36151,7 +36086,7 @@ var App = function (_Component) {
 				this.state.isSignedIn == true && _react2.default.createElement(
 					'div',
 					{ className: 'main' },
-					_react2.default.createElement(_NavBar2.default, { isSignedIn: this.props.isSignedIn, logout: this.logout.bind(this) }),
+					_react2.default.createElement(_NavBar2.default, { logout: this.logout.bind(this) }),
 					_react2.default.createElement(_Homepage2.default, { isSignedIn: this.state.isSignedIn, logout: this.logout.bind(this) })
 				)
 			);
@@ -38634,10 +38569,6 @@ var _ConsentForm = __webpack_require__(231);
 
 var _ConsentForm2 = _interopRequireDefault(_ConsentForm);
 
-var _NavBar = __webpack_require__(74);
-
-var _NavBar2 = _interopRequireDefault(_NavBar);
-
 var _CreateDBEntry = __webpack_require__(233);
 
 var _CreateDBEntry2 = _interopRequireDefault(_CreateDBEntry);
@@ -38662,41 +38593,13 @@ var Homepage = function (_Component) {
 
     var _this = _possibleConstructorReturn(this, (Homepage.__proto__ || Object.getPrototypeOf(Homepage)).call(this));
 
-    _this.state = {
-      tab: ""
-    };
+    _this.state = {};
     return _this;
   }
 
   _createClass(Homepage, [{
     key: 'componentDidMount',
-    value: function componentDidMount() {
-      var url = location.href.substr(location.href.lastIndexOf('/') + 1);
-      if (url == "#consentForm") {
-        this.updateTab("consentForm");
-      } else if (url == "#addData") {
-        this.updateTab("addData");
-      } else if (url == "#searchDB") {
-        this.updateTab("searchDB");
-      } else {
-        this.updateTab("profile");
-      }
-    }
-  }, {
-    key: 'updateTab',
-    value: function updateTab(tab) {
-      var updatedTab = Object.assign("", this.state.tab);
-      updatedTab = tab;
-
-      this.setState({
-        tab: updatedTab
-      });
-    }
-  }, {
-    key: 'logout',
-    value: function logout() {
-      this.props.logout();
-    }
+    value: function componentDidMount() {}
   }, {
     key: 'render',
     value: function render() {
@@ -38706,10 +38609,11 @@ var Homepage = function (_Component) {
         _react2.default.createElement(
           _reactRouterDom.Switch,
           null,
-          _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/profile', component: _Profile2.default }),
-          _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/consentForm', component: _ConsentForm2.default }),
-          _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/addData', component: _CreateDBEntry2.default }),
-          _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/searchDB', component: _CreateDBEntry2.default })
+          _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', component: _Profile2.default }),
+          _react2.default.createElement(_reactRouterDom.Route, { path: '/profile', component: _Profile2.default }),
+          _react2.default.createElement(_reactRouterDom.Route, { path: '/consentForm', component: _ConsentForm2.default }),
+          _react2.default.createElement(_reactRouterDom.Route, { path: '/addData', component: _CreateDBEntry2.default }),
+          _react2.default.createElement(_reactRouterDom.Route, { path: '/searchDB', component: _CreateDBEntry2.default })
         )
       );
     }
@@ -39283,7 +39187,6 @@ var Profile = function (_Component) {
           console.log("ERROR: " + err);
           return;
         }
-
         _this2.setState({
           consentFormList: response.body.results
         });
@@ -39293,7 +39196,6 @@ var Profile = function (_Component) {
     key: 'render',
     value: function render() {
       var formStyle = _styles2.default.form;
-      console.log(this.state.userProfile);
 
       var formList = this.state.consentFormList.map(function (form, i) {
         return _react2.default.createElement(

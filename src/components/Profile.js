@@ -21,17 +21,14 @@ class Profile extends Component {
           console.log("ERROR: " + err);
           return
         }
-
         this.setState({
           consentFormList: response.body.results
         })
       })
-
   }
 
   render() {
 		const formStyle = styles.form;
-    console.log(this.state.userProfile);
 
     const formList = this.state.consentFormList.map((form, i) => {
       return (
