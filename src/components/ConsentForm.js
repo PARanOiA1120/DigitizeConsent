@@ -32,7 +32,7 @@ class ConsentForm extends Component {
 				return
 			}
 
-			// console.log(JSON.stringify(response.body.results))
+			console.log(response)
 			let results = response.body.results
 
 			this.setState({

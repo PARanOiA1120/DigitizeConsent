@@ -40,7 +40,6 @@ class Login extends React.Component{
             }
 
             // if it's the first login, store user profile into db
-            console.log(response.body.results.length);
             if(response.body.results.length == 0) {
               superagent
                 .post('/api/user')

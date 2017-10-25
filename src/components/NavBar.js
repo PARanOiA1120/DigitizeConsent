@@ -17,64 +17,64 @@ class NavBar extends Component {
 			isSignedIn: this.props.isSignedIn
 		})
 		// this.getUserProfile();
-		const url = location.href.substr(location.href.lastIndexOf('/') + 1)
-		if (url == "#consentForm"){
-			this.toggleConsentForm();
-		} else if(url == "#addData"){
-			this.toggleAddData();
-		} else if (url == "#searchDB"){
-			this.toggleSearchDB();
-		} else {
-			this.toggleProfile();
-		}
+		// const url = location.href.substr(location.href.lastIndexOf('/') + 1)
+		// if (url == "#consentForm"){
+		// 	this.toggleConsentForm();
+		// } else if(url == "#addData"){
+		// 	this.toggleAddData();
+		// } else if (url == "#searchDB"){
+		// 	this.toggleSearchDB();
+		// } else {
+		// 	this.toggleProfile();
+		// }
 	}
 
-	toggleProfile() {
-		document.getElementById('profile').className = "active";
-		document.getElementById('consentForm').className = "consentForm";
-		document.getElementById('searchDB').className = "searchDB";
-		document.getElementById('addData').className = "addData";
-
-		this.updateTab("profile")
-	}
-
-	toggleConsentForm(){
-		document.getElementById('profile').className = "profile";
-		document.getElementById('consentForm').className = "active";
-		document.getElementById('searchDB').className = "searchDB";
-		document.getElementById('addData').className = "addData";
-
-		this.updateTab("consentForm")
-	}
-
-	toggleSearchDB(){
-		document.getElementById('profile').className = "profile";
-		document.getElementById('consentForm').className = "consentForm";
-		document.getElementById('searchDB').className = "active";
-		document.getElementById('addData').className = "addData";
-
-		this.updateTab("searchDB")
-	}
-
-	toggleAddData(){
-		document.getElementById('profile').className = "profile";
-		document.getElementById('consentForm').className = "consentForm";
-		document.getElementById('searchDB').className = "searchDB";
-		document.getElementById('addData').className = "active";
-
-		this.updateTab("addData")
-	}
-
-	updateTab(tab){
-		let updatedTab = Object.assign("", this.state.currentTab)
-		updatedTab = tab
-
-		this.props.onChange(updatedTab)
-
-		this.setState ({
-			currentTab: updatedTab
-		})
-	}
+	// toggleProfile() {
+	// 	document.getElementById('profile').className = "active";
+	// 	document.getElementById('consentForm').className = "consentForm";
+	// 	document.getElementById('searchDB').className = "searchDB";
+	// 	document.getElementById('addData').className = "addData";
+	//
+	// 	this.updateTab("profile")
+	// }
+	//
+	// toggleConsentForm(){
+	// 	document.getElementById('profile').className = "profile";
+	// 	document.getElementById('consentForm').className = "active";
+	// 	document.getElementById('searchDB').className = "searchDB";
+	// 	document.getElementById('addData').className = "addData";
+	//
+	// 	this.updateTab("consentForm")
+	// }
+	//
+	// toggleSearchDB(){
+	// 	document.getElementById('profile').className = "profile";
+	// 	document.getElementById('consentForm').className = "consentForm";
+	// 	document.getElementById('searchDB').className = "active";
+	// 	document.getElementById('addData').className = "addData";
+	//
+	// 	this.updateTab("searchDB")
+	// }
+	//
+	// toggleAddData(){
+	// 	document.getElementById('profile').className = "profile";
+	// 	document.getElementById('consentForm').className = "consentForm";
+	// 	document.getElementById('searchDB').className = "searchDB";
+	// 	document.getElementById('addData').className = "active";
+	//
+	// 	this.updateTab("addData")
+	// }
+	//
+	// updateTab(tab){
+	// 	let updatedTab = Object.assign("", this.state.currentTab)
+	// 	updatedTab = tab
+	//
+	// 	this.props.onChange(updatedTab)
+	//
+	// 	this.setState ({
+	// 		currentTab: updatedTab
+	// 	})
+	// }
 
 	logout() {
 		this.props.logout();
@@ -92,10 +92,10 @@ class NavBar extends Component {
 
 			    <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			      <ul className="nav navbar-nav">
-							<li onClick={ this.toggleProfile.bind(this) } className="active" id="profile"><Link to="/profile">&nbsp;Profile&nbsp;</Link></li>
-			        <li onClick={ this.toggleConsentForm.bind(this)} id="consentForm"><Link to="/consentForm">Consent Form Generator</Link></li>
-			        <li onClick={ this.toggleAddData.bind(this)} id="addData"><Link to="/addData">Create Data Record</Link></li>
-			        <li onClick={ this.toggleSearchDB.bind(this)} id="searchDB"><Link to="/searchDB">Search Database</Link></li>
+							<li id="profile"><Link to="/profile" activeClassName="active">&nbsp;Profile&nbsp;</Link></li>
+			        <li id="consentForm"><Link to="/consentForm" activeClassName="active">Consent Form Generator</Link></li>
+			        <li id="addData"><Link to="/addData" activeClassName="active">Create Data Record</Link></li>
+			        <li id="searchDB"><Link to="/searchDB" activeClassName="active">Search Database</Link></li>
 						</ul>
 						<ul className="nav navbar-nav navbar-right">
 							<li className="dropdown" style={{float: 'right'}}>

@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
+import {Switch, Route } from 'react-router-dom'
+
+
 import ConsentForm from './ConsentForm'
 import NavBar from './NavBar'
 import CreateDBEntry from './CreateDBEntry'
@@ -42,21 +45,12 @@ class Homepage extends Component {
   render(){
     return (
       <div>
-        <NavBar currentTab={this.state.tab} onChange={this.updateTab.bind(this)} isSignedIn={this.props.isSignedIn}
-          logout={ this.logout.bind(this) }/>
-
-        {this.state.tab == "profile" &&
-          <Profile />
-        }
-        {this.state.tab == "consentForm" &&
-          <ConsentForm />
-        }
-        {this.state.tab == "addData" &&
-          <CreateDBEntry />
-        }
-        {this.state.tab == "searchDB" &&
-          <br />
-        }
+        <Switch>
+          <Route exact path='/profile' component={Profile} />
+          <Route exact path='/consentForm' component={ConsentForm} />
+          <Route exact path='/addData' component={CreateDBEntry} />
+          <Route exact path='/searchDB' component={CreateDBEntry} />
+        </Switch>
       </div>
     );
   }
