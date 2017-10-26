@@ -1,78 +1,13 @@
 import React, { Component } from 'react'
 import styles from './styles'
+import { Link, NavLink } from 'react-router-dom'
 
 
 class NavBar extends Component {
 	constructor(){
 		super()
 		this.state = {
-			currentTab: "",
-			isSignedIn: false,
 		}
-	}
-
-	componentDidMount() {
-		this.setState({
-			isSignedIn: this.props.isSignedIn
-		})
-		// this.getUserProfile();
-		const url = location.href.substr(location.href.lastIndexOf('/') + 1)
-		if (url == "#consentForm"){
-			this.toggleConsentForm();
-		} else if(url == "#addData"){
-			this.toggleAddData();
-		} else if (url == "#searchDB"){
-			this.toggleSearchDB();
-		} else {
-			this.toggleProfile();
-		}
-	}
-
-	toggleProfile() {
-		document.getElementById('profile').className = "active";
-		document.getElementById('consentForm').className = "consentForm";
-		document.getElementById('searchDB').className = "searchDB";
-		document.getElementById('addData').className = "addData";
-
-		this.updateTab("profile")
-	}
-
-	toggleConsentForm(){
-		document.getElementById('profile').className = "profile";
-		document.getElementById('consentForm').className = "active";
-		document.getElementById('searchDB').className = "searchDB";
-		document.getElementById('addData').className = "addData";
-
-		this.updateTab("consentForm")
-	}
-
-	toggleSearchDB(){
-		document.getElementById('profile').className = "profile";
-		document.getElementById('consentForm').className = "consentForm";
-		document.getElementById('searchDB').className = "active";
-		document.getElementById('addData').className = "addData";
-
-		this.updateTab("searchDB")
-	}
-
-	toggleAddData(){
-		document.getElementById('profile').className = "profile";
-		document.getElementById('consentForm').className = "consentForm";
-		document.getElementById('searchDB').className = "searchDB";
-		document.getElementById('addData').className = "active";
-
-		this.updateTab("addData")
-	}
-
-	updateTab(tab){
-		let updatedTab = Object.assign("", this.state.currentTab)
-		updatedTab = tab
-
-		this.props.onChange(updatedTab)
-
-		this.setState ({
-			currentTab: updatedTab
-		})
 	}
 
 	logout() {
@@ -86,15 +21,27 @@ class NavBar extends Component {
 			<nav className="navbar navbar-default" style={styles.navBar}>
 				<div className="container-fluid">
 					<div className="navbar-header">
-  					<a className="navbar-brand" href="">mProv</a>
+  					<Link to="/"><span className="navbar-brand">mProv</span></Link>
     			</div>
 
 			    <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			      <ul className="nav navbar-nav">
-							<li onClick={ this.toggleProfile.bind(this) } className="active" id="profile"><a href="#profile">&nbsp;Profile&nbsp;</a></li>
-			        <li onClick={ this.toggleConsentForm.bind(this)} id="consentForm"><a href="#consentForm">Consent Form Generator</a></li>
-			        <li onClick={ this.toggleAddData.bind(this)} id="addData"><a href="#addData">Create Data Record</a></li>
-			        <li onClick={ this.toggleSearchDB.bind(this)} id="searchDB"><a href="#searchDB">Search Database</a></li>
+							<li id="profile">
+								<NavLink to="/profile" activeClassName="active"
+									activeStyle={{fontWeight:'bold', fontSize: 15+'px', color:'steelblue'}}>&nbsp;Profile&nbsp;</NavLink>
+							</li>
+			        <li id="consentForm">
+								<NavLink to="/consentForm" activeClassName="active"
+									activeStyle={{fontWeight:'bold', fontSize: 15+'px', color:'steelblue'}}>Consent Form Generator</NavLink>
+							</li>
+			        <li id="addData">
+								<NavLink to="/addData" activeClassName="active"
+									activeStyle={{fontWeight:'bold', fontSize: 15+'px', color:'steelblue'}}>Create Data Record</NavLink>
+							</li>
+			        <li id="searchDB">
+								<NavLink to="/searchDB" activeClassName="active"
+									activeStyle={{fontWeight:'bold', fontSize: 15+'px', color:'steelblue'}}>Search Database</NavLink>
+							</li>
 						</ul>
 						<ul className="nav navbar-nav navbar-right">
 							<li className="dropdown" style={{float: 'right'}}>
