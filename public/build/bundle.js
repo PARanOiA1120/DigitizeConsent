@@ -37045,22 +37045,27 @@ var ConsentForm = function (_Component) {
 			var _this2 = this;
 
 			if (this.props.match.params.formid) {
-				this.setState({
-					formId: this.props.match.params.formid
-				}, function () {
-					console.log("formid: " + _this2.state.formId);
-					_superagent2.default.get('/api/consentform').query({ _id: _this2.state.formId }).set('Accept', 'application/json').end(function (err, response) {
-						if (err) {
-							console.log('ERROR: ' + err);
-							return;
-						}
+				var formid = this.props.match.params.formid;
+				var url = '/api/consentform/' + formid;
+				_superagent2.default.get(url).set('Accept', 'application/json').end(function (err, response) {
+					if (err) {
+						alert('ERROR: ' + err);
+						_this2.props.history.push('/consentForm');
+						return;
+					}
 
-						var form = response.body.results[0];
+					if (response.body.result) {
+						var form = response.body.result;
+
 						_this2.setState({
+							formId: formid,
 							title: form.title,
 							selectedSectionList: form.sections
 						});
-					});
+					} else {
+						alert("Alert: Form not found.");
+						_this2.props.history.push('/consentForm');
+					}
 				});
 			} else {
 				this.setState({
@@ -37076,11 +37081,8 @@ var ConsentForm = function (_Component) {
 					return;
 				}
 
-				console.log(response);
-				var results = response.body.results;
-
 				_this2.setState({
-					sectionList: results
+					sectionList: response.body.results
 				});
 			});
 		}
@@ -37242,31 +37244,51 @@ var ConsentForm = function (_Component) {
 	}, {
 		key: 'saveForm',
 		value: function saveForm() {
+			var _this8 = this;
+
 			var sectionList = this.state.selectedSectionList;
 
 			sectionList.forEach(function (section) {
-				section["content"] = section["content"].substring(section["content"].indexOf('</p>') + 4);
+				var title = "<p><strong>" + section["title"] + "</strong></p>";
+				if (section["content"].indexOf(title) >= 0) section["content"] = section["content"].substring(section["content"].indexOf(title) + title.length);
 			});
 
 			var data = {
 				authorID: JSON.parse(localStorage.getItem('profile')).id,
 				title: this.state.title,
-				sections: this.state.selectedSectionList
+				sections: sectionList
 			};
 
-			_superagent2.default.post('/api/consentform').send(data).set('Accept', 'application/json').end(function (err, response) {
-				if (err) {
-					alert('ERROR: ' + err);
-					return;
-				}
+			if (this.state.formId != '') {
+				// update form
+				var url = '/api/consentform/' + this.state.formId;
+				_superagent2.default.put(url).send(data).set('Accept', 'application/json').end(function (err, response) {
+					if (err) {
+						console.log(err);
+						console.log(response);
+						return;
+					}
 
-				console.log("form saved...");
-			});
+					alert("Your update is saved!");
+					_this8.props.history.push('/profile');
+				});
+			} else {
+				// create a new form
+				_superagent2.default.post('/api/consentform').send(data).set('Accept', 'application/json').end(function (err, response) {
+					if (err) {
+						alert('ERROR: ' + err);
+						return;
+					}
+
+					alert("Your consent form is saved!");
+					_this8.props.history.push('/profile');
+				});
+			}
 		}
 	}, {
 		key: 'render',
 		value: function render() {
-			var _this8 = this;
+			var _this9 = this;
 
 			var formStyle = _styles2.default.form;
 			var universalStyle = _styles2.default.universal;
@@ -37283,7 +37305,7 @@ var ConsentForm = function (_Component) {
 				return _react2.default.createElement(
 					'li',
 					{ key: i },
-					_react2.default.createElement(_FormSection2.default, { currentSection: section, addRiskSection: _this8.addRiskSection.bind(_this8), onChange: _this8.updateSection.bind(_this8, i) })
+					_react2.default.createElement(_FormSection2.default, { currentSection: section, addRiskSection: _this9.addRiskSection.bind(_this9), onChange: _this9.updateSection.bind(_this9, i) })
 				);
 			});
 
@@ -37733,8 +37755,8 @@ var FormSection = function (_Component) {
       var _this2 = this;
 
       var content = "";
-      content += "<strong>" + this.props.currentSection.title + "</strong>";
-      content += "<br/>";
+      content += "<p><strong>" + this.props.currentSection.title + "</strong></p>";
+      // content += "<br/>"
       content += this.props.currentSection.content;
 
       this.props.currentSection["content"] = content;

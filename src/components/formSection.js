@@ -55,8 +55,8 @@ class FormSection extends Component {
 
   componentDidMount(){
     let content = ""
-    content += "<strong>" + this.props.currentSection.title + "</strong>"
-    content += "<br/>"
+    content += "<p><strong>" + this.props.currentSection.title + "</strong></p>"
+    // content += "<br/>"
     content += this.props.currentSection.content
 
     this.props.currentSection["content"] = content

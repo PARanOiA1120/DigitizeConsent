@@ -21,29 +21,32 @@ class ConsentForm extends Component {
 	}
 
 	componentDidMount(){
-
 		if(this.props.match.params.formid){
-			this.setState({
-				formId: this.props.match.params.formid
-			}, () => {
-				console.log("formid: " + this.state.formId)
-				superagent
-					.get('/api/consentform')
-					.query({_id: this.state.formId})
-					.set('Accept', 'application/json')
-					.end((err, response) => {
-						if(err) {
-							console.log('ERROR: ' + err)
-							return
-						}
+			var formid = this.props.match.params.formid
+			var url = '/api/consentform/' + formid
+			superagent
+				.get(url)
+				.set('Accept', 'application/json')
+				.end((err, response) => {
+					if(err) {
+						alert('ERROR: ' + err)
+						this.props.history.push('/consentForm')
+						return
+					}
 
-						var form = response.body.results[0]
+					if(response.body.result){
+						var form = response.body.result
+
 						this.setState({
+							formId: formid,
 							title: form.title,
 							selectedSectionList: form.sections
 						})
-					})
-			})
+					} else {
+						alert("Alert: Form not found.")
+						this.props.history.push('/consentForm')
+					}
+				})
 		} else {
 			this.setState({
 				formId: ''
@@ -62,11 +65,8 @@ class ConsentForm extends Component {
 				return
 			}
 
-			console.log(response)
-			let results = response.body.results
-
 			this.setState({
-				sectionList: results
+				sectionList: response.body.results
 			})
 		})
 	}
@@ -195,28 +195,51 @@ class ConsentForm extends Component {
 		var sectionList = this.state.selectedSectionList
 
 		sectionList.forEach((section) => {
-			section["content"] = section["content"].substring(section["content"].indexOf('</p>')+4)
+			var title = "<p><strong>" + section["title"] + "</strong></p>"
+			if(section["content"].indexOf(title) >= 0)
+				section["content"] = section["content"].substring(section["content"].indexOf(title)+title.length)
 		})
 
 		var data = {
 			authorID: JSON.parse(localStorage.getItem('profile')).id,
 			title: this.state.title,
-			sections: this.state.selectedSectionList
+			sections: sectionList
 		}
 
-		superagent
-			.post('/api/consentform')
-			.send(data)
-			.set('Accept', 'application/json')
-			.end((err, response) => {
-				if(err){
-					alert('ERROR: '+err)
-					return
-				}
+		if(this.state.formId != ''){
+			// update form
+			var url = '/api/consentform/' + this.state.formId
+			superagent
+				.put(url)
+				.send(data)
+				.set('Accept', 'application/json')
+				.end((err, response) => {
+					if(err){
+						console.log(err)
+						console.log(response)
+						return
+					}
 
-				console.log("form saved...");
-			})
+					alert("Your update is saved!")
+					this.props.history.push('/profile')
+				})
 
+		} else {
+			// create a new form
+			superagent
+				.post('/api/consentform')
+				.send(data)
+				.set('Accept', 'application/json')
+				.end((err, response) => {
+					if(err){
+						alert('ERROR: '+err)
+						return
+					}
+
+					alert("Your consent form is saved!")
+					this.props.history.push('/profile')
+				})
+		}
 	}
 
 

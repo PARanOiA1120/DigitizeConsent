@@ -33,13 +33,13 @@ module.exports = {
 	},
 
 	update: function(id, params, callback){
-		ConsentForm.findByIdAndUpdate(id, params, {new:true}, function(err, consentform){
+		ConsentForm.findByIdAndUpdate(id, { $set: params}, {new:true}, function(err, consentform){
 			if(err){
 				callback(err, null)
 				return
 			}
+			callback(null, consentform)
 		})
-		callback(null, consentform)
 	},
 
 	delete: function(id, callback){
