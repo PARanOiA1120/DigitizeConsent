@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
-import styles from './styles'
 import superagent from 'superagent'
+import { Link } from 'react-router-dom'
+import styles from './styles'
+
 
 class Profile extends Component {
   constructor() {
@@ -37,9 +39,11 @@ class Profile extends Component {
           <td>{ form["timeCreated"].split('T')[0] }</td>
           <td>{ form["lastUpdated"].split('T')[0] }</td>
           <td>
-            <a className="btn btn-primary" style={{width:80, background:'white', color:'steelblue', borderColor:'steelblue'}}>
-              <span className="glyphicon glyphicon-edit" style={{fontWeight:'bold'}}>&nbsp;Edit</span>
-            </a>
+            <Link to={'/consentForm/'+ form["_id"]}>
+              <a className="btn btn-primary" style={{width:80, background:'white', color:'steelblue', borderColor:'steelblue'}}>
+                <span className="glyphicon glyphicon-edit" style={{fontWeight:'bold'}}>&nbsp;Edit</span>
+              </a>
+            </Link>
           </td>
           <td>
             <a className="btn btn-primary" style={{background:'white', color:'steelblue', borderColor:'steelblue'}}>

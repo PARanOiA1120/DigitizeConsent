@@ -14,7 +14,6 @@ class FormSection extends Component {
       apps: [], //app name list
       selectedApp:'',
 
-
       swsensorListforSelectedApp: [],
       supportedDevices: [],
       selectedSWSeneors:[],
@@ -67,7 +66,6 @@ class FormSection extends Component {
       text: content
     })
 
-
     //get application list
     superagent
     .get('/api/appsensor')
@@ -79,14 +77,11 @@ class FormSection extends Component {
         return
       }
 
-      // console.log(JSON.stringify(response.body.results))
       let results = response.body.results
       let apps = Object.assign([], this.state.apps)
       results.forEach((app) => {
           apps.push(app.application)
       })
-
-      // console.log("apps: " + apps)
 
       this.setState({
         appList: results,
@@ -104,7 +99,6 @@ class FormSection extends Component {
         return
       }
 
-      // console.log(JSON.stringify(response.body.results))
       let results = response.body.results
       let devices = Object.assign([], this.state.deviceList)
       results.forEach((devicesensor) => {
@@ -128,13 +122,10 @@ class FormSection extends Component {
 
     this.setState({
       section: updatedSection
-    }, () => {
-      // console.log("updated section: " + JSON.stringify(this.state.section))
     })
   }
 
   updateSensorSelection(event){
-    // console.log('update sensor selection: ' + event.target.value)
     let updatedSensor = Object.assign("", this.state.selectedSensor)
     updatedSensor = event.target.value
 
@@ -144,7 +135,6 @@ class FormSection extends Component {
   }
 
   updateAttrName(event) {
-    // console.log("update arrtibute name: " + event.target)
     this.setState({
       attrName: event.target.value,
       attrNameC: "",
@@ -231,12 +221,9 @@ class FormSection extends Component {
         sensors.push(options[i].value)
       }
     }
-    // console.log(sensors)
 
     this.setState({
       selectedSWSeneors: sensors
-    }, () => {
-      // console.log("selected sw sensors: " + this.state.selectedSWSeneors)
     })
   }
 
@@ -252,10 +239,7 @@ class FormSection extends Component {
 
     this.setState({
       selectedDeviceforApp: devices
-    }, () => {
-      // console.log("devices running the app: " + this.state.selectedDeviceforApp)
     })
-
   }
 
   addAnotherApp(event){
@@ -380,7 +364,6 @@ class FormSection extends Component {
     updatedSensor["device"] = this.state.selectedDevice
     updatedSensor["sensor"] = this.state.selectedSensor
     updatedSensor["attributes"] = this.state.attrForSearch
-    // console.log('add sensor: ' + JSON.stringify(updatedSensor))
 
     let updatedSensorList = Object.assign([], this.state.sensorList)
     updatedSensorList.push(updatedSensor)
@@ -441,7 +424,6 @@ class FormSection extends Component {
         text: context
       })
     }
-
 
     // generate query data
     var sensorList = this.state.sensorList

@@ -22,7 +22,8 @@ class Homepage extends Component {
         <Switch>
           <Route exact path='/' component={Profile} />
           <Route path='/profile' component={Profile} />
-          <Route path='/consentForm' component={ConsentForm} />
+          <Route exact path='/consentForm' component={ConsentForm} />
+          <Route path='/consentForm/:formid' component={ConsentForm} />
           <Route path='/addData' component={CreateDBEntry} />
           <Route path='/searchDB' component={CreateDBEntry} />
         </Switch>

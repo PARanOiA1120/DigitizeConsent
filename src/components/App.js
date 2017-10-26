@@ -75,7 +75,6 @@ class App extends Component {
 				{this.state.isSignedIn == true &&
           <div className="main">
             <NavBar logout={ this.logout.bind(this) }/>
-
   					<Homepage isSignedIn={ this.state.isSignedIn } logout={ this.logout.bind(this)} />
           </div>
 				}

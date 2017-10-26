@@ -37028,6 +37028,7 @@ var ConsentForm = function (_Component) {
 		var _this = _possibleConstructorReturn(this, (ConsentForm.__proto__ || Object.getPrototypeOf(ConsentForm)).call(this));
 
 		_this.state = {
+			formId: '',
 			sectionList: [],
 			selectedSectionList: [],
 			selected: '',
@@ -37043,7 +37044,31 @@ var ConsentForm = function (_Component) {
 		value: function componentDidMount() {
 			var _this2 = this;
 
-			// console.log('componentDidMount')
+			if (this.props.match.params.formid) {
+				this.setState({
+					formId: this.props.match.params.formid
+				}, function () {
+					console.log("formid: " + _this2.state.formId);
+					_superagent2.default.get('/api/consentform').query({ _id: _this2.state.formId }).set('Accept', 'application/json').end(function (err, response) {
+						if (err) {
+							console.log('ERROR: ' + err);
+							return;
+						}
+
+						var form = response.body.results[0];
+						_this2.setState({
+							title: form.title,
+							selectedSectionList: form.sections
+						});
+					});
+				});
+			} else {
+				this.setState({
+					formId: ''
+				}, function () {
+					console.log("formid: " + _this2.state.formId);
+				});
+			}
 
 			_superagent2.default.get('/api/formsection').query(null).set('Accept', 'application/json').end(function (err, response) {
 				if (err) {
@@ -37217,6 +37242,12 @@ var ConsentForm = function (_Component) {
 	}, {
 		key: 'saveForm',
 		value: function saveForm() {
+			var sectionList = this.state.selectedSectionList;
+
+			sectionList.forEach(function (section) {
+				section["content"] = section["content"].substring(section["content"].indexOf('</p>') + 4);
+			});
+
 			var data = {
 				authorID: JSON.parse(localStorage.getItem('profile')).id,
 				title: this.state.title,
@@ -37329,7 +37360,7 @@ var ConsentForm = function (_Component) {
 					),
 					_react2.default.createElement(
 						'div',
-						{ style: { width: 30 + '%', margin: 'auto', marginTop: 35 + 'px' } },
+						{ style: { width: 40 + '%', margin: 'auto', marginTop: 35 + 'px' } },
 						_react2.default.createElement(
 							'button',
 							{ className: 'btn btn-primary', onClick: this.saveForm.bind(this), style: { float: 'left', width: 80 } },
@@ -37720,14 +37751,11 @@ var FormSection = function (_Component) {
           return;
         }
 
-        // console.log(JSON.stringify(response.body.results))
         var results = response.body.results;
         var apps = Object.assign([], _this2.state.apps);
         results.forEach(function (app) {
           apps.push(app.application);
         });
-
-        // console.log("apps: " + apps)
 
         _this2.setState({
           appList: results,
@@ -37741,7 +37769,6 @@ var FormSection = function (_Component) {
           return;
         }
 
-        // console.log(JSON.stringify(response.body.results))
         var results = response.body.results;
         var devices = Object.assign([], _this2.state.deviceList);
         results.forEach(function (devicesensor) {
@@ -37764,14 +37791,11 @@ var FormSection = function (_Component) {
 
       this.setState({
         section: updatedSection
-      }, function () {
-        // console.log("updated section: " + JSON.stringify(this.state.section))
       });
     }
   }, {
     key: 'updateSensorSelection',
     value: function updateSensorSelection(event) {
-      // console.log('update sensor selection: ' + event.target.value)
       var updatedSensor = Object.assign("", this.state.selectedSensor);
       updatedSensor = event.target.value;
 
@@ -37782,7 +37806,6 @@ var FormSection = function (_Component) {
   }, {
     key: 'updateAttrName',
     value: function updateAttrName(event) {
-      // console.log("update arrtibute name: " + event.target)
       this.setState({
         attrName: event.target.value,
         attrNameC: "",
@@ -37881,12 +37904,9 @@ var FormSection = function (_Component) {
           sensors.push(options[i].value);
         }
       }
-      // console.log(sensors)
 
       this.setState({
         selectedSWSeneors: sensors
-      }, function () {
-        // console.log("selected sw sensors: " + this.state.selectedSWSeneors)
       });
     }
   }, {
@@ -37902,8 +37922,6 @@ var FormSection = function (_Component) {
 
       this.setState({
         selectedDeviceforApp: devices
-      }, function () {
-        // console.log("devices running the app: " + this.state.selectedDeviceforApp)
       });
     }
   }, {
@@ -38022,7 +38040,6 @@ var FormSection = function (_Component) {
       updatedSensor["device"] = this.state.selectedDevice;
       updatedSensor["sensor"] = this.state.selectedSensor;
       updatedSensor["attributes"] = this.state.attrForSearch;
-      // console.log('add sensor: ' + JSON.stringify(updatedSensor))
 
       var updatedSensorList = Object.assign([], this.state.sensorList);
       updatedSensorList.push(updatedSensor);
@@ -38611,7 +38628,8 @@ var Homepage = function (_Component) {
           null,
           _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', component: _Profile2.default }),
           _react2.default.createElement(_reactRouterDom.Route, { path: '/profile', component: _Profile2.default }),
-          _react2.default.createElement(_reactRouterDom.Route, { path: '/consentForm', component: _ConsentForm2.default }),
+          _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/consentForm', component: _ConsentForm2.default }),
+          _react2.default.createElement(_reactRouterDom.Route, { path: '/consentForm/:formid', component: _ConsentForm2.default }),
           _react2.default.createElement(_reactRouterDom.Route, { path: '/addData', component: _CreateDBEntry2.default }),
           _react2.default.createElement(_reactRouterDom.Route, { path: '/searchDB', component: _CreateDBEntry2.default })
         )
@@ -39146,13 +39164,15 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _styles = __webpack_require__(27);
-
-var _styles2 = _interopRequireDefault(_styles);
-
 var _superagent = __webpack_require__(37);
 
 var _superagent2 = _interopRequireDefault(_superagent);
+
+var _reactRouterDom = __webpack_require__(52);
+
+var _styles = __webpack_require__(27);
+
+var _styles2 = _interopRequireDefault(_styles);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -39221,12 +39241,16 @@ var Profile = function (_Component) {
             'td',
             null,
             _react2.default.createElement(
-              'a',
-              { className: 'btn btn-primary', style: { width: 80, background: 'white', color: 'steelblue', borderColor: 'steelblue' } },
+              _reactRouterDom.Link,
+              { to: '/consentForm/' + form["_id"] },
               _react2.default.createElement(
-                'span',
-                { className: 'glyphicon glyphicon-edit', style: { fontWeight: 'bold' } },
-                '\xA0Edit'
+                'a',
+                { className: 'btn btn-primary', style: { width: 80, background: 'white', color: 'steelblue', borderColor: 'steelblue' } },
+                _react2.default.createElement(
+                  'span',
+                  { className: 'glyphicon glyphicon-edit', style: { fontWeight: 'bold' } },
+                  '\xA0Edit'
+                )
               )
             )
           ),

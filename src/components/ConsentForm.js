@@ -10,6 +10,7 @@ class ConsentForm extends Component {
 	constructor(){
 		super()
 		this.state = {
+			formId: '',
 			sectionList: [],
 			selectedSectionList: [],
 			selected: '',
@@ -20,7 +21,36 @@ class ConsentForm extends Component {
 	}
 
 	componentDidMount(){
-		// console.log('componentDidMount')
+
+		if(this.props.match.params.formid){
+			this.setState({
+				formId: this.props.match.params.formid
+			}, () => {
+				console.log("formid: " + this.state.formId)
+				superagent
+					.get('/api/consentform')
+					.query({_id: this.state.formId})
+					.set('Accept', 'application/json')
+					.end((err, response) => {
+						if(err) {
+							console.log('ERROR: ' + err)
+							return
+						}
+
+						var form = response.body.results[0]
+						this.setState({
+							title: form.title,
+							selectedSectionList: form.sections
+						})
+					})
+			})
+		} else {
+			this.setState({
+				formId: ''
+			}, () => {
+				console.log("formid: " + this.state.formId)
+			})
+		}
 
 		superagent
 		.get('/api/formsection')
@@ -162,6 +192,12 @@ class ConsentForm extends Component {
 	}
 
 	saveForm(){
+		var sectionList = this.state.selectedSectionList
+
+		sectionList.forEach((section) => {
+			section["content"] = section["content"].substring(section["content"].indexOf('</p>')+4)
+		})
+
 		var data = {
 			authorID: JSON.parse(localStorage.getItem('profile')).id,
 			title: this.state.title,
@@ -239,7 +275,7 @@ class ConsentForm extends Component {
 						<ContentPreview content={this.state.context} />
 					</div>
 
-					<div style={{width: 30+'%', margin:'auto', marginTop: 35+'px'}}>
+					<div style={{width: 40+'%', margin:'auto', marginTop: 35+'px'}}>
 						<button className="btn btn-primary" onClick={ this.saveForm.bind(this) } style={{float:'left', width: 80}}>Save</button>
 						<DownloadPDF content={this.state.context} />
 					</div>
