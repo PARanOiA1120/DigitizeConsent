@@ -29,6 +29,23 @@ class Profile extends Component {
       })
   }
 
+  deleteForm(formid){
+    console.log("deleting form: " + formid);
+    var url = '/api/consentform/' + formid;
+
+    superagent
+      .delete(url)
+      .query(null)
+      .set('Accept', 'application/json')
+      .end((err, response) => {
+        if(err){
+          console.log("ERROR: " + err);
+          return
+        }
+        window.location.reload();
+      })
+  }
+
   render() {
 		const formStyle = styles.form;
 
@@ -50,13 +67,19 @@ class Profile extends Component {
               <span className="glyphicon glyphicon-download-alt" style={{fontWeight:'bold'}}>&nbsp;Download</span>
             </a>
           </td>
+          <td>
+            <a className="btn btn-primary" onClick={ this.deleteForm.bind(this, form["_id"]) }
+              style={{background:'white', color:'darkred', borderColor:'darkred'}}>
+              <span className="glyphicon glyphicon-remove" style={{fontWeight:'bold'}}>&nbsp;Delete</span>
+            </a>
+          </td>
         </tr>
       )
     })
 
     return(
       <div className="container" style={formStyle.container}>
-        <div className="userProfile" style={{width:30+'%', float: 'left', paddingLeft: 50+'px',
+        <div className="userProfile" style={{width:25+'%', float: 'left', paddingLeft: 20+'px',
           paddingTop: 10+'px', paddingButtom: 10+'px', marginTop: 70+'px',
           borderRight: 'solid', borderWidth:1+'px', borderColor:'lightgrey', textAlign:"center",}}>
           <img src={this.state.userProfile.picture}
@@ -70,7 +93,7 @@ class Profile extends Component {
           <p><span style={{color:"grey"}}>Consent Forms: </span><span style={{fontWeight:"bold", color:"steelblue"}}>1</span></p>
         </div>
 
-        <div className="myConsents" style={{width:68+'%', float: "right", marginTop: 70+'px', paddingLeft: 25+'px'}}>
+        <div className="myConsents" style={{width:73+'%', float: "right", marginTop: 70+'px', paddingLeft: 20+'px'}}>
           <h4>Your Consent Forms</h4>
           <br/>
 
@@ -82,6 +105,7 @@ class Profile extends Component {
                 <th style={{textAlign: 'center'}}>Last Updated Time</th>
                 <th style={{textAlign: 'center'}}>Edit</th>
                 <th style={{textAlign: 'center'}}>Download</th>
+                <th style={{textAlign: 'center'}}>Delete</th>
               </tr>
             </thead>
             <tbody>

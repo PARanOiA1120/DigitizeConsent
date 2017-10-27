@@ -76,7 +76,14 @@ class Login extends React.Component{
 
     return (
       <div style={{backgroundColor:'#f9f9f9', height:100+'%'}}>
-        <div className="container" style={{marginTop:30, height: 'calc(100vh - 52px)'}}>
+        <nav className="navbar navbar-default" style={{height: 100+'px', background:'#f9f9f9'}}>
+          <div className="container-fluid" style={{padding:20}}>
+            <div className="navbar-header" style={{marginLeft:20}}>
+              <span className="navbar-brand" style={{fontSize: 60}}>&nbsp;mProv</span>
+            </div>
+          </div>
+        </nav>
+        <div className="container" style={{marginTop:30, height: 'calc(100vh - 52px)', background:'white', padding:15}}>
           <div className="intro" style={{width:70+'%', float:'left'}}>
             <h2>Digitize Your Consent Form</h2>
             <br/>
@@ -88,7 +95,7 @@ class Login extends React.Component{
 
           <div className="signin" style={{width:30+'%', float:'right', paddingLeft:4+'%', paddingRight:4+'%'}}>
             <br/>
-            <h4 style={{color:'grey', textAlign:'center'}}>Please Sign In</h4>
+            <h4 style={{textAlign:'center'}}>Please Sign In</h4>
             <br/>
             <GoogleLogin socialId="883714622208-doumj0pod3cursh149qjoj2pjt0ujgit.apps.googleusercontent.com"
                          className="google-login"

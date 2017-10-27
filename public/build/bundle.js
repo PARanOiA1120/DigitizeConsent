@@ -10656,13 +10656,9 @@ var NavBar = function (_Component) {
 						'div',
 						{ className: 'navbar-header' },
 						_react2.default.createElement(
-							_reactRouterDom.Link,
-							{ to: '/' },
-							_react2.default.createElement(
-								'span',
-								{ className: 'navbar-brand' },
-								'mProv'
-							)
+							'span',
+							{ className: 'navbar-brand' },
+							'mProv'
 						)
 					),
 					_react2.default.createElement(
@@ -39100,8 +39096,25 @@ var Login = function (_React$Component) {
         "div",
         { style: { backgroundColor: '#f9f9f9', height: 100 + '%' } },
         _react2.default.createElement(
+          "nav",
+          { className: "navbar navbar-default", style: { height: 100 + 'px', background: '#f9f9f9' } },
+          _react2.default.createElement(
+            "div",
+            { className: "container-fluid", style: { padding: 20 } },
+            _react2.default.createElement(
+              "div",
+              { className: "navbar-header", style: { marginLeft: 20 } },
+              _react2.default.createElement(
+                "span",
+                { className: "navbar-brand", style: { fontSize: 60 } },
+                "\xA0mProv"
+              )
+            )
+          )
+        ),
+        _react2.default.createElement(
           "div",
-          { className: "container", style: { marginTop: 30, height: 'calc(100vh - 52px)' } },
+          { className: "container", style: { marginTop: 30, height: 'calc(100vh - 52px)', background: 'white', padding: 15 } },
           _react2.default.createElement(
             "div",
             { className: "intro", style: { width: 70 + '%', float: 'left' } },
@@ -39148,7 +39161,7 @@ var Login = function (_React$Component) {
             _react2.default.createElement("br", null),
             _react2.default.createElement(
               "h4",
-              { style: { color: 'grey', textAlign: 'center' } },
+              { style: { textAlign: 'center' } },
               "Please Sign In"
             ),
             _react2.default.createElement("br", null),
@@ -39235,8 +39248,24 @@ var Profile = function (_Component) {
       });
     }
   }, {
+    key: 'deleteForm',
+    value: function deleteForm(formid) {
+      console.log("deleting form: " + formid);
+      var url = '/api/consentform/' + formid;
+
+      _superagent2.default.delete(url).query(null).set('Accept', 'application/json').end(function (err, response) {
+        if (err) {
+          console.log("ERROR: " + err);
+          return;
+        }
+        window.location.reload();
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
+      var _this3 = this;
+
       var formStyle = _styles2.default.form;
 
       var formList = this.state.consentFormList.map(function (form, i) {
@@ -39288,6 +39317,20 @@ var Profile = function (_Component) {
                 '\xA0Download'
               )
             )
+          ),
+          _react2.default.createElement(
+            'td',
+            null,
+            _react2.default.createElement(
+              'a',
+              { className: 'btn btn-primary', onClick: _this3.deleteForm.bind(_this3, form["_id"]),
+                style: { background: 'white', color: 'darkred', borderColor: 'darkred' } },
+              _react2.default.createElement(
+                'span',
+                { className: 'glyphicon glyphicon-remove', style: { fontWeight: 'bold' } },
+                '\xA0Delete'
+              )
+            )
           )
         );
       });
@@ -39297,7 +39340,7 @@ var Profile = function (_Component) {
         { className: 'container', style: formStyle.container },
         _react2.default.createElement(
           'div',
-          { className: 'userProfile', style: { width: 30 + '%', float: 'left', paddingLeft: 50 + 'px',
+          { className: 'userProfile', style: { width: 25 + '%', float: 'left', paddingLeft: 20 + 'px',
               paddingTop: 10 + 'px', paddingButtom: 10 + 'px', marginTop: 70 + 'px',
               borderRight: 'solid', borderWidth: 1 + 'px', borderColor: 'lightgrey', textAlign: "center" } },
           _react2.default.createElement('img', { src: this.state.userProfile.picture,
@@ -39350,7 +39393,7 @@ var Profile = function (_Component) {
         ),
         _react2.default.createElement(
           'div',
-          { className: 'myConsents', style: { width: 68 + '%', float: "right", marginTop: 70 + 'px', paddingLeft: 25 + 'px' } },
+          { className: 'myConsents', style: { width: 73 + '%', float: "right", marginTop: 70 + 'px', paddingLeft: 20 + 'px' } },
           _react2.default.createElement(
             'h4',
             null,
@@ -39390,6 +39433,11 @@ var Profile = function (_Component) {
                   'th',
                   { style: { textAlign: 'center' } },
                   'Download'
+                ),
+                _react2.default.createElement(
+                  'th',
+                  { style: { textAlign: 'center' } },
+                  'Delete'
                 )
               )
             ),

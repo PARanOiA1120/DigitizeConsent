@@ -21,7 +21,7 @@ class NavBar extends Component {
 			<nav className="navbar navbar-default" style={styles.navBar}>
 				<div className="container-fluid">
 					<div className="navbar-header">
-  					<Link to="/"><span className="navbar-brand">mProv</span></Link>
+  					<span className="navbar-brand">mProv</span>
     			</div>
 
 			    <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
