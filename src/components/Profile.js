@@ -9,7 +9,8 @@ class Profile extends Component {
     super();
     this.state = {
       userProfile: JSON.parse(localStorage.getItem('profile')),
-      consentFormList: []
+      consentFormList: [],
+      numForms: 0
     }
   }
 
@@ -24,7 +25,8 @@ class Profile extends Component {
           return
         }
         this.setState({
-          consentFormList: response.body.results
+          consentFormList: response.body.results,
+          numForms: response.body.results.length
         })
       })
   }
@@ -88,9 +90,9 @@ class Profile extends Component {
           </img>
           <br />
           <br />
-          <p><span style={{color:"grey"}}>Name: </span><span style={{fontWeight:"bold", color:"steelblue"}}>{this.state.userProfile.name}</span></p>
-          <p><span style={{color:"grey"}}>Email: </span><span style={{fontWeight:"bold", color:"steelblue"}}>{this.state.userProfile.email}</span></p>
-          <p><span style={{color:"grey"}}>Consent Forms: </span><span style={{fontWeight:"bold", color:"steelblue"}}>1</span></p>
+          <p><span style={{color:"grey"}}>Name: </span><span style={{fontWeight:"bold", color:"steelblue"}}>{ this.state.userProfile.name }</span></p>
+          <p><span style={{color:"grey"}}>Email: </span><span style={{fontWeight:"bold", color:"steelblue"}}>{ this.state.userProfile.email }</span></p>
+          <p><span style={{color:"grey"}}>Consent Forms: </span><span style={{fontWeight:"bold", color:"steelblue"}}>{ this.state.numForms }</span></p>
         </div>
 
         <div className="myConsents" style={{width:73+'%', float: "right", marginTop: 70+'px', paddingLeft: 20+'px'}}>

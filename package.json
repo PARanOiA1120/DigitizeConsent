@@ -12,7 +12,10 @@
     "body-parser": "~1.17.1",
     "cookie-parser": "~1.4.3",
     "cross-env": "^5.1.0",
+    "css-loader": "^0.28.7",
     "debug": "~2.6.3",
+    "eslint-config-react-tools": "^1.0.10",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
     "express": "~4.15.2",
     "hjs": "~0.0.6",
     "i": "^0.3.5",
@@ -27,7 +30,10 @@
     "react-html-parser": "^1.0.3",
     "react-jsonschema-form": "^0.48.2",
     "react-quill": "^1.0.0",
+    "react-router-dom": "^4.2.2",
+    "react-table": "^6.7.4",
     "serve-favicon": "~2.4.2",
+    "style-loader": "^0.19.0",
     "superagent": "^3.5.2"
   },
   "devDependencies": {

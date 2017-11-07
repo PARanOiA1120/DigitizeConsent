@@ -75,7 +75,7 @@ class Login extends React.Component{
     const google_logo = <span><span className='fa fa-google fa-2x' style={{color:'white', float:'left', marginLeft:20+'px'}}></span><span style={{float:'right', marginRight:40+'px'}}>Sign in with Google</span></span>;
 
     return (
-      <div style={{backgroundColor:'#f9f9f9', height:100+'%'}}>
+      <div style={{backgroundColor:'#f9f9f9', height:100+'%', width: 100+'%'}}>
         <nav className="navbar navbar-default" style={{height: 100+'px', background:'#f9f9f9'}}>
           <div className="container-fluid" style={{padding:20}}>
             <div className="navbar-header" style={{marginLeft:20}}>
@@ -83,8 +83,8 @@ class Login extends React.Component{
             </div>
           </div>
         </nav>
-        <div className="container" style={{marginTop:30, height: 'calc(100vh - 52px)', background:'white', padding:15}}>
-          <div className="intro" style={{width:70+'%', float:'left'}}>
+        <div className="container" style={{marginTop:30, height: 'calc(100vh - 52px)', background:'white', padding:15, width:90+'%'}}>
+          <div className="intro" style={{width:70+'%', float:'left', paddingLeft:20}}>
             <h2>Digitize Your Consent Form</h2>
             <br/>
 
@@ -93,7 +93,7 @@ class Login extends React.Component{
             <p><span className="fa fa-youtube-play fa-2x" style={{color:'	#cc181e'}}></span><a href="https://drive.google.com/a/g.ucla.edu/file/d/0B43qfJfyhlkVNXNaWDY3MGRmMWc/view?usp=sharing" style={{fontSize:16+'px', color:'#666666'}}>&nbsp;&nbsp;Demo Video</a></p>
           </div>
 
-          <div className="signin" style={{width:30+'%', float:'right', paddingLeft:4+'%', paddingRight:4+'%'}}>
+          <div className="signin" style={{width:30+'%', float:'right', paddingLeft:4+'%', paddingRight:4+'%', paddingRight:15}}>
             <br/>
             <h4 style={{textAlign:'center'}}>Please Sign In</h4>
             <br/>
