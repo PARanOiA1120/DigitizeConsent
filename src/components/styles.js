@@ -4,7 +4,6 @@ export default {
 			borderColor: 'lightgrey',
 			width:95+'%'
 		}
-
 	},
 	navBar: {
 		width:100+'%',
@@ -93,8 +92,9 @@ export default {
 			width: 35+'%',
 			marginLeft: 'auto',
 			marginRight: 'auto',
-			marginTop: 40 + 'px'
+			marginTop: 40 + 'px',
+			textAlign: 'center'
 		},
-
 	}
+
 }

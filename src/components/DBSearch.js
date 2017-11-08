@@ -1,109 +1,182 @@
 import React, { Component } from "react"
 import { render } from "react-dom"
-// Import React Table
 import ReactTable from "react-table"
+import matchSorter from 'match-sorter'
+import superagent from 'superagent'
+
+import styles from './styles'
 require("react-table/react-table.css")
 
 class DBSearch extends Component {
 
-  render() {
-    const data = [{
-      name: 'Tanner Linsley',
-      age: 26,
-      friend: {
-        name: 'Jason Maurer',
-        age: 23,
-      }
-    },{
-      name: 'Ariel Xin',
-      age: 23,
-      friend: {
-        name: 'ZZM',
-        age: 24,
-      }
-    }]
+  constructor() {
+    super()
+    this.state = {
+      tableList: [
+        {
+          title: 'Device List',
+          action: '/api/device',
+          columns: [
+            {
+              Header: "Device Type",
+              accessor: "device",
+              id: "device",
+              filterMethod: (filter, row) =>  String(row[filter.id]).startsWith(filter.value)
+            }
+          ],
+          pivot: []
+        },
+        {
+          title: 'Device Sensor List',
+          action: '/api/devicesensor',
+          columns: [
+            {
+              Header: "Device Type",
+              accessor: "device",
+              filterable: false
+            },
+            {
+              Header: "Sensor Name",
+              accessor: "sensorName",
+              filterable: false
+            },
+          ],
+          pivot: ["device"]
+        },
+        {
+          title: 'Software Sensor List',
+          action: '/api/swsensor',
+          columns: [
+            {
+              Header: "Sensor Name",
+              accessor: "sensor"
+            }
+          ],
+          pivot: []
+        },
+        {
+          title: 'Application Sensor List',
+          action: '/api/appsensor',
+          columns: [
+            {
+              Header: "Application",
+              accessor: "application"
+            },
+            {
+              Header: "Supported Devices",
+              accessor: "supportedDevices"
+            },
+            {
+              Header: "Software Sensor",
+              accessor: "softwareSensor"
+            }
+          ],
+          pivot: []
+        },
+        {
+          title: 'Sensor Inference List',
+          action: '/api/sensorinference',
+          columns: [
+            {
+              Header: "Reference",
+              accessor: "reference"
+            },
+            {
+              Header: "Inference",
+              columns: [
+                {
+                  Header: "Inference Name",
+                  accessor:"inference.inferenceName"
+                },
+                {
+                  Header: "Description",
+                  accessor: "inference.description"
+                }
+              ]
+            },
+            {
+              Header: "Device List",
+              accessor: "deviceList",
+              width:300
+            }
+          ],
+          pivot: [],
+        },
+        {
+          title: 'Inference Description',
+          action: '/api/inferencedescription',
+          columns: [
+            {
+              Header: "Inference Name",
+              accessor: "inferenceName"
+            },
+            {
+              Header: "Description",
+              accessor: "description"
+            }
+          ],
+          pivot: []
+        },
+      ],
+      selectedTable: {},
+      data: {}
+    }
+  }
 
-    const columns = [{
-      Header: 'Name',
-      accessor: 'name' // String-based value accessors!
-    }, {
-      Header: 'Age',
-      accessor: 'age',
-      Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
-    }, {
-      id: 'friendName', // Required because our accessor is not a string
-      Header: 'Friend Name',
-      accessor: d => d.friend.name // Custom value accessors!
-    }, {
-      Header: props => <span>Friend Age</span>, // Custom header components!
-      accessor: 'friend.age'
-    }]
+  updateTable(event){
+    let table = this.state.tableList[event.target.value]
+
+    superagent
+      .get(table.action)
+      .set('Accept', 'application/json')
+      .end((err, response) => {
+        if(err) {
+          alert('ERROR: ' + err)
+          return
+        }
+
+        let inferences = response.body.results
+        if(table.action == '/api/sensorinference'){
+          inferences.forEach((inference) => {
+            inference["deviceList"] = JSON.stringify(inference["deviceList"], null, 2)
+          })
+        }
+        this.setState({
+          selectedTable: table,
+          data: inferences
+        })
+      })
+	}
+
+  render() {
+    const formStyle = styles.schemaform
+    const options = this.state.tableList.map((table, i) => {
+      return (
+        <option value={i} key={i}>{table["title"]}</option>
+      )
+    })
 
     return (
        <div>
-         <ReactTable
-           data={data}
-           filterable
-           defaultFilterMethod={(filter, row) =>
-             String(row[filter.id]) === filter.value}
-           columns={[
-             {
-               Header: "Name",
-               columns: [
-                 {
-                   Header: "First Name",
-                   accessor: "firstName",
-                   filterMethod: (filter, row) =>
-                     row[filter.id].startsWith(filter.value) &&
-                     row[filter.id].endsWith(filter.value)
-                 },
-                 {
-                   Header: "Last Name",
-                   id: "lastName",
-                   accessor: d => d.lastName,
-                   filterMethod: (filter, rows) =>
-                     matchSorter(rows, filter.value, { keys: ["lastName"] }),
-                   filterAll: true
-                 }
-               ]
-             },
-             {
-               Header: "Info",
-               columns: [
-                 {
-                   Header: "Age",
-                   accessor: "age"
-                 },
-                 {
-                   Header: "Over 21",
-                   accessor: "age",
-                   id: "over",
-                   Cell: ({ value }) => (value >= 21 ? "Yes" : "No"),
-                   filterMethod: (filter, row) => {
-                     if (filter.value === "all") {
-                       return true;
-                     }
-                     if (filter.value === "true") {
-                       return row[filter.id] >= 21;
-                     }
-                     return row[filter.id] < 21;
-                   },
-                   Filter: ({ filter, onChange }) =>
-                     <select
-                       onChange={event => onChange(event.target.value)}
-                       style={{ width: "100%" }}
-                       value={filter ? filter.value : "all"}>
-                       <option value="all">Show All</option>
-                       <option value="true">Can Drink</option>
-                       <option value="false">Cant Drink</option>
-                     </select>
-                 }
-               ]
-             }
-           ]}
-           defaultPageSize={10}
-           className="-striped -highlight"
-         />
+         <select className="form-control" id="db" style={formStyle.selectionBox}
+           onChange={this.updateTable.bind(this)}>
+           <option>-------------- Select a Table --------------</option>
+           { options }
+         </select>
+
+         { this.state.selectedTable.columns &&
+           <ReactTable
+             data={ this.state.data }
+             filterable
+             defaultFilterMethod={ (filter, row) =>  String(row[filter.id]).startsWith(filter.value) }
+             pivotBy={ this.state.selectedTable.pivot }
+             columns={ this.state.selectedTable.columns }
+             SubComponent={ this.state.selectedTable.subComponent }
+             defaultPageSize={5}
+             style={{width:60+'%', marginLeft:'auto', marginRight:'auto', backgroundColor:'lightsteelblue', marginTop: 50+'px'}}
+             className="-striped -highlight"
+           />
+         }
          <br />
        </div>
      );
