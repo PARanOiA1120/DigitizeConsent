@@ -21,10 +21,13 @@ class DBSearch extends Component {
               Header: "Device Type",
               accessor: "device",
               id: "device",
-              filterMethod: (filter, row) =>  String(row[filter.id]).startsWith(filter.value)
+              filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, { keys: ["device"] }),
+              filterAll: true
             }
           ],
-          pivot: []
+          pivot: [],
+          subComponent: null
         },
         {
           title: 'Device Sensor List',
@@ -33,7 +36,9 @@ class DBSearch extends Component {
             {
               Header: "Device Type",
               accessor: "device",
-              filterable: false
+              filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, { keys: ["device"] }),
+              filterAll: true
             },
             {
               Header: "Sensor Name",
@@ -41,7 +46,8 @@ class DBSearch extends Component {
               filterable: false
             },
           ],
-          pivot: ["device"]
+          pivot: ["device"],
+          subComponent: null
         },
         {
           title: 'Software Sensor List',
@@ -49,10 +55,14 @@ class DBSearch extends Component {
           columns: [
             {
               Header: "Sensor Name",
-              accessor: "sensor"
+              accessor: "sensor",
+              filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, { keys: ["sensor"] }),
+              filterAll: true
             }
           ],
-          pivot: []
+          pivot: [],
+          subComponent: null
         },
         {
           title: 'Application Sensor List',
@@ -60,18 +70,28 @@ class DBSearch extends Component {
           columns: [
             {
               Header: "Application",
-              accessor: "application"
+              accessor: "application",
+              filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, { keys: ["application"] }),
+              filterAll: true
             },
             {
               Header: "Supported Devices",
-              accessor: "supportedDevices"
+              accessor: "supportedDevices",
+              filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, { keys: ["supportedDevices"] }),
+              filterAll: true
             },
             {
               Header: "Software Sensor",
-              accessor: "softwareSensor"
+              accessor: "softwareSensor",
+              filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, { keys: ["softwareSensor"] }),
+              filterAll: true
             }
           ],
-          pivot: []
+          pivot: [],
+          subComponent: null
         },
         {
           title: 'Sensor Inference List',
@@ -79,7 +99,10 @@ class DBSearch extends Component {
           columns: [
             {
               Header: "Reference",
-              accessor: "reference"
+              accessor: "reference",
+              filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, { keys: ["reference"] }),
+              filterAll: true
             },
             {
               Header: "Inference",
@@ -97,10 +120,29 @@ class DBSearch extends Component {
             {
               Header: "Device List",
               accessor: "deviceList",
-              width:300
+              width:300,
+            },
+            {
+              Header: "Detail",
+              width: 65,
+              expander: true,
+              Expander: ({ isExpanded, rest }) =>
+                <div>
+                  {isExpanded
+                    ? <span>&#x2299;</span>
+                    : <span>&#x2295;</span>}
+                </div>,
+              style: {
+                cursor: "pointer",
+                fontSize: 25,
+                padding: "0",
+                textAlign: "center",
+                userSelect: "none"
+              },
             }
           ],
           pivot: [],
+          subComponent: (row) => <div style={{padding: '10px'}}>{row.original.deviceList}</div>
         },
         {
           title: 'Inference Description',
@@ -115,7 +157,8 @@ class DBSearch extends Component {
               accessor: "description"
             }
           ],
-          pivot: []
+          pivot: [],
+          subComponent: null
         },
       ],
       selectedTable: {},
@@ -168,12 +211,15 @@ class DBSearch extends Component {
            <ReactTable
              data={ this.state.data }
              filterable
-             defaultFilterMethod={ (filter, row) =>  String(row[filter.id]).startsWith(filter.value) }
+             defaultFilterMethod={(filter, row) => String(row[filter.id]).startsWith(filter.value) ||
+              String(row[filter.pivotId]).startsWith(filter.value) }
+             resizable
              pivotBy={ this.state.selectedTable.pivot }
              columns={ this.state.selectedTable.columns }
              SubComponent={ this.state.selectedTable.subComponent }
              defaultPageSize={5}
-             style={{width:60+'%', marginLeft:'auto', marginRight:'auto', backgroundColor:'lightsteelblue', marginTop: 50+'px'}}
+             style={{width:60+'%', marginLeft:'auto', marginRight:'auto', backgroundColor:'lightsteelblue',
+              marginTop: 50+'px', overflow:"visible"}}
              className="-striped -highlight"
            />
          }
