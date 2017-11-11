@@ -661,7 +661,7 @@ class FormSection extends Component {
     return (
       <div>
         <div className="form-group" style={formStyle.formgroup}>
-          <label style={formStyle.label}>{this.state.section.title}</label>
+          <label style={formStyle.label}>{this.state.section.category}</label>
           <br/>
           <br/>
 

@@ -37633,9 +37633,8 @@ var ConsentForm = function (_Component) {
 		value: function addSection(event) {
 			var _this3 = this;
 
-			console.log('add section: ' + this.state.selected);
-
-			var index = _.findIndex(this.state.sectionList, ['title', this.state.selected]);
+			// console.log('add section: ' + this.state.selected)
+			var index = _.findIndex(this.state.sectionList, ['category', this.state.selected]);
 			var selectedSection = this.state.sectionList[index];
 			// console.log('added section: ' + JSON.stringify(selectedSection))
 
@@ -37653,7 +37652,7 @@ var ConsentForm = function (_Component) {
 		value: function addRiskSection(title, inferences) {
 			var _this4 = this;
 
-			var index = _.findIndex(this.state.sectionList, ['title', title]);
+			var index = _.findIndex(this.state.sectionList, ['category', title]);
 			var selectedSection = this.state.sectionList[index];
 			var content = "";
 			// console.log('added section: ' + JSON.stringify(selectedSection))
@@ -37781,8 +37780,13 @@ var ConsentForm = function (_Component) {
 			var sectionList = this.state.selectedSectionList;
 
 			sectionList.forEach(function (section) {
-				var title = "<p><strong>" + section["title"] + "</strong></p>";
-				if (section["content"].indexOf(title) >= 0) section["content"] = section["content"].substring(section["content"].indexOf(title) + title.length);
+				var separator = "</strong></p>";
+				var idx = section["content"].indexOf(separator);
+
+				if (idx >= 0) {
+					section["title"] = section["content"].substring(11, idx);
+					section["content"] = section["content"].substring(idx + separator.length);
+				}
 			});
 
 			var data = {
@@ -37797,7 +37801,6 @@ var ConsentForm = function (_Component) {
 				_superagent2.default.put(url).send(data).set('Accept', 'application/json').end(function (err, response) {
 					if (err) {
 						console.log(err);
-						console.log(response);
 						return;
 					}
 
@@ -37828,8 +37831,8 @@ var ConsentForm = function (_Component) {
 			var options = this.state.sectionList.map(function (section, i) {
 				return _react2.default.createElement(
 					'option',
-					{ value: section["title"], key: i },
-					section["title"]
+					{ value: section["category"], key: i },
+					section["category"]
 				);
 			});
 
@@ -39176,7 +39179,7 @@ var FormSection = function (_Component) {
           _react2.default.createElement(
             'label',
             { style: formStyle.label },
-            this.state.section.title
+            this.state.section.category
           ),
           _react2.default.createElement('br', null),
           _react2.default.createElement('br', null),

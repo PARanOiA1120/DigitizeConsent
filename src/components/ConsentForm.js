@@ -81,9 +81,8 @@ class ConsentForm extends Component {
 	}
 
 	addSection(event){
-		console.log('add section: ' + this.state.selected)
-
-		const index = _.findIndex(this.state.sectionList, ['title', this.state.selected])
+		// console.log('add section: ' + this.state.selected)
+		const index = _.findIndex(this.state.sectionList, ['category', this.state.selected])
 		const selectedSection = this.state.sectionList[index]
 		// console.log('added section: ' + JSON.stringify(selectedSection))
 
@@ -95,12 +94,10 @@ class ConsentForm extends Component {
 		}, () => {
 			this.updateFullText()
 		})
-
-
 	}
 
 	addRiskSection(title, inferences){
-		const index = _.findIndex(this.state.sectionList, ['title', title])
+		const index = _.findIndex(this.state.sectionList, ['category', title])
 		const selectedSection = this.state.sectionList[index]
 		var content = ""
 		// console.log('added section: ' + JSON.stringify(selectedSection))
@@ -195,9 +192,13 @@ class ConsentForm extends Component {
 		var sectionList = this.state.selectedSectionList
 
 		sectionList.forEach((section) => {
-			var title = "<p><strong>" + section["title"] + "</strong></p>"
-			if(section["content"].indexOf(title) >= 0)
-				section["content"] = section["content"].substring(section["content"].indexOf(title)+title.length)
+			var separator = "</strong></p>"
+			var idx = section["content"].indexOf(separator)
+
+			if(idx >= 0) {
+				section["title"] = section["content"].substring(11, idx)
+				section["content"] = section["content"].substring(idx+separator.length)
+			}
 		})
 
 		var data = {
@@ -216,7 +217,6 @@ class ConsentForm extends Component {
 				.end((err, response) => {
 					if(err){
 						console.log(err)
-						console.log(response)
 						return
 					}
 
@@ -249,7 +249,7 @@ class ConsentForm extends Component {
 
 		const options = this.state.sectionList.map((section, i) => {
 			return (
-				<option value={section["title"]} key={i}>{section["title"]}</option>
+				<option value={section["category"]} key={i}>{section["category"]}</option>
 			)
 		})
 

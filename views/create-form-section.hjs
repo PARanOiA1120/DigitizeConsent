@@ -4,13 +4,43 @@
 		<title>{{ title }}</title>
 	</head>
 	<body>
-		<h1>Create Form Section</h1>
+		<div style="width: 40%; margin-left: auto; margin-right: auto; margin-top: 50px">
+			<h1 style="text-align: center">Create Form Section</h1>
+			<hr/>
+			<br/>
+			<br/>
+			
+			<form action="/api/formsection" method="post" style="text-align: center">
+				<div class=form-group>
+					<label for="category">Category: </label>
+					<input class="form-control" type="text" name="category" id="category"
+						style="width:200px"/>
+				</div>
+				<br/>
 
-		<form action="/api/formsection" method="post">
-			<input type="text" name="title" placeholder="Title"/><br/>
-			<input type="text" name="sensors" placeholder="Sensors"/><br/>
-			<input type="text" name="content" placeholder="Description"/><br/>
-			<input type="submit" value="Create Form Section"/>
-		</form>
+				<div class=form-group>
+					<label for="title">Title: </label>
+					<input class="form-control" type="text" name="title" id="title"
+						style="width:200px" placeholder="(same as category by default)"/>
+				</div>
+				<br/>
+
+				<div class=form-group>
+					<label for="sensors">Sensors: </label>
+					<input class="form-control" type="text" name="sensors" id="sensors"
+						style="width:200px" placeholder="separate sensors by comma"/>
+				</div>
+				<br/>
+
+				<div class=form-group>
+					<label for="content">Content: </label>
+					<textarea class="form-control" type="text" name="content" id="content"
+						placeholder="Description" rows="10" style="width: 400px"></textarea>
+				</div>
+				<br/>
+
+				<input class="btn btn-primary" type="submit" value="Create Form Section"/>
+			</form>
+		</div>
 	</body>
 </html>

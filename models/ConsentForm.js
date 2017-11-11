@@ -8,6 +8,7 @@ var ConsentFormSchema = new mongoose.Schema({
   sections: [{
     title: String,
     content: String,
+		category: String,
     sensors:{type: Array, default: []}
   }]
 })
