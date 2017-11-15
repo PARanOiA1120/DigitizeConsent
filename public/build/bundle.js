@@ -37623,6 +37623,7 @@ var ConsentForm = function (_Component) {
 		value: function updateSelection(event) {
 			var updatedSelection = Object.assign('', this.state.selected);
 			updatedSelection = event.target.value;
+			console.log(updatedSelection);
 
 			this.setState({
 				selected: updatedSelection
@@ -37636,7 +37637,6 @@ var ConsentForm = function (_Component) {
 			// console.log('add section: ' + this.state.selected)
 			var index = _.findIndex(this.state.sectionList, ['category', this.state.selected]);
 			var selectedSection = this.state.sectionList[index];
-			// console.log('added section: ' + JSON.stringify(selectedSection))
 
 			var updatedSections = Object.assign([], this.state.selectedSectionList);
 			updatedSections.push(selectedSection);
@@ -37721,7 +37721,6 @@ var ConsentForm = function (_Component) {
 				for (var _iterator = this.state.selectedSectionList[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 					var section = _step.value;
 
-					// text += (section["title"] + '</br>')
 					text += section["content"] + '<br/>';
 				}
 			} catch (err) {
@@ -37821,9 +37820,22 @@ var ConsentForm = function (_Component) {
 			}
 		}
 	}, {
+		key: 'removeSection',
+		value: function removeSection(sectionid) {
+			var _this9 = this;
+
+			this.setState({
+				selectedSectionList: this.state.selectedSectionList.filter(function (section) {
+					return section["_id"] != sectionid;
+				})
+			}, function () {
+				_this9.updateFullText();
+			});
+		}
+	}, {
 		key: 'render',
 		value: function render() {
-			var _this9 = this;
+			var _this10 = this;
 
 			var formStyle = _styles2.default.form;
 			var universalStyle = _styles2.default.universal;
@@ -37839,8 +37851,11 @@ var ConsentForm = function (_Component) {
 			var sectionList = this.state.selectedSectionList.map(function (section, i) {
 				return _react2.default.createElement(
 					'li',
-					{ key: i },
-					_react2.default.createElement(_FormSection2.default, { currentSection: section, addRiskSection: _this9.addRiskSection.bind(_this9), onChange: _this9.updateSection.bind(_this9, i) })
+					{ key: section["_id"] },
+					_react2.default.createElement(_FormSection2.default, { currentSection: section,
+						addRiskSection: _this10.addRiskSection.bind(_this10),
+						onChange: _this10.updateSection.bind(_this10, i),
+						deleteSection: _this10.removeSection.bind(_this10, section["_id"]) })
 				);
 			});
 
@@ -37880,7 +37895,7 @@ var ConsentForm = function (_Component) {
 								onChange: this.updateSelection.bind(this) },
 							_react2.default.createElement(
 								'option',
-								null,
+								{ value: '' },
 								'--- Select a section ---'
 							),
 							options
@@ -38575,10 +38590,11 @@ var FormSection = function (_Component) {
       var _this2 = this;
 
       var content = "";
-      content += "<p><strong>" + this.props.currentSection.title + "</strong></p>";
-      // content += "<br/>"
+      var title = "<p><strong>" + this.props.currentSection.title + "</strong></p>";
+      if (this.props.currentSection["content"].indexOf(title) == -1) {
+        content += title;
+      }
       content += this.props.currentSection.content;
-
       this.props.currentSection["content"] = content;
 
       this.setState({
@@ -39104,6 +39120,11 @@ var FormSection = function (_Component) {
       });
     }
   }, {
+    key: 'deleteSection',
+    value: function deleteSection() {
+      this.props.deleteSection();
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this7 = this;
@@ -39185,6 +39206,12 @@ var FormSection = function (_Component) {
             'label',
             { style: formStyle.label },
             this.state.section.category
+          ),
+          _react2.default.createElement(
+            'button',
+            { className: 'btn btn-danger', style: { float: 'right' },
+              onClick: this.deleteSection.bind(this) },
+            _react2.default.createElement('span', { className: 'glyphicon glyphicon-remove' })
           ),
           _react2.default.createElement('br', null),
           _react2.default.createElement('br', null),

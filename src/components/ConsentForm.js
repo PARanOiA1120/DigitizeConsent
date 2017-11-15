@@ -74,6 +74,7 @@ class ConsentForm extends Component {
 	updateSelection(event){
 		let updatedSelection = Object.assign('', this.state.selected)
 		updatedSelection = event.target.value
+		console.log(updatedSelection)
 
 		this.setState({
 			selected: updatedSelection
@@ -84,7 +85,6 @@ class ConsentForm extends Component {
 		// console.log('add section: ' + this.state.selected)
 		const index = _.findIndex(this.state.sectionList, ['category', this.state.selected])
 		const selectedSection = this.state.sectionList[index]
-		// console.log('added section: ' + JSON.stringify(selectedSection))
 
 		let updatedSections = Object.assign([], this.state.selectedSectionList)
 		updatedSections.push(selectedSection)
@@ -151,7 +151,6 @@ class ConsentForm extends Component {
 	updateFullText(){
 		let text = ""
 		for(let section of this.state.selectedSectionList){
-			// text += (section["title"] + '</br>')
 			text += (section["content"] + '<br/>')
 		}
 
@@ -242,6 +241,16 @@ class ConsentForm extends Component {
 		}
 	}
 
+	removeSection(sectionid) {
+		this.setState({
+			selectedSectionList: this.state.selectedSectionList.filter(function(section){
+				return section["_id"] != sectionid;
+			})
+		}, () => {
+			this.updateFullText()
+		});
+	}
+
 
 	render(){
 		const formStyle = styles.form;
@@ -255,7 +264,13 @@ class ConsentForm extends Component {
 
 		const sectionList = this.state.selectedSectionList.map((section, i) => {
 			return (
-				<li key={i}><Section currentSection={section} addRiskSection={this.addRiskSection.bind(this)} onChange={this.updateSection.bind(this, i)}></Section></li>
+				<li key={ section["_id"] }>
+					<Section currentSection={ section }
+										addRiskSection={ this.addRiskSection.bind(this) }
+										onChange={ this.updateSection.bind(this, i) }
+										deleteSection={ this.removeSection.bind(this, section["_id"]) }>
+					</Section>
+				</li>
 			)
 		})
 
@@ -277,7 +292,7 @@ class ConsentForm extends Component {
 						<label htmlFor="section" style={formStyle.label}>Select section to add:</label>
 						<select className="form-control" id="section" style={formStyle.selectionBox}
 							onChange={this.updateSelection.bind(this)}>
-							<option>--- Select a section ---</option>
+							<option value=''>--- Select a section ---</option>
 							{options}
 						</select>
 						<button className="btn btn-primary" onClick={this.addSection.bind(this)}>Add Section</button>

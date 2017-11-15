@@ -55,10 +55,11 @@ class FormSection extends Component {
 
   componentDidMount(){
     let content = ""
-    content += "<p><strong>" + this.props.currentSection.title + "</strong></p>"
-    // content += "<br/>"
+    let title = "<p><strong>" + this.props.currentSection.title + "</strong></p>"
+    if(this.props.currentSection["content"].indexOf(title) == -1){
+      content += title
+    }
     content += this.props.currentSection.content
-
     this.props.currentSection["content"] = content
 
     this.setState({
@@ -590,6 +591,10 @@ class FormSection extends Component {
     })
   }
 
+  deleteSection() {
+    this.props.deleteSection();
+  }
+
 
   render() {
     const modules = {
@@ -661,7 +666,11 @@ class FormSection extends Component {
     return (
       <div>
         <div className="form-group" style={formStyle.formgroup}>
-          <label style={formStyle.label}>{this.state.section.category}</label>
+          <label style={formStyle.label}>{ this.state.section.category }</label>
+          <button className="btn btn-danger" style={{float:'right'}}
+                onClick={ this.deleteSection.bind(this) }>
+            <span className="glyphicon glyphicon-remove"></span>
+          </button>
           <br/>
           <br/>
 
