@@ -6,8 +6,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose')
 
-var dbUrl = 'mongodb://localhost/DigitizeConsent'
-// var dbUrl = 'mongodb://consentdigitizerdb:c3y4A6Zno38jRX9rzXuE1aI0ue5sMT4DFisGquSLqu7P554tijj4mQjIPwdb6s0FUHIREQ3OyiqIHbvoI4kwjA==@consentdigitizerdb.documents.azure.com:10250/mean?ssl=true&sslverifycertificate=false'
+// var dbUrl = 'mongodb://localhost/DigitizeConsent'
+var dbUrl = 'mongodb://consentdigitizerdb:c3y4A6Zno38jRX9rzXuE1aI0ue5sMT4DFisGquSLqu7P554tijj4mQjIPwdb6s0FUHIREQ3OyiqIHbvoI4kwjA==@consentdigitizerdb.documents.azure.com:10250/mean?ssl=true&sslverifycertificate=false'
 mongoose.connect(dbUrl, function(err, res){
 	if(err){
 		console.log('DB CONNECTION FAILED: '+ err)
