@@ -38032,7 +38032,7 @@ var CreateDBEntry = function (_Component) {
 		var _this = _possibleConstructorReturn(this, (CreateDBEntry.__proto__ || Object.getPrototypeOf(CreateDBEntry)).call(this));
 
 		_this.state = {
-			collectionList: [{ title: 'Device (add a new device)', action: '/api/device', schema: 'device_schema' }, { title: 'Device Sensor (add a raw sensor to a specific device)', action: '/api/devicesensor', schema: 'device_sensor_schema' }, { title: 'Software Sensor (add a new type of data that can be collected from software applications)', action: '/api/swsensor', schema: 'software_sensor_schema' }, { title: 'Application (add a new application along with the types of data collected and devices supported)', action: '/api/appsensor', schema: 'app_sensor_schema' }, { title: 'Sensor Inference (add a new inference with the devices and sensors produce that inference)', action: '/api/sensorinference', schema: 'sensor_inference_schema' }, { title: 'Inference Description (add keyword and inference description mapping)', action: '/api/inferencedescription', schema: 'inference_description_schema' }],
+			collectionList: [{ title: 'Device (add a new device)', action: '/api/device', schema: 'device_schema' }, { title: 'Device Sensor (add a raw sensor to a specific device)', action: '/api/devicesensor', schema: 'device_sensor_schema' }, { title: 'Software Sensor (add a new type of data that can be collected from software applications)', action: '/api/swsensor', schema: 'software_sensor_schema' }, { title: 'Application (add a new application along with the types of data collected and devices supported)', action: '/api/appsensor', schema: 'app_sensor_schema' }, { title: 'Inference Description (add keyword and inference description mapping)', action: '/api/inferencedescription', schema: 'inference_description_schema' }, { title: 'Sensor Inference (add a new inference with the devices and sensors produce that inference)', action: '/api/sensorinference', schema: 'sensor_inference_schema' }],
 			selectedCollection: {},
 			switchToReview: false
 		};
@@ -38040,6 +38040,11 @@ var CreateDBEntry = function (_Component) {
 	}
 
 	_createClass(CreateDBEntry, [{
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			console.log(this.props);
+		}
+	}, {
 		key: 'updateSelection',
 		value: function updateSelection(event) {
 			console.log(event.target.value);
@@ -38978,7 +38983,7 @@ var FormSection = function (_Component) {
         //query DB
         var numDevices = Object.keys(queryData).length + 1;
 
-        _superagent2.default.get('/api/sensorinference').query({ $where: "this.deviceList.length < " + numDevices }).set('Accept', 'application/json').end(function (err, response) {
+        _superagent2.default.get('/api/sensorinference').query({ $where: "this.deviceList.length <= " + numDevices }).set('Accept', 'application/json').end(function (err, response) {
           if (err) {
             alert('ERROR: ' + err);
             return;
@@ -40332,6 +40337,7 @@ var Review = function (_Component) {
 	_createClass(Review, [{
 		key: "componentDidMount",
 		value: function componentDidMount() {
+			console.log(this.props);
 			this.setState({
 				formData: this.props.formData
 			});
@@ -40363,7 +40369,7 @@ var Review = function (_Component) {
 			// 		// console.log("sensor: " + sensorName)
 
 			// 		//get sensorID from device sensor table
-			// 		superagent   
+			// 		superagent
 			// 		.get('/api/devicesensor')
 			// 		.query({device: device, sensorName: sensorName})
 			// 		.set('Accept', 'application/json')
@@ -40405,7 +40411,7 @@ var Review = function (_Component) {
 				}
 
 				alert("Data submitted. Thanks for your contribution!");
-				window.location.href = "http://localhost:3000/";
+				window.location.reload();
 			});
 			// }
 		}

@@ -462,7 +462,7 @@ class FormSection extends Component {
 
       superagent
       .get('/api/sensorinference')
-      .query({$where: "this.deviceList.length < " + numDevices})
+      .query({$where: "this.deviceList.length <= " + numDevices})
       .set('Accept', 'application/json')
       .end((err, response) => {
         if(err){

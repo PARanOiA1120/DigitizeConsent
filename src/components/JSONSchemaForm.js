@@ -37,7 +37,7 @@ class JSONSchemaForm extends Component {
         for(var i=0; i<results.length; i++)
           sensors.push(results[i].sensor)
 
-        this.setState({ 
+        this.setState({
           softwareSensors: sensors
         })
       })
@@ -150,7 +150,7 @@ class JSONSchemaForm extends Component {
           title: "Device List",
           items: {
             type: "object",
-            properties: {              
+            properties: {
               deviceType: {
                 type: "string",
                 enum: this.state.devices,
@@ -182,7 +182,7 @@ class JSONSchemaForm extends Component {
                           }
                         }
                       }
-                    } 
+                    }
                   }
                 }
               }
@@ -191,7 +191,7 @@ class JSONSchemaForm extends Component {
         },
         inference: {
           type: "object",
-          title: "Inference", 
+          title: "Inference",
           properties: {
             inferenceName: {
                 type: "string",
@@ -254,8 +254,8 @@ class JSONSchemaForm extends Component {
     const schema = this.props.collection.schema
     const schemaDict = {
                         'device_schema': device_schema,
-                        'device_sensor_schema': device_sensor_schema, 
-                        'sensor_inference_schema': sensor_inference_schema, 
+                        'device_sensor_schema': device_sensor_schema,
+                        'sensor_inference_schema': sensor_inference_schema,
                         'inference_description_schema': inference_description_schema,
                         'app_sensor_schema': app_sensor_schema,
                         'software_sensor_schema': software_sensor_schema
@@ -264,7 +264,7 @@ class JSONSchemaForm extends Component {
     return(
         <div style={styles.schemaform.form}>
           {this.state.switchToReview ?
-            <Review formData={this.state.formData} collection={this.props.collection}/>
+            <Review formData={this.state.formData} collection={this.props.collection} />
             :
             <Form schema={schemaDict[schema]}
                   onSubmit={onSubmit}
@@ -276,10 +276,3 @@ class JSONSchemaForm extends Component {
 }
 
 export default JSONSchemaForm
-
-
-
-
-
-
-

@@ -11,12 +11,16 @@ class CreateDBEntry extends Component{
 				{title: 'Device Sensor (add a raw sensor to a specific device)', action: '/api/devicesensor', schema: 'device_sensor_schema'},
 				{title: 'Software Sensor (add a new type of data that can be collected from software applications)', action: '/api/swsensor', schema: 'software_sensor_schema'},
 				{title: 'Application (add a new application along with the types of data collected and devices supported)', action: '/api/appsensor', schema: 'app_sensor_schema'},
-				{title: 'Sensor Inference (add a new inference with the devices and sensors produce that inference)', action: '/api/sensorinference', schema: 'sensor_inference_schema'},
 				{title: 'Inference Description (add keyword and inference description mapping)', action: '/api/inferencedescription', schema: 'inference_description_schema'},
+				{title: 'Sensor Inference (add a new inference with the devices and sensors produce that inference)', action: '/api/sensorinference', schema: 'sensor_inference_schema'},
 			],
 			selectedCollection: {},
 			switchToReview: false
 		}
+	}
+
+	componentDidMount(){
+		console.log(this.props);
 	}
 
 	updateSelection(event){
@@ -44,7 +48,6 @@ class CreateDBEntry extends Component{
 				<option value={i} key={i}>{collection["title"]}</option>
 			)
 		})
-
 
 		return (
 			<div>

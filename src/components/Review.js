@@ -12,6 +12,7 @@ class Review extends Component {
 	}
 
 	componentDidMount(){
+		console.log(this.props)
 		this.setState({
 			formData: this.props.formData
 		})
@@ -39,9 +40,9 @@ class Review extends Component {
 		// 		let sensorName = sensor["name"]
 		// 		// console.log("device: " + device)
 		// 		// console.log("sensor: " + sensorName)
-				
+
 		// 		//get sensorID from device sensor table
-		// 		superagent   
+		// 		superagent
 		// 		.get('/api/devicesensor')
 		// 		.query({device: device, sensorName: sensorName})
 		// 		.set('Accept', 'application/json')
@@ -87,7 +88,7 @@ class Review extends Component {
 				}
 
 				alert("Data submitted. Thanks for your contribution!")
-				window.location.href="http://localhost:3000/"
+				window.location.reload()
 			})
 		// }
 	}
@@ -111,4 +112,3 @@ class Review extends Component {
 
 
 export default Review
-
