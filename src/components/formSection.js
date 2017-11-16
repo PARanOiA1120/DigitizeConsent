@@ -596,6 +596,14 @@ class FormSection extends Component {
     this.props.deleteSection();
   }
 
+  moveSectionUp() {
+    this.props.moveSectionUp();
+  }
+
+  moveSectionDown() {
+    this.props.moveSectionDown();
+  }
+
 
   render() {
     const modules = {
@@ -668,10 +676,22 @@ class FormSection extends Component {
       <div>
         <div className="form-group" style={formStyle.formgroup}>
           <label style={formStyle.label}>{ this.state.section.category }</label>
-          <button className="btn btn-danger" style={{float:'right'}}
-                onClick={ this.deleteSection.bind(this) }>
-            <span className="glyphicon glyphicon-remove"></span>
-          </button>
+          <div className="btn-group"  style={{float:'right'}}>
+            { this.props.idx > 0 &&
+              <button className="btn btn-default" onClick={ this.moveSectionUp.bind(this) }>
+                <span className="fa fa-arrow-up"></span>
+              </button>
+            }
+            { this.props.idx < this.props.numSections-1 &&
+              <button className="btn btn-default" onClick={ this.moveSectionDown.bind(this) }>
+                <span className="fa fa-arrow-down"></span>
+              </button>
+            }
+            <button className="btn btn-danger"
+                  onClick={ this.deleteSection.bind(this) }>
+              <span className="glyphicon glyphicon-remove"></span>
+            </button>
+          </div>
           <br/>
           <br/>
 

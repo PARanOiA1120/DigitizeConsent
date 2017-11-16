@@ -257,8 +257,34 @@ class ConsentForm extends Component {
 				return section["_id"] != sectionid;
 			})
 		}, () => {
-			this.updateFullText()
+			this.updateFullText();
 		});
+	}
+
+	moveSectionUp(idx) {
+		var sectionList = this.state.selectedSectionList;
+		var section = sectionList[idx];
+		sectionList[idx] = sectionList[idx-1];
+		sectionList[idx-1] = section;
+
+		this.setState({
+			selectedSectionList: sectionList
+		}, () => {
+			this.updateFullText();
+		})
+	}
+
+	moveSectionDown(idx) {
+		var sectionList = this.state.selectedSectionList;
+		var section = sectionList[idx];
+		sectionList[idx] = sectionList[idx+1];
+		sectionList[idx+1] = section;
+
+		this.setState({
+			selectedSectionList: sectionList
+		}, () => {
+			this.updateFullText();
+		})
 	}
 
 
@@ -278,7 +304,12 @@ class ConsentForm extends Component {
 					<Section currentSection={ section }
 										addRiskSection={ this.addRiskSection.bind(this) }
 										onChange={ this.updateSection.bind(this, i) }
-										deleteSection={ this.removeSection.bind(this, section["_id"]) }>
+										deleteSection={ this.removeSection.bind(this, section["_id"]) }
+									 	idx = { i }
+										numSections = { this.state.selectedSectionList.length }
+										moveSectionUp = { this.moveSectionUp.bind(this,i) }
+										moveSectionDown = {this.moveSectionDown.bind(this,i) }
+									>
 					</Section>
 				</li>
 			)

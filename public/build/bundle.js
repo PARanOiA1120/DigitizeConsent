@@ -37842,9 +37842,41 @@ var ConsentForm = function (_Component) {
 			});
 		}
 	}, {
+		key: 'moveSectionUp',
+		value: function moveSectionUp(idx) {
+			var _this10 = this;
+
+			var sectionList = this.state.selectedSectionList;
+			var section = sectionList[idx];
+			sectionList[idx] = sectionList[idx - 1];
+			sectionList[idx - 1] = section;
+
+			this.setState({
+				selectedSectionList: sectionList
+			}, function () {
+				_this10.updateFullText();
+			});
+		}
+	}, {
+		key: 'moveSectionDown',
+		value: function moveSectionDown(idx) {
+			var _this11 = this;
+
+			var sectionList = this.state.selectedSectionList;
+			var section = sectionList[idx];
+			sectionList[idx] = sectionList[idx + 1];
+			sectionList[idx + 1] = section;
+
+			this.setState({
+				selectedSectionList: sectionList
+			}, function () {
+				_this11.updateFullText();
+			});
+		}
+	}, {
 		key: 'render',
 		value: function render() {
-			var _this10 = this;
+			var _this12 = this;
 
 			var formStyle = _styles2.default.form;
 			var universalStyle = _styles2.default.universal;
@@ -37862,9 +37894,14 @@ var ConsentForm = function (_Component) {
 					'li',
 					{ key: section["_id"] },
 					_react2.default.createElement(_FormSection2.default, { currentSection: section,
-						addRiskSection: _this10.addRiskSection.bind(_this10),
-						onChange: _this10.updateSection.bind(_this10, i),
-						deleteSection: _this10.removeSection.bind(_this10, section["_id"]) })
+						addRiskSection: _this12.addRiskSection.bind(_this12),
+						onChange: _this12.updateSection.bind(_this12, i),
+						deleteSection: _this12.removeSection.bind(_this12, section["_id"]),
+						idx: i,
+						numSections: _this12.state.selectedSectionList.length,
+						moveSectionUp: _this12.moveSectionUp.bind(_this12, i),
+						moveSectionDown: _this12.moveSectionDown.bind(_this12, i)
+					})
 				);
 			});
 
@@ -39149,6 +39186,16 @@ var FormSection = function (_Component) {
       this.props.deleteSection();
     }
   }, {
+    key: 'moveSectionUp',
+    value: function moveSectionUp() {
+      this.props.moveSectionUp();
+    }
+  }, {
+    key: 'moveSectionDown',
+    value: function moveSectionDown() {
+      this.props.moveSectionDown();
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this7 = this;
@@ -39238,10 +39285,24 @@ var FormSection = function (_Component) {
             this.state.section.category
           ),
           _react2.default.createElement(
-            'button',
-            { className: 'btn btn-danger', style: { float: 'right' },
-              onClick: this.deleteSection.bind(this) },
-            _react2.default.createElement('span', { className: 'glyphicon glyphicon-remove' })
+            'div',
+            { className: 'btn-group', style: { float: 'right' } },
+            this.props.idx > 0 && _react2.default.createElement(
+              'button',
+              { className: 'btn btn-default', onClick: this.moveSectionUp.bind(this) },
+              _react2.default.createElement('span', { className: 'fa fa-arrow-up' })
+            ),
+            this.props.idx < this.props.numSections - 1 && _react2.default.createElement(
+              'button',
+              { className: 'btn btn-default', onClick: this.moveSectionDown.bind(this) },
+              _react2.default.createElement('span', { className: 'fa fa-arrow-down' })
+            ),
+            _react2.default.createElement(
+              'button',
+              { className: 'btn btn-danger',
+                onClick: this.deleteSection.bind(this) },
+              _react2.default.createElement('span', { className: 'glyphicon glyphicon-remove' })
+            )
           ),
           _react2.default.createElement('br', null),
           _react2.default.createElement('br', null),
