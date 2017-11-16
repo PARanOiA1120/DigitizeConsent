@@ -37658,11 +37658,20 @@ var ConsentForm = function (_Component) {
 
 			if (inferences.length == 0) {
 				content += "There are no known privacy risks for the data being collected in this study.";
+				selectedSection["content"] = content;
+				var updatedSections = Object.assign([], this.state.selectedSectionList);
+				updatedSections.push(selectedSection);
+
+				this.setState({
+					selectedSectionList: updatedSections
+				}, function () {
+					_this4.updateFullText();
+				});
 			} else {
 				inferences.forEach(function (inference) {
 					var inferenceID = inference["inference"]["inferenceID"];
 					var url = '/api/inferencedescription/' + inferenceID;
-
+					// query db to get inference description
 					_superagent2.default.get(url).set('Accept', 'application/json').end(function (err, response) {
 						if (err) {
 							alert('ERROR: ' + err);
@@ -37758,11 +37767,7 @@ var ConsentForm = function (_Component) {
 		value: function updateFormViewer() {
 			var content = "";
 			if (this.state.title != "") {
-				// content += "<p style='text-align: center'>"
-				// content += "<h3><center><strong>"
 				content += "<h4>" + this.state.title + "</h4>";
-				// content += "</strong></center></h3>"
-				// content += "</p>"
 				content += '<br/>';
 			}
 
@@ -37773,8 +37778,6 @@ var ConsentForm = function (_Component) {
 
 			this.setState({
 				context: updatedFormContent
-			}, function () {
-				// console.log("preview: " + this.state.context)
 			});
 		}
 	}, {
@@ -38597,6 +38600,8 @@ var FormSection = function (_Component) {
       attrName: "",
       attrValue: "",
       knownAttriList: [],
+      attrType: '',
+      attrUnit: '',
 
       trustedAppList: [],
       trustedDeviceList: [],
@@ -38706,10 +38711,16 @@ var FormSection = function (_Component) {
   }, {
     key: 'updateAttrName',
     value: function updateAttrName(event) {
+      var attrName = event.target.value;
+      var attribute = this.state.knownAttriList.filter(function (attr) {
+        return attr["attributeName"] == attrName;
+      });
+      // console.log(attribute)
+
       this.setState({
-        attrName: event.target.value,
-        attrNameC: "",
-        attrValueC: ""
+        attrName: attrName,
+        attrType: attribute[0]["valueType"],
+        attrUnit: attribute[0]["unit"]
       });
     }
   }, {
@@ -39016,7 +39027,7 @@ var FormSection = function (_Component) {
           var inferences = response.body.results.filter(function (res) {
             return res["deviceList"].length <= numDevices;
           });
-          console.log(inferences);
+          // console.log(inferences);
 
           var validInferences = [];
           // level 1: check if every device in the results is in queryData
@@ -39075,14 +39086,16 @@ var FormSection = function (_Component) {
 
                 for (var a in attributes) {
                   var attrName = attributes[a]["attriName"].split('(')[0];
+                  var attrType = attributes[a]["attriName"].split('(')[1].split(',')[1].split(':')[1].slice(1, -1);
                   var attrValue = attributes[a]["value"];
-                  if (!attributesQD[attrName] || attrValue != attributesQD[attrName]) {
-                    console.log("wrong attr value: " + attrValue);
+
+                  // if the attribute is of boolean type, check if the value match
+                  // if the attribute is of number type, return all with value less than or equal the value in the query
+                  if (!attributesQD[attrName] || attrType == "boolean" && attrValue != attributesQD[attrName] || attrType == "number" && (!parseInt(attrValue) || !parseInt(attributesQD[attrName]) || parseInt(attrValue) > parseInt(attributesQD[attrName]))) {
                     add = false;
                     break;
                   }
                 }
-
                 if (add == false) break;
               }
               if (add == false) break;
@@ -39376,7 +39389,7 @@ var FormSection = function (_Component) {
                     attributeOptions
                   ),
                   _react2.default.createElement('input', { className: 'form-control', placeholder: 'attribute value', style: formStyle.attribute,
-                    value: this.state.attrValue, onChange: this.updateAttrValue.bind(this) }),
+                    value: this.state.attrValue, onChange: this.updateAttrValue.bind(this), type: this.state.attrType }),
                   _react2.default.createElement(
                     'button',
                     { className: 'btn btn-primary', onClick: this.addAttr.bind(this) },

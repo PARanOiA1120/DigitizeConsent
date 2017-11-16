@@ -103,11 +103,20 @@ class ConsentForm extends Component {
 
 		if(inferences.length == 0){
 			content += "There are no known privacy risks for the data being collected in this study."
+			selectedSection["content"] = content
+			let updatedSections = Object.assign([], this.state.selectedSectionList)
+			updatedSections.push(selectedSection)
+
+			this.setState({
+				selectedSectionList: updatedSections
+			}, () => {
+				this.updateFullText()
+			})
 		} else {
 			inferences.forEach((inference) => {
 				var inferenceID = inference["inference"]["inferenceID"]
 				var url = '/api/inferencedescription/' + inferenceID
-
+        // query db to get inference description
 				superagent
 				.get(url)
 				.set('Accept', 'application/json')
@@ -131,7 +140,6 @@ class ConsentForm extends Component {
 			})
 		}
 	}
-
 
 	updateSection(i, section){
 		let updatedSectionList = Object.assign([], this.state.selectedSectionList)
@@ -175,11 +183,7 @@ class ConsentForm extends Component {
 	updateFormViewer() {
 		let content = ""
 		if(this.state.title != ""){
-			// content += "<p style='text-align: center'>"
-			// content += "<h3><center><strong>"
 			content += "<h4>" + this.state.title + "</h4>"
-			// content += "</strong></center></h3>"
-			// content += "</p>"
 			content += '<br/>'
 		}
 
@@ -190,8 +194,6 @@ class ConsentForm extends Component {
 
 		this.setState({
 			context: updatedFormContent
-		}, () => {
-			// console.log("preview: " + this.state.context)
 		})
 	}
 
