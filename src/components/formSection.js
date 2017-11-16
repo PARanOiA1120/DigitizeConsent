@@ -463,7 +463,6 @@ class FormSection extends Component {
 
       superagent
       .get('/api/sensorinference')
-      .query({$where: "this.deviceList.length <= " + numDevices})
       .set('Accept', 'application/json')
       .end((err, response) => {
         if(err){
@@ -472,7 +471,11 @@ class FormSection extends Component {
         }
 
         // find match from results
-        var inferences = response.body.results
+        var inferences = response.body.results.filter(function(res) {
+          return (res["deviceList"].length <= numDevices);
+        })
+        console.log(inferences);
+        
         var validInferences = []
         // level 1: check if every device in the results is in queryData
         inferences.forEach((inference) => {

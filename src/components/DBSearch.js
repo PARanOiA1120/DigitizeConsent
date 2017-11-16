@@ -94,6 +94,33 @@ class DBSearch extends Component {
           subComponent: null
         },
         {
+          title: 'Attribute List',
+          action: '/api/sensorattribute',
+          columns: [
+            {
+              Header: "Attribute Name",
+              accessor: "attributeName",
+              filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, { keys: ["attributeName"] }),
+              filterAll: true
+            },
+            {
+              Header: "Unit",
+              accessor: "unit",
+              filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, { keys: ["unit"] }),
+              filterAll: true
+            },
+            {
+              Header: "Value Type",
+              accessor: "valueType",
+              filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, { keys: ["valueType"] }),
+              filterAll: true
+            }
+          ]
+        },
+        {
           title: 'Sensor Inference List',
           action: '/api/sensorinference',
           columns: [

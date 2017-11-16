@@ -206,6 +206,26 @@ class JSONSchemaForm extends Component {
       }
     }
 
+    const sensor_attribute_schema = {
+      title: "Add Attribute",
+      type: "object",
+      properties: {
+        attributeName: {
+          type: "string",
+          title: "Attribute Name"
+        },
+        unit: {
+          type: "string",
+          title: "Unit"
+        },
+        valueType: {
+          type: "string",
+          enum: ["number", "boolean"],
+          title: "Value Type"
+        }
+      }
+    }
+
     const inference_description_schema = {
       title: "Add Inference Description",
       type: "object",
@@ -257,6 +277,7 @@ class JSONSchemaForm extends Component {
                         'device_sensor_schema': device_sensor_schema,
                         'sensor_inference_schema': sensor_inference_schema,
                         'inference_description_schema': inference_description_schema,
+                        'sensor_attribute_schema': sensor_attribute_schema,
                         'app_sensor_schema': app_sensor_schema,
                         'software_sensor_schema': software_sensor_schema
                       }

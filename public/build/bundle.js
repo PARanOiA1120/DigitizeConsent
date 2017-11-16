@@ -38047,7 +38047,7 @@ var CreateDBEntry = function (_Component) {
 		var _this = _possibleConstructorReturn(this, (CreateDBEntry.__proto__ || Object.getPrototypeOf(CreateDBEntry)).call(this));
 
 		_this.state = {
-			collectionList: [{ title: 'Device (add a new device)', action: '/api/device', schema: 'device_schema' }, { title: 'Device Sensor (add a raw sensor to a specific device)', action: '/api/devicesensor', schema: 'device_sensor_schema' }, { title: 'Software Sensor (add a new type of data that can be collected from software applications)', action: '/api/swsensor', schema: 'software_sensor_schema' }, { title: 'Application (add a new application along with the types of data collected and devices supported)', action: '/api/appsensor', schema: 'app_sensor_schema' }, { title: 'Inference Description (add keyword and inference description mapping)', action: '/api/inferencedescription', schema: 'inference_description_schema' }, { title: 'Sensor Inference (add a new inference with the devices and sensors produce that inference)', action: '/api/sensorinference', schema: 'sensor_inference_schema' }],
+			collectionList: [{ title: 'Device (add a new device)', action: '/api/device', schema: 'device_schema' }, { title: 'Device Sensor (add a raw sensor to a specific device)', action: '/api/devicesensor', schema: 'device_sensor_schema' }, { title: 'Software Sensor (add a new type of data that can be collected from software applications)', action: '/api/swsensor', schema: 'software_sensor_schema' }, { title: 'Application (add a new application along with the types of data collected and devices supported)', action: '/api/appsensor', schema: 'app_sensor_schema' }, { title: 'Sensor Attribute (specify attribute type that might be used in study configuration)', action: '/api/sensorattribute', schema: 'sensor_attribute_schema' }, { title: 'Inference Description (add keyword and inference description mapping)', action: '/api/inferencedescription', schema: 'inference_description_schema' }, { title: 'Sensor Inference (add a new inference with the devices and sensors produce that inference)', action: '/api/sensorinference', schema: 'sensor_inference_schema' }],
 			selectedCollection: {},
 			switchToReview: false
 		};
@@ -38241,6 +38241,31 @@ var DBSearch = function (_Component) {
         }],
         pivot: [],
         subComponent: null
+      }, {
+        title: 'Attribute List',
+        action: '/api/sensorattribute',
+        columns: [{
+          Header: "Attribute Name",
+          accessor: "attributeName",
+          filterMethod: function filterMethod(filter, rows) {
+            return (0, _matchSorter2.default)(rows, filter.value, { keys: ["attributeName"] });
+          },
+          filterAll: true
+        }, {
+          Header: "Unit",
+          accessor: "unit",
+          filterMethod: function filterMethod(filter, rows) {
+            return (0, _matchSorter2.default)(rows, filter.value, { keys: ["unit"] });
+          },
+          filterAll: true
+        }, {
+          Header: "Value Type",
+          accessor: "valueType",
+          filterMethod: function filterMethod(filter, rows) {
+            return (0, _matchSorter2.default)(rows, filter.value, { keys: ["valueType"] });
+          },
+          filterAll: true
+        }]
       }, {
         title: 'Sensor Inference List',
         action: '/api/sensorinference',
@@ -38999,14 +39024,18 @@ var FormSection = function (_Component) {
         //query DB
         var numDevices = Object.keys(queryData).length + 1;
 
-        _superagent2.default.get('/api/sensorinference').query({ $where: "this.deviceList.length <= " + numDevices }).set('Accept', 'application/json').end(function (err, response) {
+        _superagent2.default.get('/api/sensorinference').set('Accept', 'application/json').end(function (err, response) {
           if (err) {
             alert('ERROR: ' + err);
             return;
           }
 
           // find match from results
-          var inferences = response.body.results;
+          var inferences = response.body.results.filter(function (res) {
+            return res["deviceList"].length <= numDevices;
+          });
+          console.log(inferences);
+
           var validInferences = [];
           // level 1: check if every device in the results is in queryData
           inferences.forEach(function (inference) {
@@ -39754,6 +39783,26 @@ var JSONSchemaForm = function (_Component) {
         }
       };
 
+      var sensor_attribute_schema = {
+        title: "Add Attribute",
+        type: "object",
+        properties: {
+          attributeName: {
+            type: "string",
+            title: "Attribute Name"
+          },
+          unit: {
+            type: "string",
+            title: "Unit"
+          },
+          valueType: {
+            type: "string",
+            enum: ["number", "boolean"],
+            title: "Value Type"
+          }
+        }
+      };
+
       var inference_description_schema = {
         title: "Add Inference Description",
         type: "object",
@@ -39809,6 +39858,7 @@ var JSONSchemaForm = function (_Component) {
         'device_sensor_schema': device_sensor_schema,
         'sensor_inference_schema': sensor_inference_schema,
         'inference_description_schema': inference_description_schema,
+        'sensor_attribute_schema': sensor_attribute_schema,
         'app_sensor_schema': app_sensor_schema,
         'software_sensor_schema': software_sensor_schema
       };

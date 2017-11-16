@@ -7,6 +7,7 @@ var SoftwareSensorController = require('./SoftwareSensorController')
 var DeviceController = require('./DeviceController')
 var UserController = require('./UserController')
 var ConsentFormController = require('./ConsentFormController')
+var SensorAttributeController = require('./SensorAttributeController')
 
 module.exports = {
 	formsection: FormSectionController,
@@ -17,5 +18,6 @@ module.exports = {
 	swsensor: SoftwareSensorController,
 	device: DeviceController,
 	user: UserController,
-	consentform: ConsentFormController
+	consentform: ConsentFormController,
+	sensorattribute: SensorAttributeController
 }
