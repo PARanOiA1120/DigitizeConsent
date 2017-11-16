@@ -39215,7 +39215,7 @@ var FormSection = function (_Component) {
       var attributeList = Object.keys(this.state.currentAttributes).map(function (attr) {
         return _react2.default.createElement(
           'li',
-          { key: attr, style: { fontSize: 17 + 'px' } },
+          { key: attr, style: { fontSize: 14 + 'px' } },
           _react2.default.createElement(
             'b',
             null,
@@ -39388,7 +39388,22 @@ var FormSection = function (_Component) {
                     ),
                     attributeOptions
                   ),
-                  _react2.default.createElement('input', { className: 'form-control', placeholder: 'attribute value', style: formStyle.attribute,
+                  this.state.attrType == 'boolean' ? _react2.default.createElement(
+                    'select',
+                    { className: 'form-control', placeholder: 'attribute value', style: formStyle.attribute,
+                      value: this.state.attrValue, onChange: this.updateAttrValue.bind(this) },
+                    _react2.default.createElement('option', { value: '', key: '' }),
+                    _react2.default.createElement(
+                      'option',
+                      { value: 'Y', key: 'Y' },
+                      'Y'
+                    ),
+                    _react2.default.createElement(
+                      'option',
+                      { value: 'N', key: 'N' },
+                      'N'
+                    )
+                  ) : _react2.default.createElement('input', { className: 'form-control', placeholder: this.state.attrUnit, style: formStyle.attribute, min: '1',
                     value: this.state.attrValue, onChange: this.updateAttrValue.bind(this), type: this.state.attrType }),
                   _react2.default.createElement(
                     'button',

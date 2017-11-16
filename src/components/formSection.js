@@ -658,7 +658,7 @@ class FormSection extends Component {
     // TODO: make this part dynamic
     const attributeList = Object.keys(this.state.currentAttributes).map((attr) => {
       return (
-        <li key={attr} style={{fontSize: 17 + 'px'}}>
+        <li key={attr} style={{fontSize: 14 + 'px'}}>
           <b>{attr}</b>: {this.state.currentAttributes[attr]}
         </li>
       )
@@ -751,8 +751,18 @@ class FormSection extends Component {
                           <option value="" key="">---Select an attribute---</option>
                           { attributeOptions }
                         </select>
-                        <input className="form-control" placeholder="attribute value" style={formStyle.attribute}
-                          value={this.state.attrValue} onChange={this.updateAttrValue.bind(this)} type={this.state.attrType}/>
+                        { this.state.attrType == 'boolean' ?
+                          <select className="form-control" placeholder="attribute value" style={formStyle.attribute}
+                            value={this.state.attrValue} onChange={this.updateAttrValue.bind(this)}>
+                            <option value="" key=""></option>
+                            <option value="Y" key="Y">Y</option>
+                            <option value="N" key="N">N</option>
+                          </select>
+                            :
+                          <input className="form-control" placeholder={this.state.attrUnit} style={formStyle.attribute} min="1"
+                            value={this.state.attrValue} onChange={this.updateAttrValue.bind(this)} type={this.state.attrType}/>
+                          }
+
                         <button className="btn btn-primary" onClick={this.addAttr.bind(this)}>Add attribute</button>
                         <br/>
                         <br/>
