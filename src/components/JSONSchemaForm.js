@@ -15,7 +15,9 @@ class JSONSchemaForm extends Component {
       formData: {},
       softwareSensors: [],
       devices: [],
-      devicesensors: []
+      devicesensors: [],
+      attributeList: [],
+      inferenceList: [],
     }
   }
 
@@ -85,6 +87,56 @@ class JSONSchemaForm extends Component {
           devicesensors: devicesensors
         })
       })
+
+    // get the list of attributes
+    superagent
+      .get('/api/sensorattribute')
+      .query(null)
+      .set('Accept', 'application/json')
+      .end((err, response) => {
+        if(err){
+          alert('ERROR: ' + err)
+          return
+        }
+
+        let results = response.body.results
+        let attributes = Object.assign([], this.state.attributeList)
+        for(var i=0; i<results.length; i++){
+          var attribute = results[i].attributeName
+          if(results[i].unit == '') {
+            attribute += '(Unit: N/A, Value Type: ' + results[i].valueType + ')'
+          } else {
+            attribute += '(Unit: ' + results[i].unit + ', Value Type: ' + results[i].valueType + ')'
+          }
+          attributes.push(attribute)
+        }
+
+        this.setState({
+          attributeList: attributes
+        })
+      })
+
+      // get the list of inferences
+      superagent
+        .get('/api/inferencedescription')
+        .set('Accept', 'application/json')
+        .end((err, response) => {
+          if(err){
+            alert('ERROR: ' + err)
+            return
+          }
+
+          let results = response.body.results
+          let inferences = Object.assign([], this.state.inferenceList)
+          for(var i=0; i<results.length; i++){
+            var inference = results[i].inferenceName + ': ' + results[i].description + '('+ results[i]["_id"] + ')'
+            inferences.push(inference)
+          }
+
+          this.setState({
+            inferenceList: inferences
+          })
+        })
   }
 
   submit(formData){
@@ -174,11 +226,12 @@ class JSONSchemaForm extends Component {
                         properties: {
                           attriName: {
                             type: "string",
-                            title: "Attribute"
+                            title: "Attribute",
+                            enum: this.state.attributeList
                           },
                           value: {
                             type: "string",
-                            title: "Value"
+                            title: "Value (Note: do not enter unit for any numerical value as it has already been defined; enter Y or N for boolean values)"
                           }
                         }
                       }
@@ -190,18 +243,9 @@ class JSONSchemaForm extends Component {
           }
         },
         inference: {
-          type: "object",
+          type: "string",
           title: "Inference",
-          properties: {
-            inferenceName: {
-                type: "string",
-                title: "Inference"
-            },
-            description: {
-                type: "string",
-                title: "Description"
-            }
-          }
+          enum: this.state.inferenceList
         }
       }
     }

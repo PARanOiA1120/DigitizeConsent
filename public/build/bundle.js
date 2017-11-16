@@ -39600,7 +39600,9 @@ var JSONSchemaForm = function (_Component) {
       formData: {},
       softwareSensors: [],
       devices: [],
-      devicesensors: []
+      devicesensors: [],
+      attributeList: [],
+      inferenceList: []
     };
     return _this;
   }
@@ -39658,6 +39660,49 @@ var JSONSchemaForm = function (_Component) {
 
         _this2.setState({
           devicesensors: devicesensors
+        });
+      });
+
+      // get the list of attributes
+      _superagent2.default.get('/api/sensorattribute').query(null).set('Accept', 'application/json').end(function (err, response) {
+        if (err) {
+          alert('ERROR: ' + err);
+          return;
+        }
+
+        var results = response.body.results;
+        var attributes = Object.assign([], _this2.state.attributeList);
+        for (var i = 0; i < results.length; i++) {
+          var attribute = results[i].attributeName;
+          if (results[i].unit == '') {
+            attribute += '(Unit: N/A, Value Type: ' + results[i].valueType + ')';
+          } else {
+            attribute += '(Unit: ' + results[i].unit + ', Value Type: ' + results[i].valueType + ')';
+          }
+          attributes.push(attribute);
+        }
+
+        _this2.setState({
+          attributeList: attributes
+        });
+      });
+
+      // get the list of inferences
+      _superagent2.default.get('/api/inferencedescription').set('Accept', 'application/json').end(function (err, response) {
+        if (err) {
+          alert('ERROR: ' + err);
+          return;
+        }
+
+        var results = response.body.results;
+        var inferences = Object.assign([], _this2.state.inferenceList);
+        for (var i = 0; i < results.length; i++) {
+          var inference = results[i].inferenceName + ': ' + results[i].description + '(' + results[i]["_id"] + ')';
+          inferences.push(inference);
+        }
+
+        _this2.setState({
+          inferenceList: inferences
         });
       });
     }
@@ -39751,11 +39796,12 @@ var JSONSchemaForm = function (_Component) {
                           properties: {
                             attriName: {
                               type: "string",
-                              title: "Attribute"
+                              title: "Attribute",
+                              enum: this.state.attributeList
                             },
                             value: {
                               type: "string",
-                              title: "Value"
+                              title: "Value (Note: do not enter unit for any numerical value as it has already been defined; enter Y or N for boolean values)"
                             }
                           }
                         }
@@ -39767,18 +39813,9 @@ var JSONSchemaForm = function (_Component) {
             }
           },
           inference: {
-            type: "object",
+            type: "string",
             title: "Inference",
-            properties: {
-              inferenceName: {
-                type: "string",
-                title: "Inference"
-              },
-              description: {
-                type: "string",
-                title: "Description"
-              }
-            }
+            enum: this.state.inferenceList
           }
         }
       };
@@ -40414,9 +40451,18 @@ var Review = function (_Component) {
 	_createClass(Review, [{
 		key: "componentDidMount",
 		value: function componentDidMount() {
-			console.log(this.props);
+			var formData = this.props.formData;
+			var inferenceObj = {};
+			var inference = formData.inference;
+
+			if (inference) {
+				inferenceObj["inferenceName"] = inference.split(':')[0];
+				inferenceObj["inferenceID"] = inference.split('(').slice(-1)[0].slice(0, -1);
+				formData["inference"] = inferenceObj;
+			}
+
 			this.setState({
-				formData: this.props.formData
+				formData: formData
 			});
 		}
 	}, {
@@ -40436,7 +40482,7 @@ var Review = function (_Component) {
 			// if(this.props.collection.action == '/api/sensorinference'){
 			// 	// console.log(JSON.stringify(this.state.formData))
 			// 	let updatedFormData = Object.assign({}, this.state.formData)
-
+			//
 			// 	// console.log("sensorList: " + JSON.stringify(updatedFormData.sensorList))
 			// 	updatedFormData.sensorList.forEach((sensor) => {
 			// 		// console.log("sensor: " + sensor)
@@ -40444,7 +40490,7 @@ var Review = function (_Component) {
 			// 		let sensorName = sensor["name"]
 			// 		// console.log("device: " + device)
 			// 		// console.log("sensor: " + sensorName)
-
+			//
 			// 		//get sensorID from device sensor table
 			// 		superagent
 			// 		.get('/api/devicesensor')
@@ -40458,15 +40504,15 @@ var Review = function (_Component) {
 			// 			// console.log("result: " + JSON.stringify(response.body.results))
 			// 			let sensorID = response.body.results[0]["_id"]
 			// 			// console.log("sensorID: " + sensorID)
-
+			//
 			// 			sensor["sensorID"] = sensorID
 			// 			delete sensor.device
 			// 			delete sensor.name
-
+			//
 			// 			this.setState({
 			// 				formData: updatedFormData
 			// 			})
-
+			//
 			// 			console.log("data submitted: " + JSON.stringify(this.state.formData))
 			// 			fetch(this.props.collection.action, {
 			// 		      method: 'POST',

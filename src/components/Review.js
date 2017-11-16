@@ -12,9 +12,18 @@ class Review extends Component {
 	}
 
 	componentDidMount(){
-		console.log(this.props)
+		var formData = this.props.formData
+		var inferenceObj = {}
+		var inference = formData.inference
+
+		if(inference){
+			inferenceObj["inferenceName"] = inference.split(':')[0]
+			inferenceObj["inferenceID"] = inference.split('(').slice(-1)[0].slice(0, -1)
+			formData["inference"] = inferenceObj
+		}
+
 		this.setState({
-			formData: this.props.formData
+			formData: formData
 		})
 	}
 
@@ -32,7 +41,7 @@ class Review extends Component {
 		// if(this.props.collection.action == '/api/sensorinference'){
 		// 	// console.log(JSON.stringify(this.state.formData))
 		// 	let updatedFormData = Object.assign({}, this.state.formData)
-
+    //
 		// 	// console.log("sensorList: " + JSON.stringify(updatedFormData.sensorList))
 		// 	updatedFormData.sensorList.forEach((sensor) => {
 		// 		// console.log("sensor: " + sensor)
@@ -40,7 +49,7 @@ class Review extends Component {
 		// 		let sensorName = sensor["name"]
 		// 		// console.log("device: " + device)
 		// 		// console.log("sensor: " + sensorName)
-
+    //
 		// 		//get sensorID from device sensor table
 		// 		superagent
 		// 		.get('/api/devicesensor')
@@ -54,15 +63,15 @@ class Review extends Component {
 		// 			// console.log("result: " + JSON.stringify(response.body.results))
 		// 			let sensorID = response.body.results[0]["_id"]
 		// 			// console.log("sensorID: " + sensorID)
-
+    //
 		// 			sensor["sensorID"] = sensorID
 		// 			delete sensor.device
 		// 			delete sensor.name
-
+    //
 		// 			this.setState({
 		// 				formData: updatedFormData
 		// 			})
-
+    //
 		// 			console.log("data submitted: " + JSON.stringify(this.state.formData))
 		// 			fetch(this.props.collection.action, {
 		// 		      method: 'POST',
