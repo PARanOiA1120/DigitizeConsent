@@ -37655,27 +37655,33 @@ var ConsentForm = function (_Component) {
 			var index = _.findIndex(this.state.sectionList, ['category', title]);
 			var selectedSection = this.state.sectionList[index];
 			var content = "";
-			// console.log('added section: ' + JSON.stringify(selectedSection))
 
 			if (inferences.length == 0) {
 				content += "There are no known privacy risks for the data being collected in this study.";
 			} else {
 				inferences.forEach(function (inference) {
-					// console.log("inference: " + JSON.stringify(inference))
-					content += inference["inference"]["description"] + '<br/>';
+					var inferenceID = inference["inference"]["inferenceID"];
+					var url = '/api/inferencedescription/' + inferenceID;
+
+					_superagent2.default.get(url).set('Accept', 'application/json').end(function (err, response) {
+						if (err) {
+							alert('ERROR: ' + err);
+							return;
+						}
+						content += response.body.result["description"] + '<br/>';
+						selectedSection["content"] = content;
+
+						var updatedSections = Object.assign([], _this4.state.selectedSectionList);
+						updatedSections.push(selectedSection);
+
+						_this4.setState({
+							selectedSectionList: updatedSections
+						}, function () {
+							_this4.updateFullText();
+						});
+					});
 				});
 			}
-
-			selectedSection["content"] = content;
-
-			var updatedSections = Object.assign([], this.state.selectedSectionList);
-			updatedSections.push(selectedSection);
-
-			this.setState({
-				selectedSectionList: updatedSections
-			}, function () {
-				_this4.updateFullText();
-			});
 		}
 	}, {
 		key: 'updateSection',
@@ -38590,8 +38596,7 @@ var FormSection = function (_Component) {
       attrForSearch: {}, // attributes that have a match in the db
       attrName: "",
       attrValue: "",
-      attrNameC: "", // attribute name and value for customized attributes
-      attrValueC: "",
+      knownAttriList: [],
 
       trustedAppList: [],
       trustedDeviceList: [],
@@ -38662,6 +38667,18 @@ var FormSection = function (_Component) {
           deviceList: devices
         });
       });
+
+      // get attribute List
+      _superagent2.default.get('/api/sensorattribute').set('Accept', 'application/json').end(function (err, response) {
+        if (err) {
+          alert('ERROR: ' + err);
+          return;
+        }
+
+        _this2.setState({
+          knownAttriList: response.body.results
+        });
+      });
     }
   }, {
     key: 'updateSection',
@@ -38699,27 +38716,7 @@ var FormSection = function (_Component) {
     key: 'updateAttrValue',
     value: function updateAttrValue(event) {
       this.setState({
-        attrValue: event.target.value,
-        attrNameC: "",
-        attrValueC: ""
-      });
-    }
-  }, {
-    key: 'updateAttrNameC',
-    value: function updateAttrNameC(event) {
-      this.setState({
-        attrNameC: event.target.value,
-        attrName: "",
-        attrValue: ""
-      });
-    }
-  }, {
-    key: 'updateAttrValueC',
-    value: function updateAttrValueC(event) {
-      this.setState({
-        attrValueC: event.target.value,
-        attrName: "",
-        attrValue: ""
+        attrValue: event.target.value
       });
     }
 
@@ -38739,21 +38736,6 @@ var FormSection = function (_Component) {
         attrForSearch: updatedAttrForSearch,
         attrName: "",
         attrValue: ""
-      });
-    }
-
-    // add attribute to currentAttributes but not to attrForSearch
-
-  }, {
-    key: 'addCustomizedAttr',
-    value: function addCustomizedAttr(event) {
-      var updatedCurrentAttr = Object.assign({}, this.state.currentAttributes);
-      updatedCurrentAttr[this.state.attrNameC] = this.state.attrValueC;
-
-      this.setState({
-        currentAttributes: updatedCurrentAttr,
-        attrNameC: "",
-        attrValueC: ""
       });
     }
   }, {
@@ -39165,9 +39147,7 @@ var FormSection = function (_Component) {
       var formats = ['header', 'bold', 'italic', 'underline', 'strike', 'blockquote', 'list', 'bullet', 'indent', 'link', 'image'];
 
       var formStyle = _styles2.default.form;
-
       var sensors = this.state.deviceSensorList;
-
       var section = this.props.currentSection.title;
 
       var appOptions = this.state.apps.map(function (app, i) {
@@ -39207,6 +39187,14 @@ var FormSection = function (_Component) {
           'option',
           { value: sensor, key: i },
           sensor
+        );
+      });
+
+      var attributeOptions = this.state.knownAttriList.map(function (attr, i) {
+        return _react2.default.createElement(
+          'option',
+          { value: attr["attributeName"], key: attr["attributeName"] },
+          attr["attributeName"]
         );
       });
 
@@ -39385,16 +39373,7 @@ var FormSection = function (_Component) {
                       { value: '', key: '' },
                       '---Select an attribute---'
                     ),
-                    _react2.default.createElement(
-                      'option',
-                      { value: 'sampling rate', key: 'sampling rate' },
-                      'sampling rate'
-                    ),
-                    _react2.default.createElement(
-                      'option',
-                      { value: 'continuous', key: 'continuous' },
-                      'continuous'
-                    )
+                    attributeOptions
                   ),
                   _react2.default.createElement('input', { className: 'form-control', placeholder: 'attribute value', style: formStyle.attribute,
                     value: this.state.attrValue, onChange: this.updateAttrValue.bind(this) }),
@@ -39404,20 +39383,6 @@ var FormSection = function (_Component) {
                     'Add attribute'
                   ),
                   _react2.default.createElement('br', null),
-                  _react2.default.createElement('br', null)
-                ),
-                _react2.default.createElement(
-                  'div',
-                  { className: 'customizedAttr' },
-                  _react2.default.createElement('input', { className: 'form-control', placeholder: 'attribute name', style: formStyle.attribute,
-                    value: this.state.attrNameC, onChange: this.updateAttrNameC.bind(this) }),
-                  _react2.default.createElement('input', { className: 'form-control', placeholder: 'attribute value', style: formStyle.attribute,
-                    value: this.state.attrValueC, onChange: this.updateAttrValueC.bind(this) }),
-                  _react2.default.createElement(
-                    'button',
-                    { className: 'btn btn-primary', onClick: this.addCustomizedAttr.bind(this) },
-                    'Add attribute'
-                  ),
                   _react2.default.createElement('br', null)
                 )
               ),

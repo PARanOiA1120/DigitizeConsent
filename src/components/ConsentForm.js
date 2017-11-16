@@ -100,28 +100,36 @@ class ConsentForm extends Component {
 		const index = _.findIndex(this.state.sectionList, ['category', title])
 		const selectedSection = this.state.sectionList[index]
 		var content = ""
-		// console.log('added section: ' + JSON.stringify(selectedSection))
 
 		if(inferences.length == 0){
 			content += "There are no known privacy risks for the data being collected in this study."
 		} else {
 			inferences.forEach((inference) => {
-				// console.log("inference: " + JSON.stringify(inference))
-				content += inference["inference"]["description"] + '<br/>'
+				var inferenceID = inference["inference"]["inferenceID"]
+				var url = '/api/inferencedescription/' + inferenceID
+
+				superagent
+				.get(url)
+				.set('Accept', 'application/json')
+				.end((err, response) => {
+					if(err){
+						alert('ERROR: '+err)
+						return
+					}
+					content += response.body.result["description"] + '<br/>'
+					selectedSection["content"] = content
+
+					let updatedSections = Object.assign([], this.state.selectedSectionList)
+					updatedSections.push(selectedSection)
+
+					this.setState({
+						selectedSectionList: updatedSections
+					}, () => {
+						this.updateFullText()
+					})
+				})
 			})
-
 		}
-
-		selectedSection["content"] = content
-
-		let updatedSections = Object.assign([], this.state.selectedSectionList)
-		updatedSections.push(selectedSection)
-
-		this.setState({
-			selectedSectionList: updatedSections
-		}, () => {
-			this.updateFullText()
-		})
 	}
 
 

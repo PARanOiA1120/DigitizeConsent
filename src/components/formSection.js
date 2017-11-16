@@ -34,8 +34,7 @@ class FormSection extends Component {
       attrForSearch: {}, // attributes that have a match in the db
       attrName: "",
       attrValue: "",
-      attrNameC: "", // attribute name and value for customized attributes
-      attrValueC: "",
+      knownAttriList: [],
 
       trustedAppList: [],
       trustedDeviceList: [],
@@ -111,6 +110,21 @@ class FormSection extends Component {
         deviceList: devices
       })
     })
+
+    // get attribute List
+    superagent
+    .get('/api/sensorattribute')
+    .set('Accept', 'application/json')
+    .end((err, response) => {
+      if(err){
+        alert('ERROR: '+err)
+        return
+      }
+
+      this.setState({
+        knownAttriList: response.body.results
+      })
+    })
   }
 
 
@@ -145,25 +159,7 @@ class FormSection extends Component {
 
   updateAttrValue(event) {
     this.setState({
-      attrValue: event.target.value,
-      attrNameC: "",
-      attrValueC: ""
-    })
-  }
-
-  updateAttrNameC(event) {
-    this.setState({
-      attrNameC: event.target.value,
-      attrName: "",
-      attrValue: ""
-    })
-  }
-
-  updateAttrValueC(event) {
-    this.setState({
-      attrValueC: event.target.value,
-      attrName: "",
-      attrValue: ""
+      attrValue: event.target.value
     })
   }
 
@@ -181,19 +177,6 @@ class FormSection extends Component {
       attrName: "",
       attrValue: ""
     })
-  }
-
-  // add attribute to currentAttributes but not to attrForSearch
-  addCustomizedAttr(event){
-    let updatedCurrentAttr = Object.assign({}, this.state. currentAttributes)
-    updatedCurrentAttr[this.state.attrNameC] = this.state.attrValueC
-
-    this.setState({
-      currentAttributes: updatedCurrentAttr,
-      attrNameC: "",
-      attrValueC: ""
-    })
-
   }
 
   updateAppSelection(event){
@@ -475,7 +458,7 @@ class FormSection extends Component {
           return (res["deviceList"].length <= numDevices);
         })
         console.log(inferences);
-        
+
         var validInferences = []
         // level 1: check if every device in the results is in queryData
         inferences.forEach((inference) => {
@@ -618,11 +601,8 @@ class FormSection extends Component {
     ]
 
     const formStyle = styles.form
-
     const sensors = this.state.deviceSensorList
-
     const section = this.props.currentSection.title
-
 
     const appOptions = this.state.apps.map((app, i) => {
       return (
@@ -642,7 +622,6 @@ class FormSection extends Component {
       )
     })
 
-
     const deviceOptions = this.state.deviceList.map((device, i) => {
       return (
           <option value={device} key={i}>{device}</option>
@@ -655,6 +634,11 @@ class FormSection extends Component {
       )
     })
 
+    const attributeOptions = this.state.knownAttriList.map((attr, i) => {
+      return (
+        <option value={ attr["attributeName"] } key={ attr["attributeName"] }>{ attr["attributeName"] }</option>
+      )
+    })
 
     // TODO: make this part dynamic
     const attributeList = Object.keys(this.state.currentAttributes).map((attr) => {
@@ -664,7 +648,6 @@ class FormSection extends Component {
         </li>
       )
     })
-
 
     return (
       <div>
@@ -751,22 +734,12 @@ class FormSection extends Component {
                         <select className="form-control" style={formStyle.attribute}
                           value={this.state.attrName} onChange={this.updateAttrName.bind(this)}>
                           <option value="" key="">---Select an attribute---</option>
-                          <option value="sampling rate" key="sampling rate">sampling rate</option>
-                          <option value="continuous" key="continuous">continuous</option>
+                          { attributeOptions }
                         </select>
                         <input className="form-control" placeholder="attribute value" style={formStyle.attribute}
                           value={this.state.attrValue} onChange={this.updateAttrValue.bind(this)}/>
                         <button className="btn btn-primary" onClick={this.addAttr.bind(this)}>Add attribute</button>
                         <br/>
-                        <br/>
-                      </div>
-
-                      <div className="customizedAttr">
-                        <input className="form-control" placeholder="attribute name" style={formStyle.attribute}
-                          value={this.state.attrNameC} onChange={this.updateAttrNameC.bind(this)}/>
-                        <input className="form-control" placeholder="attribute value" style={formStyle.attribute}
-                          value={this.state.attrValueC} onChange={this.updateAttrValueC.bind(this)}/>
-                        <button className="btn btn-primary" onClick={this.addCustomizedAttr.bind(this)}>Add attribute</button>
                         <br/>
                       </div>
                     </div>
