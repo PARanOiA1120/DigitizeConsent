@@ -38977,8 +38977,6 @@ var FormSection = function (_Component) {
 
       this.setState({
         queryData: queryData
-      }, function () {
-        console.log("queryData: " + JSON.stringify(_this4.state.queryData));
       });
 
       // update context in the editor
@@ -39034,7 +39032,7 @@ var FormSection = function (_Component) {
       }
 
       var attributes = this.state.currentAttributes;
-      if (attributes != {}) {
+      if (Object.keys(attributes).length > 0) {
         updatedSectionContent += " with attribute ";
         var i = 1;
         for (var attr in attributes) {
@@ -39076,7 +39074,7 @@ var FormSection = function (_Component) {
       var trustedApps = this.state.trustedAppList;
       var trustedDevices = this.state.trustedDeviceList;
 
-      console.log("trustedDevices: " + trustedDevices);
+      // console.log("trustedDevices: " + trustedDevices)
 
       if (trustedApps.length != 0 || trustedDevices.length != 0) {
         if (trustedApps.length > 0) {
@@ -39172,8 +39170,8 @@ var FormSection = function (_Component) {
             });
             if (add == true) validInferences.push(inference);
           });
-          console.log("valid inference after device check: ");
-          console.log(validInferences);
+          // console.log("valid inference after device check: ")
+          // console.log(validInferences)
 
           //level 2: check if sensors in validInferences appear under device in queryData
           var validInferences2 = [];
@@ -39189,7 +39187,7 @@ var FormSection = function (_Component) {
                 if (sensorList.map(function (s) {
                   return s.sensorName;
                 }).indexOf(sensorName) == -1) {
-                  console.log("sensor does not found in queryData: " + sensorName);
+                  // console.log("sensor does not found in queryData: " + sensorName)
                   add = false;
                   break;
                 }
@@ -39197,8 +39195,8 @@ var FormSection = function (_Component) {
             });
             if (add == true) validInferences2.push(inference);
           });
-          console.log("valid inference after sensor check: ");
-          console.log(validInferences2);
+          // console.log("valid inference after sensor check: ")
+          // console.log(validInferences2)
 
           // level 3: check if attributes match
           var validInferences3 = [];
@@ -39237,8 +39235,8 @@ var FormSection = function (_Component) {
             }
             if (add == true) validInferences3.push(inference);
           }
-          console.log("valid inference after attributes check: ");
-          console.log(validInferences3);
+          // console.log("valid inference after attributes check: ")
+          // console.log(validInferences3)
 
           _this5.setState({
             queryResults: validInferences3
