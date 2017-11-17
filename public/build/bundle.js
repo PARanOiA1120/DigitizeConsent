@@ -37562,7 +37562,8 @@ var ConsentForm = function (_Component) {
 			selected: '',
 			title: '',
 			context: '',
-			full_text: ''
+			full_text: '',
+			inferenceSet: []
 		};
 		return _this;
 	}
@@ -37642,13 +37643,23 @@ var ConsentForm = function (_Component) {
 			});
 		}
 	}, {
-		key: 'addRiskSection',
-		value: function addRiskSection(title, inferences) {
+		key: 'setStateAsync',
+		value: function setStateAsync(state) {
 			var _this4 = this;
+
+			return new Promise(function (resolve) {
+				_this4.setState(state, resolve);
+			});
+		}
+	}, {
+		key: 'addRiskSection',
+		value: async function addRiskSection(title, inferences) {
+			var _this5 = this;
 
 			var index = _.findIndex(this.state.sectionList, ['category', title]);
 			var selectedSection = this.state.sectionList[index];
 			var content = "";
+			console.log("add risk section");
 
 			if (inferences.length == 0) {
 				content += "There are no known privacy risks for the data being collected in this study.";
@@ -37659,37 +37670,29 @@ var ConsentForm = function (_Component) {
 				this.setState({
 					selectedSectionList: updatedSections
 				}, function () {
-					_this4.updateFullText();
+					_this5.updateFullText();
 				});
 			} else {
 				inferences.forEach(function (inference) {
-					var inferenceID = inference["inference"]["inferenceID"];
-					var url = '/api/inferencedescription/' + inferenceID;
-					// query db to get inference description
-					_superagent2.default.get(url).set('Accept', 'application/json').end(function (err, response) {
-						if (err) {
-							alert('ERROR: ' + err);
-							return;
-						}
-						content += response.body.result["description"] + '<br/>';
-						selectedSection["content"] = content;
+					var description = inference["inference"]["description"];
+					content += description + '<br/>';
+				});
 
-						var updatedSections = Object.assign([], _this4.state.selectedSectionList);
-						updatedSections.push(selectedSection);
+				selectedSection["content"] = content;
+				var _updatedSections = Object.assign([], this.state.selectedSectionList);
+				_updatedSections.push(selectedSection);
 
-						_this4.setState({
-							selectedSectionList: updatedSections
-						}, function () {
-							_this4.updateFullText();
-						});
-					});
+				this.setState({
+					selectedSectionList: _updatedSections
+				}, function () {
+					_this5.updateFullText();
 				});
 			}
 		}
 	}, {
 		key: 'updateSection',
 		value: function updateSection(i, section) {
-			var _this5 = this;
+			var _this6 = this;
 
 			var updatedSectionList = Object.assign([], this.state.selectedSectionList);
 			updatedSectionList[i] = section;
@@ -37697,20 +37700,20 @@ var ConsentForm = function (_Component) {
 			this.setState({
 				selectedSectionList: updatedSectionList
 			}, function () {
-				_this5.updateFullText();
+				_this6.updateFullText();
 			});
 		}
 	}, {
 		key: 'updateTitle',
 		value: function updateTitle(event) {
-			var _this6 = this;
+			var _this7 = this;
 
 			var title = "";
 
 			this.setState({
 				title: event.target.value
 			}, function () {
-				_this6.updateFormViewer();
+				_this7.updateFormViewer();
 			});
 		}
 
@@ -37719,7 +37722,7 @@ var ConsentForm = function (_Component) {
 	}, {
 		key: 'updateFullText',
 		value: function updateFullText() {
-			var _this7 = this;
+			var _this8 = this;
 
 			var text = "";
 			var _iteratorNormalCompletion = true;
@@ -37753,7 +37756,7 @@ var ConsentForm = function (_Component) {
 			this.setState({
 				full_text: updatedFullText
 			}, function () {
-				_this7.updateFormViewer();
+				_this8.updateFormViewer();
 			});
 		}
 	}, {
@@ -37777,7 +37780,7 @@ var ConsentForm = function (_Component) {
 	}, {
 		key: 'saveForm',
 		value: function saveForm() {
-			var _this8 = this;
+			var _this9 = this;
 
 			var sectionList = this.state.selectedSectionList;
 
@@ -37807,7 +37810,7 @@ var ConsentForm = function (_Component) {
 					}
 
 					alert("Your update is saved!");
-					_this8.props.history.push('/profile');
+					_this9.props.history.push('/profile');
 				});
 			} else {
 				// create a new form
@@ -37818,27 +37821,27 @@ var ConsentForm = function (_Component) {
 					}
 
 					alert("Your consent form is saved!");
-					_this8.props.history.push('/profile');
+					_this9.props.history.push('/profile');
 				});
 			}
 		}
 	}, {
 		key: 'removeSection',
 		value: function removeSection(sectionid) {
-			var _this9 = this;
+			var _this10 = this;
 
 			this.setState({
 				selectedSectionList: this.state.selectedSectionList.filter(function (section) {
 					return section["_id"] != sectionid;
 				})
 			}, function () {
-				_this9.updateFullText();
+				_this10.updateFullText();
 			});
 		}
 	}, {
 		key: 'moveSectionUp',
 		value: function moveSectionUp(idx) {
-			var _this10 = this;
+			var _this11 = this;
 
 			var sectionList = this.state.selectedSectionList;
 			var section = sectionList[idx];
@@ -37848,13 +37851,13 @@ var ConsentForm = function (_Component) {
 			this.setState({
 				selectedSectionList: sectionList
 			}, function () {
-				_this10.updateFullText();
+				_this11.updateFullText();
 			});
 		}
 	}, {
 		key: 'moveSectionDown',
 		value: function moveSectionDown(idx) {
-			var _this11 = this;
+			var _this12 = this;
 
 			var sectionList = this.state.selectedSectionList;
 			var section = sectionList[idx];
@@ -37864,13 +37867,13 @@ var ConsentForm = function (_Component) {
 			this.setState({
 				selectedSectionList: sectionList
 			}, function () {
-				_this11.updateFullText();
+				_this12.updateFullText();
 			});
 		}
 	}, {
 		key: 'render',
 		value: function render() {
-			var _this12 = this;
+			var _this13 = this;
 
 			var formStyle = _styles2.default.form;
 			var universalStyle = _styles2.default.universal;
@@ -37888,13 +37891,13 @@ var ConsentForm = function (_Component) {
 					'li',
 					{ key: section["_id"] },
 					_react2.default.createElement(_FormSection2.default, { currentSection: section,
-						addRiskSection: _this12.addRiskSection.bind(_this12),
-						onChange: _this12.updateSection.bind(_this12, i),
-						deleteSection: _this12.removeSection.bind(_this12, section["_id"]),
+						addRiskSection: _this13.addRiskSection.bind(_this13),
+						onChange: _this13.updateSection.bind(_this13, i),
+						deleteSection: _this13.removeSection.bind(_this13, section["_id"]),
 						idx: i,
-						numSections: _this12.state.selectedSectionList.length,
-						moveSectionUp: _this12.moveSectionUp.bind(_this12, i),
-						moveSectionDown: _this12.moveSectionDown.bind(_this12, i)
+						numSections: _this13.state.selectedSectionList.length,
+						moveSectionUp: _this13.moveSectionUp.bind(_this13, i),
+						moveSectionDown: _this13.moveSectionDown.bind(_this13, i)
 					})
 				);
 			});
@@ -39101,7 +39104,7 @@ var FormSection = function (_Component) {
             trustedDevices.forEach(function (device) {
               context += device + ", ";
             });
-            context = context.slice(0, -2) + ' manufacturer.';
+            context = context.slice(0, -2) + ' device.';
           }
         }
 
@@ -39171,7 +39174,8 @@ var FormSection = function (_Component) {
             });
             if (add == true) validInferences.push(inference);
           });
-          console.log("valid inference after device check: " + JSON.stringify(validInferences));
+          console.log("valid inference after device check: ");
+          console.log(validInferences);
 
           //level 2: check if sensors in validInferences appear under device in queryData
           var validInferences2 = [];
@@ -39195,7 +39199,8 @@ var FormSection = function (_Component) {
             });
             if (add == true) validInferences2.push(inference);
           });
-          console.log("valid inference after sensor check: " + JSON.stringify(validInferences2));
+          console.log("valid inference after sensor check: ");
+          console.log(validInferences2);
 
           // level 3: check if attributes match
           var validInferences3 = [];
@@ -39234,7 +39239,9 @@ var FormSection = function (_Component) {
             }
             if (add == true) validInferences3.push(inference);
           }
-          console.log("valid inference after attributes check: " + JSON.stringify(validInferences3));
+          console.log("valid inference after attributes check: ");
+          console.log(validInferences3);
+
           _this5.setState({
             queryResults: validInferences3
           }, function () {
@@ -40599,6 +40606,8 @@ var Review = function (_Component) {
 	_createClass(Review, [{
 		key: "componentDidMount",
 		value: function componentDidMount() {
+			var _this2 = this;
+
 			var formData = this.props.formData;
 			var inferenceObj = {};
 			var inference = formData.inference;
@@ -40606,12 +40615,22 @@ var Review = function (_Component) {
 			if (inference) {
 				inferenceObj["inferenceName"] = inference.split(':')[0];
 				inferenceObj["inferenceID"] = inference.split('(').slice(-1)[0].slice(0, -1);
-				formData["inference"] = inferenceObj;
-			}
 
-			this.setState({
-				formData: formData
-			});
+				var url = '/api/inferencedescription/' + inferenceObj["inferenceID"];
+				_superagent2.default.get(url).set('Accept', 'application/json').end(function (err, response) {
+					if (err) {
+						alert('ERROR: ' + err);
+						return;
+					}
+
+					inferenceObj["description"] = response.body.result["description"];
+					formData["inference"] = inferenceObj;
+
+					_this2.setState({
+						formData: formData
+					});
+				});
+			}
 		}
 	}, {
 		key: "updateData",

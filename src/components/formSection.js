@@ -406,7 +406,7 @@ class FormSection extends Component {
           trustedDevices.forEach((device) => {
             context += device + ", "
           })
-          context = context.slice(0, -2) + ' manufacturer.'
+          context = context.slice(0, -2) + ' device.'
         }
       }
 
@@ -479,7 +479,8 @@ class FormSection extends Component {
           if(add == true)
             validInferences.push(inference)
         })
-        console.log("valid inference after device check: " + JSON.stringify(validInferences))
+        console.log("valid inference after device check: ")
+        console.log(validInferences)
 
         //level 2: check if sensors in validInferences appear under device in queryData
         var validInferences2 = []
@@ -502,7 +503,8 @@ class FormSection extends Component {
           if(add == true)
             validInferences2.push(inference)
         })
-        console.log("valid inference after sensor check: " + JSON.stringify(validInferences2))
+        console.log("valid inference after sensor check: ")
+        console.log(validInferences2)
 
         // level 3: check if attributes match
         var validInferences3 = []
@@ -547,7 +549,9 @@ class FormSection extends Component {
           if(add == true)
             validInferences3.push(inference)
         }
-        console.log("valid inference after attributes check: " + JSON.stringify(validInferences3))
+        console.log("valid inference after attributes check: ")
+        console.log(validInferences3)
+        
         this.setState({
           queryResults: validInferences3
         }, () => {

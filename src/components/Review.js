@@ -19,12 +19,25 @@ class Review extends Component {
 		if(inference){
 			inferenceObj["inferenceName"] = inference.split(':')[0]
 			inferenceObj["inferenceID"] = inference.split('(').slice(-1)[0].slice(0, -1)
-			formData["inference"] = inferenceObj
-		}
 
-		this.setState({
-			formData: formData
-		})
+			var url = '/api/inferencedescription/' + inferenceObj["inferenceID"]
+			superagent
+			.get(url)
+			.set('Accept', 'application/json')
+			.end((err, response) => {
+				if(err){
+					alert('ERROR: '+err)
+					return
+				}
+
+				inferenceObj["description"] = response.body.result["description"]
+				formData["inference"] = inferenceObj
+
+				this.setState({
+					formData: formData
+				})
+			})
+		}
 	}
 
 	updateData(event){

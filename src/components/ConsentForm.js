@@ -16,7 +16,8 @@ class ConsentForm extends Component {
 			selected: '',
 			title: '',
 			context: '',
-			full_text:''
+			full_text:'',
+			inferenceSet: []
 		}
 	}
 
@@ -94,10 +95,17 @@ class ConsentForm extends Component {
 		})
 	}
 
-	addRiskSection(title, inferences){
+	setStateAsync(state) {
+		return new Promise((resolve) => {
+			this.setState(state, resolve)
+		});
+	}
+
+	async addRiskSection(title, inferences){
 		const index = _.findIndex(this.state.sectionList, ['category', title])
 		const selectedSection = this.state.sectionList[index]
 		var content = ""
+		console.log("add risk section")
 
 		if(inferences.length == 0){
 			content += "There are no known privacy risks for the data being collected in this study."
@@ -112,29 +120,19 @@ class ConsentForm extends Component {
 			})
 		} else {
 			inferences.forEach((inference) => {
-				var inferenceID = inference["inference"]["inferenceID"]
-				var url = '/api/inferencedescription/' + inferenceID
-        // query db to get inference description
-				superagent
-				.get(url)
-				.set('Accept', 'application/json')
-				.end((err, response) => {
-					if(err){
-						alert('ERROR: '+err)
-						return
-					}
-					content += response.body.result["description"] + '<br/>'
-					selectedSection["content"] = content
+				var description = inference["inference"]["description"]
+				content += description + '<br/>'
 
-					let updatedSections = Object.assign([], this.state.selectedSectionList)
-					updatedSections.push(selectedSection)
+			})
 
-					this.setState({
-						selectedSectionList: updatedSections
-					}, () => {
-						this.updateFullText()
-					})
-				})
+			selectedSection["content"] = content
+			let updatedSections = Object.assign([], this.state.selectedSectionList)
+			updatedSections.push(selectedSection)
+      
+			this.setState({
+				selectedSectionList: updatedSections
+			}, () => {
+				this.updateFullText()
 			})
 		}
 	}
