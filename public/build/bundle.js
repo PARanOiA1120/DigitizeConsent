@@ -38216,21 +38216,24 @@ var DBSearch = function (_Component) {
     var _this = _possibleConstructorReturn(this, (DBSearch.__proto__ || Object.getPrototypeOf(DBSearch)).call(this));
 
     _this.state = {
-      tableList: [{
-        title: 'Device List',
-        action: '/api/device',
-        columns: [{
-          Header: "Device Type",
-          accessor: "device",
-          id: "device",
-          filterMethod: function filterMethod(filter, rows) {
-            return (0, _matchSorter2.default)(rows, filter.value, { keys: ["device"] });
-          },
-          filterAll: true
-        }],
-        pivot: [],
-        subComponent: null
-      }, {
+      tableList: [
+      // {
+      //   title: 'Device List',
+      //   action: '/api/device',
+      //   columns: [
+      //     {
+      //       Header: "Device Type",
+      //       accessor: "device",
+      //       id: "device",
+      //       filterMethod: (filter, rows) =>
+      //         matchSorter(rows, filter.value, { keys: ["device"] }),
+      //       filterAll: true
+      //     }
+      //   ],
+      //   pivot: [],
+      //   subComponent: null
+      // },
+      {
         title: 'Device Sensor List',
         action: '/api/devicesensor',
         columns: [{
@@ -38325,16 +38328,28 @@ var DBSearch = function (_Component) {
         }, {
           Header: "Inference",
           columns: [{
-            Header: "Inference Name",
-            accessor: "inference.inferenceName"
+            Header: "Inference ID",
+            accessor: "inference.inferenceID",
+            filterMethod: function filterMethod(filter, rows) {
+              return (0, _matchSorter2.default)(rows, filter.value, { keys: ["inference.inferenceID"] });
+            },
+            filterAll: true
           }, {
-            Header: "Description",
-            accessor: "inference.description"
+            Header: "Inference Name",
+            accessor: "inference.inferenceName",
+            filterMethod: function filterMethod(filter, rows) {
+              return (0, _matchSorter2.default)(rows, filter.value, { keys: ["inference.inferenceName"] });
+            },
+            filterAll: true
           }]
         }, {
           Header: "Device List",
           accessor: "deviceList",
-          width: 300
+          width: 300,
+          filterMethod: function filterMethod(filter, rows) {
+            return (0, _matchSorter2.default)(rows, filter.value, { keys: ["deviceList"] });
+          },
+          filterAll: true
         }, {
           Header: "Detail",
           width: 65,
@@ -38369,21 +38384,110 @@ var DBSearch = function (_Component) {
           return _react2.default.createElement(
             "div",
             { style: { padding: '10px' } },
-            row.original.deviceList
+            _react2.default.createElement(
+              "p",
+              null,
+              "Inference Name: ",
+              row.original.inference.inferenceName,
+              " "
+            ),
+            _react2.default.createElement(
+              "p",
+              null,
+              "Inference ID: ",
+              row.original.inference.inferenceID,
+              " "
+            ),
+            _react2.default.createElement(
+              "p",
+              null,
+              "Device/Sensor Config: ",
+              row.original.deviceList,
+              " "
+            )
           );
         }
       }, {
         title: 'Inference Description',
         action: '/api/inferencedescription',
         columns: [{
+          Header: "Inference ID",
+          accessor: "_id",
+          filterMethod: function filterMethod(filter, rows) {
+            return (0, _matchSorter2.default)(rows, filter.value, { keys: ["inferenceName"] });
+          },
+          filterAll: true
+        }, {
           Header: "Inference Name",
-          accessor: "inferenceName"
+          accessor: "inferenceName",
+          filterMethod: function filterMethod(filter, rows) {
+            return (0, _matchSorter2.default)(rows, filter.value, { keys: ["inferenceName"] });
+          },
+          filterAll: true
         }, {
           Header: "Description",
-          accessor: "description"
+          accessor: "description",
+          filterMethod: function filterMethod(filter, rows) {
+            return (0, _matchSorter2.default)(rows, filter.value, { keys: ["description"] });
+          },
+          filterAll: true
+        }, {
+          Header: "Detail",
+          width: 65,
+          expander: true,
+          Expander: function Expander(_ref2) {
+            var isExpanded = _ref2.isExpanded,
+                rest = _ref2.rest;
+            return _react2.default.createElement(
+              "div",
+              null,
+              isExpanded ? _react2.default.createElement(
+                "span",
+                null,
+                "\u2299"
+              ) : _react2.default.createElement(
+                "span",
+                null,
+                "\u2295"
+              )
+            );
+          },
+          style: {
+            cursor: "pointer",
+            fontSize: 25,
+            padding: "0",
+            textAlign: "center",
+            userSelect: "none"
+          }
         }],
         pivot: [],
-        subComponent: null
+        subComponent: function subComponent(row) {
+          return _react2.default.createElement(
+            "div",
+            { style: { padding: '10px' } },
+            _react2.default.createElement(
+              "p",
+              null,
+              "Inference ID: ",
+              row.original["_id"],
+              " "
+            ),
+            _react2.default.createElement(
+              "p",
+              null,
+              "Inference Name: ",
+              row.original.inferenceName,
+              " "
+            ),
+            _react2.default.createElement(
+              "p",
+              null,
+              "Description: ",
+              row.original.description,
+              " "
+            )
+          );
+        }
       }],
       selectedTable: {},
       data: {}

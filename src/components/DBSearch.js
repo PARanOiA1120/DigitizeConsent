@@ -13,22 +13,22 @@ class DBSearch extends Component {
     super()
     this.state = {
       tableList: [
-        {
-          title: 'Device List',
-          action: '/api/device',
-          columns: [
-            {
-              Header: "Device Type",
-              accessor: "device",
-              id: "device",
-              filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, { keys: ["device"] }),
-              filterAll: true
-            }
-          ],
-          pivot: [],
-          subComponent: null
-        },
+        // {
+        //   title: 'Device List',
+        //   action: '/api/device',
+        //   columns: [
+        //     {
+        //       Header: "Device Type",
+        //       accessor: "device",
+        //       id: "device",
+        //       filterMethod: (filter, rows) =>
+        //         matchSorter(rows, filter.value, { keys: ["device"] }),
+        //       filterAll: true
+        //     }
+        //   ],
+        //   pivot: [],
+        //   subComponent: null
+        // },
         {
           title: 'Device Sensor List',
           action: '/api/devicesensor',
@@ -135,12 +135,18 @@ class DBSearch extends Component {
               Header: "Inference",
               columns: [
                 {
-                  Header: "Inference Name",
-                  accessor:"inference.inferenceName"
+                  Header: "Inference ID",
+                  accessor:"inference.inferenceID",
+                  filterMethod: (filter, rows) =>
+                    matchSorter(rows, filter.value, { keys: ["inference.inferenceID"] }),
+                  filterAll: true
                 },
                 {
-                  Header: "Description",
-                  accessor: "inference.description"
+                  Header: "Inference Name",
+                  accessor: "inference.inferenceName",
+                  filterMethod: (filter, rows) =>
+                    matchSorter(rows, filter.value, { keys: ["inference.inferenceName"] }),
+                  filterAll: true
                 }
               ]
             },
@@ -148,6 +154,9 @@ class DBSearch extends Component {
               Header: "Device List",
               accessor: "deviceList",
               width:300,
+              filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, { keys: ["deviceList"] }),
+              filterAll: true
             },
             {
               Header: "Detail",
@@ -169,23 +178,64 @@ class DBSearch extends Component {
             }
           ],
           pivot: [],
-          subComponent: (row) => <div style={{padding: '10px'}}>{row.original.deviceList}</div>
+          subComponent: (row) =>
+                <div style={{padding: '10px'}}>
+                  <p>Inference Name: { row.original.inference.inferenceName } </p>
+                  <p>Inference ID: { row.original.inference.inferenceID } </p>
+                  <p>Device/Sensor Config: { row.original.deviceList } </p>
+                </div>
         },
         {
           title: 'Inference Description',
           action: '/api/inferencedescription',
           columns: [
             {
+              Header: "Inference ID",
+              accessor: "_id",
+              filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, { keys: ["inferenceName"] }),
+              filterAll: true
+            },
+            {
               Header: "Inference Name",
-              accessor: "inferenceName"
+              accessor: "inferenceName",
+              filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, { keys: ["inferenceName"] }),
+              filterAll: true
             },
             {
               Header: "Description",
-              accessor: "description"
+              accessor: "description",
+              filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, { keys: ["description"] }),
+              filterAll: true
+            },
+            {
+              Header: "Detail",
+              width: 65,
+              expander: true,
+              Expander: ({ isExpanded, rest }) =>
+                <div>
+                  {isExpanded
+                    ? <span>&#x2299;</span>
+                    : <span>&#x2295;</span>}
+                </div>,
+              style: {
+                cursor: "pointer",
+                fontSize: 25,
+                padding: "0",
+                textAlign: "center",
+                userSelect: "none"
+              },
             }
           ],
           pivot: [],
-          subComponent: null
+          subComponent: (row) =>
+                <div style={{padding: '10px'}}>
+                  <p>Inference ID: { row.original["_id"] } </p>
+                  <p>Inference Name: { row.original.inferenceName } </p>
+                  <p>Description: { row.original.description } </p>
+                </div>
         },
       ],
       selectedTable: {},
