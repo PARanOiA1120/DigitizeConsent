@@ -118,7 +118,9 @@ class DBSearch extends Component {
                 matchSorter(rows, filter.value, { keys: ["valueType"] }),
               filterAll: true
             }
-          ]
+          ],
+          pivot: [],
+          subComponent: null
         },
         {
           title: 'Inference Description',

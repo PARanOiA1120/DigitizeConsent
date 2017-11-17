@@ -38303,7 +38303,9 @@ var DBSearch = function (_Component) {
             return (0, _matchSorter2.default)(rows, filter.value, { keys: ["valueType"] });
           },
           filterAll: true
-        }]
+        }],
+        pivot: [],
+        subComponent: null
       }, {
         title: 'Inference Description',
         action: '/api/inferencedescription',
