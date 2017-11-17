@@ -32,7 +32,6 @@ class Profile extends Component {
   }
 
   deleteForm(formid){
-    console.log("deleting form: " + formid);
     var url = '/api/consentform/' + formid;
 
     superagent
@@ -59,9 +58,9 @@ class Profile extends Component {
           <td>{ form["lastUpdated"].split('T')[0] }</td>
           <td>
             <Link to={'/consentForm/'+ form["_id"]}>
-              <a className="btn btn-primary" style={{width:80, background:'white', color:'steelblue', borderColor:'steelblue'}}>
+              <button className="btn btn-primary" style={{width:80, background:'white', color:'steelblue', borderColor:'steelblue'}}>
                 <span className="glyphicon glyphicon-edit" style={{fontWeight:'bold'}}>&nbsp;Edit</span>
-              </a>
+              </button>
             </Link>
           </td>
           <td>

@@ -71,7 +71,7 @@ router.post('/:resource', function(req, res, next){
 	}
 
 	controller.create(req.body, function(err, result){
-		console.log("body: ", req.body)
+		// console.log("body: ", req.body)
 		if(err){
 			res.json({
 				confirmation:'fail',
@@ -118,8 +118,7 @@ router.delete('/:resource/:id', function(req, res, next){
 	var resource = req.params.resource
 	var id = req.params.id
 	var controller = controllers[resource]
-	console.log(id);
-
+	
 	if(controller == null){
 		res.json({
 			confirmation: 'fail',

@@ -13,7 +13,7 @@ class App extends Component {
 	constructor(){
 		super()
 		this.state = {
-			isSignedIn: false
+			isSignedIn: ''
 		}
 	}
 
@@ -21,11 +21,9 @@ class App extends Component {
 		this.isLoggedIn();
 	}
 
-	setSingnInStatus(status) {
+	setSignInStatus(status) {
 		this.setState({
 			isSignedIn: status
-		}, () => {
-			console.log("sign in status: " + this.state.isSignedIn);
 		})
 	}
 
@@ -35,23 +33,22 @@ class App extends Component {
 
 	isLoggedIn() {
 		var id_token = this.getIdToken();
-		console.log("id token: " + id_token);
 
 		if(id_token == null) {
-			this.setSingnInStatus(false);
+			this.setSignInStatus(false);
 		} else {
 			axios
 				.get("https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + id_token)
 				.then((result) => {
-					console.log(result);
+					// console.log(result);
 					if(result.status == 200 ){
-						this.setSingnInStatus(true);
+						this.setSignInStatus(true);
 					} else {
-						this.setSingnInStatus(false);
+						this.setSignInStatus(false);
 					}
 				})
 				.catch((error) => {
-					this.setSingnInStatus(false);
+					this.setSignInStatus(false);
 					this.logout();
 					console.log(error);
 				})
@@ -59,7 +56,7 @@ class App extends Component {
 	}
 
 	logout() {
-		console.log("logging out...");
+		// console.log("logging out...");
 		localStorage.removeItem('profile');
 		localStorage.removeItem('id_token');
 		window.location.reload();
@@ -69,14 +66,17 @@ class App extends Component {
 	render(){
 		return (
 			<div>
-  			{this.state.isSignedIn == false &&
-					<Login setSingnInStatus={ this.setSingnInStatus.bind(this) }/>
+				{ this.state.isSignedIn == '' &&
+					<div></div>
 				}
-				{this.state.isSignedIn == true &&
-          <div className="main">
-            <NavBar logout={ this.logout.bind(this) }/>
-  					<Homepage isSignedIn={ this.state.isSignedIn } logout={ this.logout.bind(this)} />
-          </div>
+  			{ this.state.isSignedIn == true &&
+					<div className="main">
+						<NavBar logout={ this.logout.bind(this) }/>
+						<Homepage isSignedIn={ this.state.isSignedIn } logout={ this.logout.bind(this)} />
+					</div>
+				}
+				{ this.state.isSignedIn == false &&
+					<Login setSignInStatus={ this.setSignInStatus.bind(this) }/>
 				}
 			</div>
 		);

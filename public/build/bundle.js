@@ -36549,7 +36549,7 @@ var App = function (_Component) {
 		var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
 
 		_this.state = {
-			isSignedIn: false
+			isSignedIn: ''
 		};
 		return _this;
 	}
@@ -36560,14 +36560,10 @@ var App = function (_Component) {
 			this.isLoggedIn();
 		}
 	}, {
-		key: 'setSingnInStatus',
-		value: function setSingnInStatus(status) {
-			var _this2 = this;
-
+		key: 'setSignInStatus',
+		value: function setSignInStatus(status) {
 			this.setState({
 				isSignedIn: status
-			}, function () {
-				console.log("sign in status: " + _this2.state.isSignedIn);
 			});
 		}
 	}, {
@@ -36578,24 +36574,23 @@ var App = function (_Component) {
 	}, {
 		key: 'isLoggedIn',
 		value: function isLoggedIn() {
-			var _this3 = this;
+			var _this2 = this;
 
 			var id_token = this.getIdToken();
-			console.log("id token: " + id_token);
 
 			if (id_token == null) {
-				this.setSingnInStatus(false);
+				this.setSignInStatus(false);
 			} else {
 				_axios2.default.get("https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + id_token).then(function (result) {
-					console.log(result);
+					// console.log(result);
 					if (result.status == 200) {
-						_this3.setSingnInStatus(true);
+						_this2.setSignInStatus(true);
 					} else {
-						_this3.setSingnInStatus(false);
+						_this2.setSignInStatus(false);
 					}
 				}).catch(function (error) {
-					_this3.setSingnInStatus(false);
-					_this3.logout();
+					_this2.setSignInStatus(false);
+					_this2.logout();
 					console.log(error);
 				});
 			}
@@ -36603,7 +36598,7 @@ var App = function (_Component) {
 	}, {
 		key: 'logout',
 		value: function logout() {
-			console.log("logging out...");
+			// console.log("logging out...");
 			localStorage.removeItem('profile');
 			localStorage.removeItem('id_token');
 			window.location.reload();
@@ -36614,13 +36609,14 @@ var App = function (_Component) {
 			return _react2.default.createElement(
 				'div',
 				null,
-				this.state.isSignedIn == false && _react2.default.createElement(_Login2.default, { setSingnInStatus: this.setSingnInStatus.bind(this) }),
+				this.state.isSignedIn == '' && _react2.default.createElement('div', null),
 				this.state.isSignedIn == true && _react2.default.createElement(
 					'div',
 					{ className: 'main' },
 					_react2.default.createElement(_NavBar2.default, { logout: this.logout.bind(this) }),
 					_react2.default.createElement(_Homepage2.default, { isSignedIn: this.state.isSignedIn, logout: this.logout.bind(this) })
-				)
+				),
+				this.state.isSignedIn == false && _react2.default.createElement(_Login2.default, { setSignInStatus: this.setSignInStatus.bind(this) })
 			);
 		}
 	}]);
@@ -37602,8 +37598,6 @@ var ConsentForm = function (_Component) {
 			} else {
 				this.setState({
 					formId: ''
-				}, function () {
-					console.log("formid: " + _this2.state.formId);
 				});
 			}
 
@@ -37623,7 +37617,7 @@ var ConsentForm = function (_Component) {
 		value: function updateSelection(event) {
 			var updatedSelection = Object.assign('', this.state.selected);
 			updatedSelection = event.target.value;
-			console.log(updatedSelection);
+			// console.log(updatedSelection)
 
 			this.setState({
 				selected: updatedSelection
@@ -38102,15 +38096,10 @@ var CreateDBEntry = function (_Component) {
 
 	_createClass(CreateDBEntry, [{
 		key: 'componentDidMount',
-		value: function componentDidMount() {
-			console.log(this.props);
-		}
+		value: function componentDidMount() {}
 	}, {
 		key: 'updateSelection',
 		value: function updateSelection(event) {
-			console.log(event.target.value);
-			console.log(this.state.selectedCollection);
-
 			var updatedCollection = Object.assign({}, this.state.selectedCollection);
 			updatedCollection = this.state.collectionList[event.target.value];
 
@@ -38316,98 +38305,6 @@ var DBSearch = function (_Component) {
           filterAll: true
         }]
       }, {
-        title: 'Sensor Inference List',
-        action: '/api/sensorinference',
-        columns: [{
-          Header: "Reference",
-          accessor: "reference",
-          filterMethod: function filterMethod(filter, rows) {
-            return (0, _matchSorter2.default)(rows, filter.value, { keys: ["reference"] });
-          },
-          filterAll: true
-        }, {
-          Header: "Inference",
-          columns: [{
-            Header: "Inference ID",
-            accessor: "inference.inferenceID",
-            filterMethod: function filterMethod(filter, rows) {
-              return (0, _matchSorter2.default)(rows, filter.value, { keys: ["inference.inferenceID"] });
-            },
-            filterAll: true
-          }, {
-            Header: "Inference Name",
-            accessor: "inference.inferenceName",
-            filterMethod: function filterMethod(filter, rows) {
-              return (0, _matchSorter2.default)(rows, filter.value, { keys: ["inference.inferenceName"] });
-            },
-            filterAll: true
-          }]
-        }, {
-          Header: "Device List",
-          accessor: "deviceList",
-          width: 300,
-          filterMethod: function filterMethod(filter, rows) {
-            return (0, _matchSorter2.default)(rows, filter.value, { keys: ["deviceList"] });
-          },
-          filterAll: true
-        }, {
-          Header: "Detail",
-          width: 65,
-          expander: true,
-          Expander: function Expander(_ref) {
-            var isExpanded = _ref.isExpanded,
-                rest = _ref.rest;
-            return _react2.default.createElement(
-              "div",
-              null,
-              isExpanded ? _react2.default.createElement(
-                "span",
-                null,
-                "\u2299"
-              ) : _react2.default.createElement(
-                "span",
-                null,
-                "\u2295"
-              )
-            );
-          },
-          style: {
-            cursor: "pointer",
-            fontSize: 25,
-            padding: "0",
-            textAlign: "center",
-            userSelect: "none"
-          }
-        }],
-        pivot: [],
-        subComponent: function subComponent(row) {
-          return _react2.default.createElement(
-            "div",
-            { style: { padding: '10px' } },
-            _react2.default.createElement(
-              "p",
-              null,
-              "Inference Name: ",
-              row.original.inference.inferenceName,
-              " "
-            ),
-            _react2.default.createElement(
-              "p",
-              null,
-              "Inference ID: ",
-              row.original.inference.inferenceID,
-              " "
-            ),
-            _react2.default.createElement(
-              "p",
-              null,
-              "Device/Sensor Config: ",
-              row.original.deviceList,
-              " "
-            )
-          );
-        }
-      }, {
         title: 'Inference Description',
         action: '/api/inferencedescription',
         columns: [{
@@ -38435,9 +38332,9 @@ var DBSearch = function (_Component) {
           Header: "Detail",
           width: 65,
           expander: true,
-          Expander: function Expander(_ref2) {
-            var isExpanded = _ref2.isExpanded,
-                rest = _ref2.rest;
+          Expander: function Expander(_ref) {
+            var isExpanded = _ref.isExpanded,
+                rest = _ref.rest;
             return _react2.default.createElement(
               "div",
               null,
@@ -38484,6 +38381,98 @@ var DBSearch = function (_Component) {
               null,
               "Description: ",
               row.original.description,
+              " "
+            )
+          );
+        }
+      }, {
+        title: 'Sensor Inference List',
+        action: '/api/sensorinference',
+        columns: [{
+          Header: "Reference",
+          accessor: "reference",
+          filterMethod: function filterMethod(filter, rows) {
+            return (0, _matchSorter2.default)(rows, filter.value, { keys: ["reference"] });
+          },
+          filterAll: true
+        }, {
+          Header: "Inference",
+          columns: [{
+            Header: "Inference ID",
+            accessor: "inference.inferenceID",
+            filterMethod: function filterMethod(filter, rows) {
+              return (0, _matchSorter2.default)(rows, filter.value, { keys: ["inference.inferenceID"] });
+            },
+            filterAll: true
+          }, {
+            Header: "Inference Name",
+            accessor: "inference.inferenceName",
+            filterMethod: function filterMethod(filter, rows) {
+              return (0, _matchSorter2.default)(rows, filter.value, { keys: ["inference.inferenceName"] });
+            },
+            filterAll: true
+          }]
+        }, {
+          Header: "Device List",
+          accessor: "deviceList",
+          width: 300,
+          filterMethod: function filterMethod(filter, rows) {
+            return (0, _matchSorter2.default)(rows, filter.value, { keys: ["deviceList"] });
+          },
+          filterAll: true
+        }, {
+          Header: "Detail",
+          width: 65,
+          expander: true,
+          Expander: function Expander(_ref2) {
+            var isExpanded = _ref2.isExpanded,
+                rest = _ref2.rest;
+            return _react2.default.createElement(
+              "div",
+              null,
+              isExpanded ? _react2.default.createElement(
+                "span",
+                null,
+                "\u2299"
+              ) : _react2.default.createElement(
+                "span",
+                null,
+                "\u2295"
+              )
+            );
+          },
+          style: {
+            cursor: "pointer",
+            fontSize: 25,
+            padding: "0",
+            textAlign: "center",
+            userSelect: "none"
+          }
+        }],
+        pivot: [],
+        subComponent: function subComponent(row) {
+          return _react2.default.createElement(
+            "div",
+            { style: { padding: '10px' } },
+            _react2.default.createElement(
+              "p",
+              null,
+              "Inference Name: ",
+              row.original.inference.inferenceName,
+              " "
+            ),
+            _react2.default.createElement(
+              "p",
+              null,
+              "Inference ID: ",
+              row.original.inference.inferenceID,
+              " "
+            ),
+            _react2.default.createElement(
+              "p",
+              null,
+              "Device/Sensor Config: ",
+              row.original.deviceList,
               " "
             )
           );
@@ -38620,7 +38609,7 @@ var DownloadPDF = function (_Component) {
     value: function pdfToHTML() {
       var pdf = new jsPDF('p', 'pt', 'letter');
       var source = this.props.content;
-      console.log("source: " + source);
+      // console.log("source: " + source)
       var specialElementHandlers = {
         '#bypassme': function bypassme(element, renderer) {
           return true;
@@ -40144,7 +40133,7 @@ var Login = function (_React$Component) {
         // save user login data to localStorage
         _this2.setUserProfile(result.data);
         _this2.setIdToken(id_token);
-        _this2.props.setSingnInStatus(true);
+        _this2.props.setSignInStatus(true);
 
         // check if user is our in the Database
         var googleid = result.data.id;
@@ -40161,7 +40150,7 @@ var Login = function (_React$Component) {
                 alert('ERROR: ' + err);
                 return;
               }
-              console.log("user added: " + JSON.stringify(response));
+              // console.log("user added: " + JSON.stringify(response));
             });
           }
         });
@@ -40354,7 +40343,6 @@ var Profile = function (_Component) {
   }, {
     key: 'deleteForm',
     value: function deleteForm(formid) {
-      console.log("deleting form: " + formid);
       var url = '/api/consentform/' + formid;
 
       _superagent2.default.delete(url).query(null).set('Accept', 'application/json').end(function (err, response) {
@@ -40399,7 +40387,7 @@ var Profile = function (_Component) {
               _reactRouterDom.Link,
               { to: '/consentForm/' + form["_id"] },
               _react2.default.createElement(
-                'a',
+                'button',
                 { className: 'btn btn-primary', style: { width: 80, background: 'white', color: 'steelblue', borderColor: 'steelblue' } },
                 _react2.default.createElement(
                   'span',

@@ -50,8 +50,6 @@ class ConsentForm extends Component {
 		} else {
 			this.setState({
 				formId: ''
-			}, () => {
-				console.log("formid: " + this.state.formId)
 			})
 		}
 
@@ -74,7 +72,7 @@ class ConsentForm extends Component {
 	updateSelection(event){
 		let updatedSelection = Object.assign('', this.state.selected)
 		updatedSelection = event.target.value
-		console.log(updatedSelection)
+		// console.log(updatedSelection)
 
 		this.setState({
 			selected: updatedSelection

@@ -21,13 +21,10 @@ class CreateDBEntry extends Component{
 	}
 
 	componentDidMount(){
-		console.log(this.props);
+		
 	}
 
 	updateSelection(event){
-		console.log(event.target.value)
-		console.log(this.state.selectedCollection)
-
 		let updatedCollection = Object.assign({}, this.state.selectedCollection)
 		updatedCollection = this.state.collectionList[event.target.value]
 

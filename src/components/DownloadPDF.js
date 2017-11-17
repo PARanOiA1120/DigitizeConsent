@@ -13,7 +13,7 @@ class DownloadPDF extends Component {
   pdfToHTML(){
     var pdf = new jsPDF('p', 'pt', 'letter');
     var source = this.props.content;
-    console.log("source: " + source)
+    // console.log("source: " + source)
     var specialElementHandlers = {
       '#bypassme': function(element, renderer) {
         return true
@@ -46,7 +46,7 @@ class DownloadPDF extends Component {
   render() {
     return (
       <div>
-        <button className="btn btn-primary" style={{float:'right'}} 
+        <button className="btn btn-primary" style={{float:'right'}}
         onClick={this.pdfToHTML}>Generate PDF</button>
       </div>
     );

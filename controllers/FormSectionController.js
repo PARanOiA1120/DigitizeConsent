@@ -25,7 +25,7 @@ module.exports = {
 	create: function(params, callback){
 		var sensors = params['sensors']
 		var sensor_arr = sensors.split(',')
-		console.log(sensor_arr)
+		// console.log(sensor_arr)
 		var newSensors = []
 		sensor_arr.forEach(function(sensor){
 			newSensors.push(sensor.trim())

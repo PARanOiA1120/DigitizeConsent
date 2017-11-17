@@ -5,7 +5,7 @@ module.exports = {
 		Device.find(params, function(err, devices){
 			if(err){
 				callback(err, null)
-				return 
+				return
 			}
 			callback(null, devices)
 		})
@@ -17,7 +17,6 @@ module.exports = {
 				return
 			}
 			callback(null, device)
-			console.log("[controller]:" + device)
 		})
 	}
 }

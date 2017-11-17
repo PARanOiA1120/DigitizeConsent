@@ -5,7 +5,7 @@ module.exports = {
 		Sensor.find(params, function(err, devicesensors){
 			if(err){
 				callback(err, null)
-				return 
+				return
 			}
 			callback(null, devicesensors)
 		})
@@ -17,7 +17,6 @@ module.exports = {
 				return
 			}
 			callback(null, devicesensor)
-			console.log("[controller]:" + devicesensor)
 		})
 	}
 }

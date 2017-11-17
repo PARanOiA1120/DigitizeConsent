@@ -25,7 +25,7 @@ class Login extends React.Component{
         // save user login data to localStorage
         this.setUserProfile(result.data);
         this.setIdToken(id_token);
-        this.props.setSingnInStatus(true);
+        this.props.setSignInStatus(true);
 
         // check if user is our in the Database
         var googleid = result.data.id;
@@ -50,7 +50,7 @@ class Login extends React.Component{
                     alert('ERROR: '+err)
               		  return
               	  }
-              		console.log("user added: " + JSON.stringify(response));
+              		// console.log("user added: " + JSON.stringify(response));
               })
 
             }

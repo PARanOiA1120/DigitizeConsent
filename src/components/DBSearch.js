@@ -121,6 +121,58 @@ class DBSearch extends Component {
           ]
         },
         {
+          title: 'Inference Description',
+          action: '/api/inferencedescription',
+          columns: [
+            {
+              Header: "Inference ID",
+              accessor: "_id",
+              filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, { keys: ["inferenceName"] }),
+              filterAll: true
+            },
+            {
+              Header: "Inference Name",
+              accessor: "inferenceName",
+              filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, { keys: ["inferenceName"] }),
+              filterAll: true
+            },
+            {
+              Header: "Description",
+              accessor: "description",
+              filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, { keys: ["description"] }),
+              filterAll: true
+            },
+            {
+              Header: "Detail",
+              width: 65,
+              expander: true,
+              Expander: ({ isExpanded, rest }) =>
+                <div>
+                  {isExpanded
+                    ? <span>&#x2299;</span>
+                    : <span>&#x2295;</span>}
+                </div>,
+              style: {
+                cursor: "pointer",
+                fontSize: 25,
+                padding: "0",
+                textAlign: "center",
+                userSelect: "none"
+              },
+            }
+          ],
+          pivot: [],
+          subComponent: (row) =>
+                <div style={{padding: '10px'}}>
+                  <p>Inference ID: { row.original["_id"] } </p>
+                  <p>Inference Name: { row.original.inferenceName } </p>
+                  <p>Description: { row.original.description } </p>
+                </div>
+        },
+        {
           title: 'Sensor Inference List',
           action: '/api/sensorinference',
           columns: [
@@ -184,59 +236,7 @@ class DBSearch extends Component {
                   <p>Inference ID: { row.original.inference.inferenceID } </p>
                   <p>Device/Sensor Config: { row.original.deviceList } </p>
                 </div>
-        },
-        {
-          title: 'Inference Description',
-          action: '/api/inferencedescription',
-          columns: [
-            {
-              Header: "Inference ID",
-              accessor: "_id",
-              filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, { keys: ["inferenceName"] }),
-              filterAll: true
-            },
-            {
-              Header: "Inference Name",
-              accessor: "inferenceName",
-              filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, { keys: ["inferenceName"] }),
-              filterAll: true
-            },
-            {
-              Header: "Description",
-              accessor: "description",
-              filterMethod: (filter, rows) =>
-                matchSorter(rows, filter.value, { keys: ["description"] }),
-              filterAll: true
-            },
-            {
-              Header: "Detail",
-              width: 65,
-              expander: true,
-              Expander: ({ isExpanded, rest }) =>
-                <div>
-                  {isExpanded
-                    ? <span>&#x2299;</span>
-                    : <span>&#x2295;</span>}
-                </div>,
-              style: {
-                cursor: "pointer",
-                fontSize: 25,
-                padding: "0",
-                textAlign: "center",
-                userSelect: "none"
-              },
-            }
-          ],
-          pivot: [],
-          subComponent: (row) =>
-                <div style={{padding: '10px'}}>
-                  <p>Inference ID: { row.original["_id"] } </p>
-                  <p>Inference Name: { row.original.inferenceName } </p>
-                  <p>Description: { row.original.description } </p>
-                </div>
-        },
+        }
       ],
       selectedTable: {},
       data: {}
