@@ -39034,13 +39034,13 @@ var FormSection = function (_Component) {
       }
 
       var attributes = this.state.currentAttributes;
-      if (attributes.length > 0) {
+      if (attributes != {}) {
         updatedSectionContent += " with attribute ";
         var i = 1;
-        Object.keys(attributes).map(function (key) {
-          if (i == 1) updatedSectionContent += key + " set to " + attributes[key];else updatedSectionContent += ", " + key + " set to " + attributes[key];
+        for (var attr in attributes) {
+          if (i == 1) updatedSectionContent += attr + " set to " + attributes[attr];else updatedSectionContent += ", " + attr + " set to " + attributes[attr];
           i += 1;
-        });
+        }
       }
 
       updatedSectionContent += ".";
@@ -39063,8 +39063,6 @@ var FormSection = function (_Component) {
         selectedSensor: "",
         currentAttributes: {},
         attrForSearch: {}
-      }, function () {
-        // console.log("sensor list for query: " + JSON.stringify(this.state.sensorList))
       });
     }
   }, {

@@ -336,16 +336,16 @@ class FormSection extends Component {
     }
 
     let attributes = this.state.currentAttributes
-    if(attributes.length > 0){
+    if( attributes != {} ){
       updatedSectionContent += " with attribute "
       let i = 1
-      Object.keys(attributes).map(function(key){
+      for(var attr in attributes) {
         if(i == 1)
-          updatedSectionContent += key + " set to " + attributes[key]
+          updatedSectionContent += attr + " set to " + attributes[attr]
         else
-          updatedSectionContent += ", " + key + " set to " + attributes[key];
+          updatedSectionContent += ", " + attr + " set to " + attributes[attr];
         i += 1
-      })
+      }
     }
 
     updatedSectionContent += "."
@@ -368,8 +368,6 @@ class FormSection extends Component {
       selectedSensor: "",
       currentAttributes: {},
       attrForSearch: {},
-    }, () => {
-      // console.log("sensor list for query: " + JSON.stringify(this.state.sensorList))
     })
   }
 
@@ -551,7 +549,7 @@ class FormSection extends Component {
         }
         console.log("valid inference after attributes check: ")
         console.log(validInferences3)
-        
+
         this.setState({
           queryResults: validInferences3
         }, () => {
