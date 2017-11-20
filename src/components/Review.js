@@ -13,10 +13,11 @@ class Review extends Component {
 
 	componentDidMount(){
 		var formData = this.props.formData
-		var inferenceObj = {}
-		var inference = formData.inference
 
-		if(inference){
+		if(formData.inference){
+			var inferenceObj = {}
+			var inference = formData.inference
+
 			inferenceObj["inferenceName"] = inference.split(':')[0]
 			inferenceObj["inferenceID"] = inference.split('(').slice(-1)[0].slice(0, -1)
 
@@ -38,6 +39,12 @@ class Review extends Component {
 				})
 			})
 		}
+
+		this.setState({
+			formData: formData
+		}, () => {
+			console.log(this.state.formData)
+		})
 	}
 
 	updateData(event){
@@ -51,68 +58,20 @@ class Review extends Component {
 	}
 
 	submit() {
-		// if(this.props.collection.action == '/api/sensorinference'){
-		// 	// console.log(JSON.stringify(this.state.formData))
-		// 	let updatedFormData = Object.assign({}, this.state.formData)
-    //
-		// 	// console.log("sensorList: " + JSON.stringify(updatedFormData.sensorList))
-		// 	updatedFormData.sensorList.forEach((sensor) => {
-		// 		// console.log("sensor: " + sensor)
-		// 		let device = sensor["device"]
-		// 		let sensorName = sensor["name"]
-		// 		// console.log("device: " + device)
-		// 		// console.log("sensor: " + sensorName)
-    //
-		// 		//get sensorID from device sensor table
-		// 		superagent
-		// 		.get('/api/devicesensor')
-		// 		.query({device: device, sensorName: sensorName})
-		// 		.set('Accept', 'application/json')
-		// 		.end((err, response) => {
-		// 			if(err){
-		// 			  alert('ERROR: '+err)
-		// 			  return
-		// 			}
-		// 			// console.log("result: " + JSON.stringify(response.body.results))
-		// 			let sensorID = response.body.results[0]["_id"]
-		// 			// console.log("sensorID: " + sensorID)
-    //
-		// 			sensor["sensorID"] = sensorID
-		// 			delete sensor.device
-		// 			delete sensor.name
-    //
-		// 			this.setState({
-		// 				formData: updatedFormData
-		// 			})
-    //
-		// 			console.log("data submitted: " + JSON.stringify(this.state.formData))
-		// 			fetch(this.props.collection.action, {
-		// 		      method: 'POST',
-		// 		      headers: {
-		// 		        'Accept': 'application/json',
-		// 		        'Content-Type': 'application/json'
-		// 		      },
-		// 		      body: JSON.stringify(this.state.formData)
-		// 		    })
-		// 		})
-		// 	})
-		// }
-		// else {
+		superagent
+		.post(this.props.collection.action)
+		.send(this.state.formData)
+		.set('Accept', 'application/json')
+		.end((err, response) => {
+			if(err){
+				alert('ERROR: '+err)
+				return
+			}
 
-			superagent
-			.post(this.props.collection.action)
-			.send(this.state.formData)
-			.set('Accept', 'application/json')
-			.end((err, response) => {
-				if(err){
-					alert('ERROR: '+err)
-					return
-				}
+			alert("Data submitted. Thanks for your contribution!")
+			window.location.reload()
+		})
 
-				alert("Data submitted. Thanks for your contribution!")
-				window.location.reload()
-			})
-		// }
 	}
 
 
@@ -122,7 +81,7 @@ class Review extends Component {
 			<div>
 				<h4>Review New Data Entry</h4>
 				<hr />
-				<textarea className="form-control" value={JSON.stringify(this.state.formData, undefined, 4)} rows="17"
+				<textarea readOnly className="form-control" value={JSON.stringify(this.state.formData, undefined, 4)} rows="17"
 				onChange={this.updateData.bind(this)}></textarea>
 				<hr />
 				<button className="btn btn-primary" onClick={this.submit.bind(this)}>Submit</button>

@@ -37643,23 +37643,13 @@ var ConsentForm = function (_Component) {
 			});
 		}
 	}, {
-		key: 'setStateAsync',
-		value: function setStateAsync(state) {
-			var _this4 = this;
-
-			return new Promise(function (resolve) {
-				_this4.setState(state, resolve);
-			});
-		}
-	}, {
 		key: 'addRiskSection',
-		value: async function addRiskSection(title, inferences) {
-			var _this5 = this;
+		value: function addRiskSection(title, inferences) {
+			var _this4 = this;
 
 			var index = _.findIndex(this.state.sectionList, ['category', title]);
 			var selectedSection = this.state.sectionList[index];
 			var content = "";
-			console.log("add risk section");
 
 			if (inferences.length == 0) {
 				content += "There are no known privacy risks for the data being collected in this study.";
@@ -37670,7 +37660,7 @@ var ConsentForm = function (_Component) {
 				this.setState({
 					selectedSectionList: updatedSections
 				}, function () {
-					_this5.updateFullText();
+					_this4.updateFullText();
 				});
 			} else {
 				inferences.forEach(function (inference) {
@@ -37685,14 +37675,14 @@ var ConsentForm = function (_Component) {
 				this.setState({
 					selectedSectionList: _updatedSections
 				}, function () {
-					_this5.updateFullText();
+					_this4.updateFullText();
 				});
 			}
 		}
 	}, {
 		key: 'updateSection',
 		value: function updateSection(i, section) {
-			var _this6 = this;
+			var _this5 = this;
 
 			var updatedSectionList = Object.assign([], this.state.selectedSectionList);
 			updatedSectionList[i] = section;
@@ -37700,20 +37690,20 @@ var ConsentForm = function (_Component) {
 			this.setState({
 				selectedSectionList: updatedSectionList
 			}, function () {
-				_this6.updateFullText();
+				_this5.updateFullText();
 			});
 		}
 	}, {
 		key: 'updateTitle',
 		value: function updateTitle(event) {
-			var _this7 = this;
+			var _this6 = this;
 
 			var title = "";
 
 			this.setState({
 				title: event.target.value
 			}, function () {
-				_this7.updateFormViewer();
+				_this6.updateFormViewer();
 			});
 		}
 
@@ -37722,7 +37712,7 @@ var ConsentForm = function (_Component) {
 	}, {
 		key: 'updateFullText',
 		value: function updateFullText() {
-			var _this8 = this;
+			var _this7 = this;
 
 			var text = "";
 			var _iteratorNormalCompletion = true;
@@ -37756,7 +37746,7 @@ var ConsentForm = function (_Component) {
 			this.setState({
 				full_text: updatedFullText
 			}, function () {
-				_this8.updateFormViewer();
+				_this7.updateFormViewer();
 			});
 		}
 	}, {
@@ -37780,7 +37770,7 @@ var ConsentForm = function (_Component) {
 	}, {
 		key: 'saveForm',
 		value: function saveForm() {
-			var _this9 = this;
+			var _this8 = this;
 
 			var sectionList = this.state.selectedSectionList;
 
@@ -37810,7 +37800,7 @@ var ConsentForm = function (_Component) {
 					}
 
 					alert("Your update is saved!");
-					_this9.props.history.push('/profile');
+					_this8.props.history.push('/profile');
 				});
 			} else {
 				// create a new form
@@ -37821,27 +37811,27 @@ var ConsentForm = function (_Component) {
 					}
 
 					alert("Your consent form is saved!");
-					_this9.props.history.push('/profile');
+					_this8.props.history.push('/profile');
 				});
 			}
 		}
 	}, {
 		key: 'removeSection',
 		value: function removeSection(sectionid) {
-			var _this10 = this;
+			var _this9 = this;
 
 			this.setState({
 				selectedSectionList: this.state.selectedSectionList.filter(function (section) {
 					return section["_id"] != sectionid;
 				})
 			}, function () {
-				_this10.updateFullText();
+				_this9.updateFullText();
 			});
 		}
 	}, {
 		key: 'moveSectionUp',
 		value: function moveSectionUp(idx) {
-			var _this11 = this;
+			var _this10 = this;
 
 			var sectionList = this.state.selectedSectionList;
 			var section = sectionList[idx];
@@ -37851,13 +37841,13 @@ var ConsentForm = function (_Component) {
 			this.setState({
 				selectedSectionList: sectionList
 			}, function () {
-				_this11.updateFullText();
+				_this10.updateFullText();
 			});
 		}
 	}, {
 		key: 'moveSectionDown',
 		value: function moveSectionDown(idx) {
-			var _this12 = this;
+			var _this11 = this;
 
 			var sectionList = this.state.selectedSectionList;
 			var section = sectionList[idx];
@@ -37867,13 +37857,13 @@ var ConsentForm = function (_Component) {
 			this.setState({
 				selectedSectionList: sectionList
 			}, function () {
-				_this12.updateFullText();
+				_this11.updateFullText();
 			});
 		}
 	}, {
 		key: 'render',
 		value: function render() {
-			var _this13 = this;
+			var _this12 = this;
 
 			var formStyle = _styles2.default.form;
 			var universalStyle = _styles2.default.universal;
@@ -37891,13 +37881,13 @@ var ConsentForm = function (_Component) {
 					'li',
 					{ key: section["_id"] },
 					_react2.default.createElement(_FormSection2.default, { currentSection: section,
-						addRiskSection: _this13.addRiskSection.bind(_this13),
-						onChange: _this13.updateSection.bind(_this13, i),
-						deleteSection: _this13.removeSection.bind(_this13, section["_id"]),
+						addRiskSection: _this12.addRiskSection.bind(_this12),
+						onChange: _this12.updateSection.bind(_this12, i),
+						deleteSection: _this12.removeSection.bind(_this12, section["_id"]),
 						idx: i,
-						numSections: _this13.state.selectedSectionList.length,
-						moveSectionUp: _this13.moveSectionUp.bind(_this13, i),
-						moveSectionDown: _this13.moveSectionDown.bind(_this13, i)
+						numSections: _this12.state.selectedSectionList.length,
+						moveSectionUp: _this12.moveSectionUp.bind(_this12, i),
+						moveSectionDown: _this12.moveSectionDown.bind(_this12, i)
 					})
 				);
 			});
@@ -38208,24 +38198,21 @@ var DBSearch = function (_Component) {
     var _this = _possibleConstructorReturn(this, (DBSearch.__proto__ || Object.getPrototypeOf(DBSearch)).call(this));
 
     _this.state = {
-      tableList: [
-      // {
-      //   title: 'Device List',
-      //   action: '/api/device',
-      //   columns: [
-      //     {
-      //       Header: "Device Type",
-      //       accessor: "device",
-      //       id: "device",
-      //       filterMethod: (filter, rows) =>
-      //         matchSorter(rows, filter.value, { keys: ["device"] }),
-      //       filterAll: true
-      //     }
-      //   ],
-      //   pivot: [],
-      //   subComponent: null
-      // },
-      {
+      tableList: [{
+        title: 'Device List',
+        action: '/api/device',
+        columns: [{
+          Header: "Device Type",
+          accessor: "device",
+          id: "device",
+          filterMethod: function filterMethod(filter, rows) {
+            return (0, _matchSorter2.default)(rows, filter.value, { keys: ["device"] });
+          },
+          filterAll: true
+        }],
+        pivot: [],
+        subComponent: null
+      }, {
         title: 'Device Sensor List',
         action: '/api/devicesensor',
         columns: [{
@@ -40605,10 +40592,11 @@ var Review = function (_Component) {
 			var _this2 = this;
 
 			var formData = this.props.formData;
-			var inferenceObj = {};
-			var inference = formData.inference;
 
-			if (inference) {
+			if (formData.inference) {
+				var inferenceObj = {};
+				var inference = formData.inference;
+
 				inferenceObj["inferenceName"] = inference.split(':')[0];
 				inferenceObj["inferenceID"] = inference.split('(').slice(-1)[0].slice(0, -1);
 
@@ -40627,6 +40615,12 @@ var Review = function (_Component) {
 					});
 				});
 			}
+
+			this.setState({
+				formData: formData
+			}, function () {
+				console.log(_this2.state.formData);
+			});
 		}
 	}, {
 		key: "updateData",
@@ -40642,54 +40636,6 @@ var Review = function (_Component) {
 	}, {
 		key: "submit",
 		value: function submit() {
-			// if(this.props.collection.action == '/api/sensorinference'){
-			// 	// console.log(JSON.stringify(this.state.formData))
-			// 	let updatedFormData = Object.assign({}, this.state.formData)
-			//
-			// 	// console.log("sensorList: " + JSON.stringify(updatedFormData.sensorList))
-			// 	updatedFormData.sensorList.forEach((sensor) => {
-			// 		// console.log("sensor: " + sensor)
-			// 		let device = sensor["device"]
-			// 		let sensorName = sensor["name"]
-			// 		// console.log("device: " + device)
-			// 		// console.log("sensor: " + sensorName)
-			//
-			// 		//get sensorID from device sensor table
-			// 		superagent
-			// 		.get('/api/devicesensor')
-			// 		.query({device: device, sensorName: sensorName})
-			// 		.set('Accept', 'application/json')
-			// 		.end((err, response) => {
-			// 			if(err){
-			// 			  alert('ERROR: '+err)
-			// 			  return
-			// 			}
-			// 			// console.log("result: " + JSON.stringify(response.body.results))
-			// 			let sensorID = response.body.results[0]["_id"]
-			// 			// console.log("sensorID: " + sensorID)
-			//
-			// 			sensor["sensorID"] = sensorID
-			// 			delete sensor.device
-			// 			delete sensor.name
-			//
-			// 			this.setState({
-			// 				formData: updatedFormData
-			// 			})
-			//
-			// 			console.log("data submitted: " + JSON.stringify(this.state.formData))
-			// 			fetch(this.props.collection.action, {
-			// 		      method: 'POST',
-			// 		      headers: {
-			// 		        'Accept': 'application/json',
-			// 		        'Content-Type': 'application/json'
-			// 		      },
-			// 		      body: JSON.stringify(this.state.formData)
-			// 		    })
-			// 		})
-			// 	})
-			// }
-			// else {
-
 			_superagent2.default.post(this.props.collection.action).send(this.state.formData).set('Accept', 'application/json').end(function (err, response) {
 				if (err) {
 					alert('ERROR: ' + err);
@@ -40699,7 +40645,6 @@ var Review = function (_Component) {
 				alert("Data submitted. Thanks for your contribution!");
 				window.location.reload();
 			});
-			// }
 		}
 	}, {
 		key: "render",
@@ -40713,7 +40658,7 @@ var Review = function (_Component) {
 					"Review New Data Entry"
 				),
 				_react2.default.createElement("hr", null),
-				_react2.default.createElement("textarea", { className: "form-control", value: JSON.stringify(this.state.formData, undefined, 4), rows: "17",
+				_react2.default.createElement("textarea", { readOnly: true, className: "form-control", value: JSON.stringify(this.state.formData, undefined, 4), rows: "17",
 					onChange: this.updateData.bind(this) }),
 				_react2.default.createElement("hr", null),
 				_react2.default.createElement(

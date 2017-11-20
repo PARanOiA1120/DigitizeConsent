@@ -13,22 +13,22 @@ class DBSearch extends Component {
     super()
     this.state = {
       tableList: [
-        // {
-        //   title: 'Device List',
-        //   action: '/api/device',
-        //   columns: [
-        //     {
-        //       Header: "Device Type",
-        //       accessor: "device",
-        //       id: "device",
-        //       filterMethod: (filter, rows) =>
-        //         matchSorter(rows, filter.value, { keys: ["device"] }),
-        //       filterAll: true
-        //     }
-        //   ],
-        //   pivot: [],
-        //   subComponent: null
-        // },
+        {
+          title: 'Device List',
+          action: '/api/device',
+          columns: [
+            {
+              Header: "Device Type",
+              accessor: "device",
+              id: "device",
+              filterMethod: (filter, rows) =>
+                matchSorter(rows, filter.value, { keys: ["device"] }),
+              filterAll: true
+            }
+          ],
+          pivot: [],
+          subComponent: null
+        },
         {
           title: 'Device Sensor List',
           action: '/api/devicesensor',

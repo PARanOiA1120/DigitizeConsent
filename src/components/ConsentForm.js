@@ -95,17 +95,10 @@ class ConsentForm extends Component {
 		})
 	}
 
-	setStateAsync(state) {
-		return new Promise((resolve) => {
-			this.setState(state, resolve)
-		});
-	}
-
-	async addRiskSection(title, inferences){
+	addRiskSection(title, inferences){
 		const index = _.findIndex(this.state.sectionList, ['category', title])
 		const selectedSection = this.state.sectionList[index]
 		var content = ""
-		console.log("add risk section")
 
 		if(inferences.length == 0){
 			content += "There are no known privacy risks for the data being collected in this study."
@@ -122,13 +115,12 @@ class ConsentForm extends Component {
 			inferences.forEach((inference) => {
 				var description = inference["inference"]["description"]
 				content += description + '<br/>'
-
 			})
 
 			selectedSection["content"] = content
 			let updatedSections = Object.assign([], this.state.selectedSectionList)
 			updatedSections.push(selectedSection)
-      
+
 			this.setState({
 				selectedSectionList: updatedSections
 			}, () => {
