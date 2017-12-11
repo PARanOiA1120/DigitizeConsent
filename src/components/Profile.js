@@ -81,7 +81,7 @@ class Profile extends Component {
     return(
       <div className="container" style={formStyle.container}>
         <div className="userProfile" style={{width:25+'%', float: 'left', paddingLeft: 20+'px',
-          paddingTop: 10+'px', paddingButtom: 10+'px', marginTop: 70+'px',
+          paddingTop: 10+'px', paddingButtom: 10+'px', marginTop: 70+'px', height: 80+'%',
           borderRight: 'solid', borderWidth:1+'px', borderColor:'lightgrey', textAlign:"center",}}>
           <img src={this.state.userProfile.picture}
             style={{width: 200+'px', border: 'solid', borderColor:'#E8E4D9',
@@ -113,6 +113,27 @@ class Profile extends Component {
               { formList }
             </tbody>
           </table>
+          <hr/>
+        </div>
+
+        <div className="myContributions" style={{width:73+'%', float: "right", marginTop: 70+'px', paddingLeft: 20+'px'}}>
+          <h4>Your Contributions</h4>
+          <br/>
+
+          <table className="table table-hover" style={{width:85+'%', float:'left', textAlign:'center'}}>
+            <thead>
+              <tr>
+                <th style={{textAlign: 'center'}}>Author</th>
+                <th style={{textAlign: 'center'}}>Data Category</th>
+                <th style={{textAlign: 'center'}}>Submitted Time</th>
+                <th style={{textAlign: 'center'}}>Status</th>
+                <th style={{textAlign: 'center'}}>View</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+
         </div>
       </div>
     )

@@ -40425,7 +40425,7 @@ var Profile = function (_Component) {
         _react2.default.createElement(
           'div',
           { className: 'userProfile', style: { width: 25 + '%', float: 'left', paddingLeft: 20 + 'px',
-              paddingTop: 10 + 'px', paddingButtom: 10 + 'px', marginTop: 70 + 'px',
+              paddingTop: 10 + 'px', paddingButtom: 10 + 'px', marginTop: 70 + 'px', height: 80 + '%',
               borderRight: 'solid', borderWidth: 1 + 'px', borderColor: 'lightgrey', textAlign: "center" } },
           _react2.default.createElement('img', { src: this.state.userProfile.picture,
             style: { width: 200 + 'px', border: 'solid', borderColor: '#E8E4D9',
@@ -40530,6 +40530,55 @@ var Profile = function (_Component) {
               null,
               formList
             )
+          ),
+          _react2.default.createElement('hr', null)
+        ),
+        _react2.default.createElement(
+          'div',
+          { className: 'myContributions', style: { width: 73 + '%', float: "right", marginTop: 70 + 'px', paddingLeft: 20 + 'px' } },
+          _react2.default.createElement(
+            'h4',
+            null,
+            'Your Contributions'
+          ),
+          _react2.default.createElement('br', null),
+          _react2.default.createElement(
+            'table',
+            { className: 'table table-hover', style: { width: 85 + '%', float: 'left', textAlign: 'center' } },
+            _react2.default.createElement(
+              'thead',
+              null,
+              _react2.default.createElement(
+                'tr',
+                null,
+                _react2.default.createElement(
+                  'th',
+                  { style: { textAlign: 'center' } },
+                  'Author'
+                ),
+                _react2.default.createElement(
+                  'th',
+                  { style: { textAlign: 'center' } },
+                  'Data Category'
+                ),
+                _react2.default.createElement(
+                  'th',
+                  { style: { textAlign: 'center' } },
+                  'Submitted Time'
+                ),
+                _react2.default.createElement(
+                  'th',
+                  { style: { textAlign: 'center' } },
+                  'Status'
+                ),
+                _react2.default.createElement(
+                  'th',
+                  { style: { textAlign: 'center' } },
+                  'View'
+                )
+              )
+            ),
+            _react2.default.createElement('tbody', null)
           )
         )
       );
@@ -40646,6 +40695,9 @@ var Review = function (_Component) {
 				window.location.reload();
 			});
 		}
+	}, {
+		key: "submitForReview",
+		value: function submitForReview() {}
 	}, {
 		key: "render",
 		value: function render() {

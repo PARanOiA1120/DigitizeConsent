@@ -74,6 +74,10 @@ class Review extends Component {
 
 	}
 
+	submitForReview() {
+		
+	}
+
 
 
 	render() {
