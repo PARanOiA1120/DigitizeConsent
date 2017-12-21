@@ -40697,7 +40697,26 @@ var Review = function (_Component) {
 		}
 	}, {
 		key: "submitForReview",
-		value: function submitForReview() {}
+		value: function submitForReview() {
+			var data = {
+				"authorID": JSON.parse(localStorage.getItem('profile')).id,
+				"action": this.props.collection.action,
+				"content": JSON.stringify(this.state.formData),
+				"tableName": this.props.collection.schema,
+				"status": "Pending"
+			};
+
+			_superagent2.default.post('/api/usercontribution').send(data).set('Accept', 'application/json').end(function (err, response) {
+				if (err) {
+					alert('ERROR: ' + err);
+					return;
+				}
+
+				console.log(response);
+				alert("Data submitted. Thanks for your contribution!");
+				// window.location.reload()
+			});
+		}
 	}, {
 		key: "render",
 		value: function render() {
@@ -40715,7 +40734,7 @@ var Review = function (_Component) {
 				_react2.default.createElement("hr", null),
 				_react2.default.createElement(
 					"button",
-					{ className: "btn btn-primary", onClick: this.submit.bind(this) },
+					{ className: "btn btn-primary", onClick: this.submitForReview.bind(this) },
 					"Submit"
 				)
 			);

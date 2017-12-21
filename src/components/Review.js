@@ -75,7 +75,28 @@ class Review extends Component {
 	}
 
 	submitForReview() {
-		
+		var data = {
+			"authorID": JSON.parse(localStorage.getItem('profile')).id,
+			"action": this.props.collection.action,
+			"content": JSON.stringify(this.state.formData),
+			"tableName": this.props.collection.schema,
+			"status": "Pending"
+		}
+
+		superagent
+		.post('/api/usercontribution')
+		.send(data)
+		.set('Accept', 'application/json')
+		.end((err, response) => {
+			if(err){
+				alert('ERROR: '+err)
+				return
+			}
+
+			console.log(response)
+			alert("Data submitted. Thanks for your contribution!")
+			// window.location.reload()
+		})
 	}
 
 
@@ -88,7 +109,7 @@ class Review extends Component {
 				<textarea readOnly className="form-control" value={JSON.stringify(this.state.formData, undefined, 4)} rows="17"
 				onChange={this.updateData.bind(this)}></textarea>
 				<hr />
-				<button className="btn btn-primary" onClick={this.submit.bind(this)}>Submit</button>
+				<button className="btn btn-primary" onClick={this.submitForReview.bind(this)}>Submit</button>
 			</div>
 		)
 	}
