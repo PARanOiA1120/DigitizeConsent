@@ -95,7 +95,7 @@ class Review extends Component {
 
 			console.log(response)
 			alert("Data submitted. Thanks for your contribution!")
-			// window.location.reload()
+			window.location.reload()
 		})
 	}
 

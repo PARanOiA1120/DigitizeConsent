@@ -40311,7 +40311,8 @@ var Profile = function (_Component) {
     _this.state = {
       userProfile: JSON.parse(localStorage.getItem('profile')),
       consentFormList: [],
-      numForms: 0
+      numForms: 0,
+      contributionList: []
     };
     return _this;
   }
@@ -40329,6 +40330,16 @@ var Profile = function (_Component) {
         _this2.setState({
           consentFormList: response.body.results,
           numForms: response.body.results.length
+        });
+      });
+
+      _superagent2.default.get('/api/usercontribution').query({ authorID: this.state.userProfile.id }).set('Accept', 'application/json').end(function (err, response) {
+        if (err) {
+          console.log("ERROR: " + err);
+          return;
+        }
+        _this2.setState({
+          contributionList: response.body.results
         });
       });
     }
@@ -40408,6 +40419,56 @@ var Profile = function (_Component) {
             _react2.default.createElement(
               'a',
               { className: 'btn btn-primary', onClick: _this3.deleteForm.bind(_this3, form["_id"]),
+                style: { background: 'white', color: 'darkred', borderColor: 'darkred' } },
+              _react2.default.createElement(
+                'span',
+                { className: 'glyphicon glyphicon-remove', style: { fontWeight: 'bold' } },
+                '\xA0Delete'
+              )
+            )
+          )
+        );
+      });
+
+      var contributionList = this.state.contributionList.map(function (contribution, i) {
+        return _react2.default.createElement(
+          'tr',
+          { key: i },
+          _react2.default.createElement(
+            'td',
+            null,
+            contribution["tableName"],
+            ' '
+          ),
+          _react2.default.createElement(
+            'td',
+            null,
+            contribution["timeSubmitted"]
+          ),
+          _react2.default.createElement(
+            'td',
+            null,
+            contribution["status"]
+          ),
+          _react2.default.createElement(
+            'td',
+            null,
+            _react2.default.createElement(
+              'a',
+              { className: 'btn btn-primary', style: { background: 'white', color: 'steelblue', borderColor: 'steelblue' } },
+              _react2.default.createElement(
+                'span',
+                { className: 'glyphicon glyphicon-search', style: { fontWeight: 'bold' } },
+                '\xA0View'
+              )
+            )
+          ),
+          _react2.default.createElement(
+            'td',
+            null,
+            _react2.default.createElement(
+              'a',
+              { className: 'btn btn-primary',
                 style: { background: 'white', color: 'darkred', borderColor: 'darkred' } },
               _react2.default.createElement(
                 'span',
@@ -40554,11 +40615,6 @@ var Profile = function (_Component) {
                 _react2.default.createElement(
                   'th',
                   { style: { textAlign: 'center' } },
-                  'Author'
-                ),
-                _react2.default.createElement(
-                  'th',
-                  { style: { textAlign: 'center' } },
                   'Data Category'
                 ),
                 _react2.default.createElement(
@@ -40575,10 +40631,19 @@ var Profile = function (_Component) {
                   'th',
                   { style: { textAlign: 'center' } },
                   'View'
+                ),
+                _react2.default.createElement(
+                  'th',
+                  { style: { textAlign: 'center' } },
+                  'Delete'
                 )
               )
             ),
-            _react2.default.createElement('tbody', null)
+            _react2.default.createElement(
+              'tbody',
+              null,
+              contributionList
+            )
           )
         )
       );
@@ -40714,7 +40779,7 @@ var Review = function (_Component) {
 
 				console.log(response);
 				alert("Data submitted. Thanks for your contribution!");
-				// window.location.reload()
+				window.location.reload();
 			});
 		}
 	}, {

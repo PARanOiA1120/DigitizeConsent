@@ -10,7 +10,8 @@ class Profile extends Component {
     this.state = {
       userProfile: JSON.parse(localStorage.getItem('profile')),
       consentFormList: [],
-      numForms: 0
+      numForms: 0,
+      contributionList: []
     }
   }
 
@@ -29,6 +30,20 @@ class Profile extends Component {
           numForms: response.body.results.length
         })
       })
+
+      superagent
+        .get('/api/usercontribution')
+        .query({authorID: this.state.userProfile.id})
+        .set('Accept', 'application/json')
+        .end((err, response) => {
+          if(err){
+            console.log("ERROR: " + err);
+            return
+          }
+          this.setState({
+            contributionList: response.body.results
+          })
+        })
   }
 
   deleteForm(formid){
@@ -46,6 +61,7 @@ class Profile extends Component {
         window.location.reload();
       })
   }
+
 
   render() {
 		const formStyle = styles.form;
@@ -70,6 +86,27 @@ class Profile extends Component {
           </td>
           <td>
             <a className="btn btn-primary" onClick={ this.deleteForm.bind(this, form["_id"]) }
+              style={{background:'white', color:'darkred', borderColor:'darkred'}}>
+              <span className="glyphicon glyphicon-remove" style={{fontWeight:'bold'}}>&nbsp;Delete</span>
+            </a>
+          </td>
+        </tr>
+      )
+    })
+
+    const contributionList = this.state.contributionList.map((contribution, i) => {
+      return (
+        <tr key={i}>
+          <td>{ contribution["tableName"]} </td>
+          <td>{ contribution["timeSubmitted"] }</td>
+          <td>{ contribution["status"] }</td>
+          <td>
+            <a className="btn btn-primary" style={{background:'white', color:'steelblue', borderColor:'steelblue'}}>
+              <span className="glyphicon glyphicon-search" style={{fontWeight:'bold'}}>&nbsp;View</span>
+            </a>
+          </td>
+          <td>
+            <a className="btn btn-primary" 
               style={{background:'white', color:'darkred', borderColor:'darkred'}}>
               <span className="glyphicon glyphicon-remove" style={{fontWeight:'bold'}}>&nbsp;Delete</span>
             </a>
@@ -123,14 +160,15 @@ class Profile extends Component {
           <table className="table table-hover" style={{width:85+'%', float:'left', textAlign:'center'}}>
             <thead>
               <tr>
-                <th style={{textAlign: 'center'}}>Author</th>
                 <th style={{textAlign: 'center'}}>Data Category</th>
                 <th style={{textAlign: 'center'}}>Submitted Time</th>
                 <th style={{textAlign: 'center'}}>Status</th>
                 <th style={{textAlign: 'center'}}>View</th>
+                <th style={{textAlign: 'center'}}>Delete</th>
               </tr>
             </thead>
             <tbody>
+              { contributionList }
             </tbody>
           </table>
 
