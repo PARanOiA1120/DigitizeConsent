@@ -15005,6 +15005,16 @@ var NavBar = function (_Component) {
 										activeStyle: { fontWeight: 'bold', fontSize: 15 + 'px', color: 'steelblue' } },
 									'Search Database'
 								)
+							),
+							profile.email == "formmulaa@gmail.com" && _react2.default.createElement(
+								'li',
+								{ id: 'adminPortal' },
+								_react2.default.createElement(
+									_reactRouterDom.NavLink,
+									{ to: '/adminPortal', activeClassName: 'active',
+										activeStyle: { fontWeight: 'bold', fontSize: 15 + 'px', color: 'steelblue' } },
+									'Admin Portal'
+								)
 							)
 						),
 						_react2.default.createElement(
@@ -39635,6 +39645,10 @@ var _DBSearch = __webpack_require__(226);
 
 var _DBSearch2 = _interopRequireDefault(_DBSearch);
 
+var _AdminPortal = __webpack_require__(556);
+
+var _AdminPortal2 = _interopRequireDefault(_AdminPortal);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -39672,7 +39686,8 @@ var Homepage = function (_Component) {
           _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/consentForm', component: _ConsentForm2.default }),
           _react2.default.createElement(_reactRouterDom.Route, { path: '/consentForm/:formid', component: _ConsentForm2.default }),
           _react2.default.createElement(_reactRouterDom.Route, { path: '/addData', component: _CreateDBEntry2.default }),
-          _react2.default.createElement(_reactRouterDom.Route, { path: '/searchDB', component: _DBSearch2.default })
+          _react2.default.createElement(_reactRouterDom.Route, { path: '/searchDB', component: _DBSearch2.default }),
+          _react2.default.createElement(_reactRouterDom.Route, { path: '/adminPortal', component: _AdminPortal2.default })
         )
       );
     }
@@ -89640,6 +89655,212 @@ function config (name) {
 /***/ (function(module, exports) {
 
 /* (ignored) */
+
+/***/ }),
+/* 556 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _superagent = __webpack_require__(32);
+
+var _superagent2 = _interopRequireDefault(_superagent);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var AdminPortal = function (_Component) {
+  _inherits(AdminPortal, _Component);
+
+  function AdminPortal() {
+    _classCallCheck(this, AdminPortal);
+
+    var _this = _possibleConstructorReturn(this, (AdminPortal.__proto__ || Object.getPrototypeOf(AdminPortal)).call(this));
+
+    _this.state = {
+      pendingReviews: [],
+      reviewHistory: []
+    };
+    return _this;
+  }
+
+  _createClass(AdminPortal, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var _this2 = this;
+
+      _superagent2.default.get('/api/usercontribution').set('Accept', 'application/json').end(function (err, response) {
+        if (err) {
+          console.log("ERROR: " + err);
+          return;
+        }
+
+        var contributions = JSON.parse(response.text).results;
+        var pending = [];
+        var history = [];
+        contributions.forEach(function (contribution) {
+          if (contribution["status"] == "Pending") {
+            pending.push(contribution);
+          } else {
+            history.push(contribution);
+          }
+        });
+
+        _this2.setState({
+          pendingReviews: pending,
+          reviewHistory: history
+        });
+      });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'div',
+        { style: { width: 85 + '%', marginLeft: 'auto', marginRight: 'auto', marginTop: 40 } },
+        _react2.default.createElement(
+          'h3',
+          null,
+          'User Contributions'
+        ),
+        _react2.default.createElement('hr', { style: { width: 40 + '%', float: 'left' } }),
+        _react2.default.createElement('br', null),
+        _react2.default.createElement('br', null),
+        _react2.default.createElement(
+          'div',
+          { className: 'pending', style: { float: 'left', width: 100 + '%' } },
+          _react2.default.createElement(
+            'h4',
+            null,
+            'Pending for Review'
+          ),
+          _react2.default.createElement('hr', { style: { width: 90 + '%', float: 'left' } }),
+          _react2.default.createElement(
+            'table',
+            { className: 'table table-striped table-hover table-sm', style: { width: 90 + '%', float: 'left', textAlign: 'center' } },
+            _react2.default.createElement(
+              'thead',
+              { className: 'thead-default' },
+              _react2.default.createElement(
+                'tr',
+                null,
+                _react2.default.createElement(
+                  'th',
+                  { style: { textAlign: 'center' } },
+                  'Author'
+                ),
+                _react2.default.createElement(
+                  'th',
+                  { style: { textAlign: 'center' } },
+                  'Data Category'
+                ),
+                _react2.default.createElement(
+                  'th',
+                  { style: { textAlign: 'center' } },
+                  'Submitted Time'
+                ),
+                _react2.default.createElement(
+                  'th',
+                  { style: { textAlign: 'center' } },
+                  'Status'
+                ),
+                _react2.default.createElement(
+                  'th',
+                  { style: { textAlign: 'center' } },
+                  'View'
+                ),
+                _react2.default.createElement(
+                  'th',
+                  { style: { textAlign: 'center' } },
+                  'Approve'
+                ),
+                _react2.default.createElement(
+                  'th',
+                  { style: { textAlign: 'center' } },
+                  'Reject'
+                )
+              )
+            ),
+            _react2.default.createElement('tbody', null)
+          )
+        ),
+        _react2.default.createElement(
+          'div',
+          { className: 'history', style: { float: 'left', width: 100 + '%', marginTop: 45 } },
+          _react2.default.createElement(
+            'h4',
+            null,
+            'Review History'
+          ),
+          _react2.default.createElement('hr', { style: { width: 90 + '%', float: 'left' } }),
+          _react2.default.createElement(
+            'table',
+            { className: 'table table-striped table-hover table-sm', style: { width: 90 + '%', float: 'left', textAlign: 'center' } },
+            _react2.default.createElement(
+              'thead',
+              { className: 'thead-default' },
+              _react2.default.createElement(
+                'tr',
+                null,
+                _react2.default.createElement(
+                  'th',
+                  { style: { textAlign: 'center' } },
+                  'Author'
+                ),
+                _react2.default.createElement(
+                  'th',
+                  { style: { textAlign: 'center' } },
+                  'Data Category'
+                ),
+                _react2.default.createElement(
+                  'th',
+                  { style: { textAlign: 'center' } },
+                  'Submitted Time'
+                ),
+                _react2.default.createElement(
+                  'th',
+                  { style: { textAlign: 'center' } },
+                  'Status'
+                ),
+                _react2.default.createElement(
+                  'th',
+                  { style: { textAlign: 'center' } },
+                  'View'
+                ),
+                _react2.default.createElement(
+                  'th',
+                  { style: { textAlign: 'center' } },
+                  'Review Time'
+                )
+              )
+            ),
+            _react2.default.createElement('tbody', null)
+          )
+        )
+      );
+    }
+  }]);
+
+  return AdminPortal;
+}(_react.Component);
+
+exports.default = AdminPortal;
 
 /***/ })
 /******/ ]);

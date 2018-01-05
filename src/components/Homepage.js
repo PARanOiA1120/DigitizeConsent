@@ -6,6 +6,7 @@ import Profile from './Profile'
 import ConsentForm from './ConsentForm'
 import CreateDBEntry from './CreateDBEntry'
 import DBSearch from './DBSearch'
+import AdminPortal from './AdminPortal'
 
 class Homepage extends Component {
   constructor(){
@@ -27,6 +28,7 @@ class Homepage extends Component {
           <Route path='/consentForm/:formid' component={ ConsentForm } />
           <Route path='/addData' component={ CreateDBEntry } />
           <Route path='/searchDB' component={ DBSearch } />
+          <Route path='/adminPortal' component={ AdminPortal } />
         </Switch>
       </div>
     );

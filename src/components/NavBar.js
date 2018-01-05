@@ -42,6 +42,12 @@ class NavBar extends Component {
 								<NavLink to="/searchDB" activeClassName="active"
 									activeStyle={{fontWeight:'bold', fontSize: 15+'px', color:'steelblue'}}>Search Database</NavLink>
 							</li>
+							{ profile.email == "formmulaa@gmail.com" &&
+								<li id="adminPortal">
+									<NavLink to="/adminPortal" activeClassName="active"
+										activeStyle={{fontWeight:'bold', fontSize: 15+'px', color:'steelblue'}}>Admin Portal</NavLink>
+								</li>
+							}
 						</ul>
 						<ul className="nav navbar-nav navbar-right">
 							<li className="dropdown" style={{float: 'right'}}>
