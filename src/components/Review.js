@@ -80,8 +80,11 @@ class Review extends Component {
 			"action": this.props.collection.action,
 			"content": JSON.stringify(this.state.formData),
 			"tableName": this.props.collection.schema,
-			"status": "Pending"
+			"status": "Pending",
+			"timeSubmitted": new Date()
 		}
+
+		console.log(data)
 
 		superagent
 		.post('/api/usercontribution')

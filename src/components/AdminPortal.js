@@ -34,12 +34,49 @@ class AdminPortal extends Component {
         this.setState({
           pendingReviews: pending,
           reviewHistory: history
-        }, () => {
-          console.log(this.state.pendingReviews);
-          console.log(this.state.reviewHistory);
         })
       })
   }
+
+  approveRequest(review) {
+    // Update user contribution:
+    //  1. change status to approved
+    //  2. update review time to current datetime
+    review["status"] = "Approved"
+    review["timeReviewed"] = new Date()
+
+    var id = review["_id"]
+    var url = '/api/usercontribution/' + id
+
+    superagent
+      .put(url)
+      .send(review)
+      .set('Accept', 'application/json')
+      .end((err, response) => {
+        if(err){
+          console.log(err)
+          console.log(response)
+          return
+        }
+
+        alert("You approved user contribution " + id + "!")
+      })
+
+      // Send content to corresponding data schema
+      superagent
+        .post(review["action"])
+        .send(JSON.parse(review["content"]))
+        .set('Accept', 'application/json')
+        .end((err, response) => {
+          if(err){
+            console.log("ERROR: " + err);
+            return
+          }
+
+          alert("Data has been posted!")
+        })
+  }
+
 
   render() {
     const pendingReviews = this.state.pendingReviews.map((review, i) => {
@@ -55,7 +92,8 @@ class AdminPortal extends Component {
             </a>
           </td>
           <td>
-            <a className="btn btn-primary" style={{background:'white', color:'green', borderColor:'green'}}>
+            <a className="btn btn-primary" style={{background:'white', color:'green', borderColor:'green'}}
+              onClick={ this.approveRequest.bind(this, review) }>
               <span className="glyphicon glyphicon-ok" style={{fontWeight:'bold'}}>&nbsp;Approve</span>
             </a>
           </td>
@@ -71,16 +109,16 @@ class AdminPortal extends Component {
     const reviewHistory = this.state.reviewHistory.map((history, i) => {
       return (
         <tr key={i}>
-          <td> { review["authorID"] } </td>
-          <td> { review["tableName"] } </td>
-          <td> { review["timeSubmitted"] } </td>
-          <td> { review["status"] } </td>
+          <td> { history["authorID"] } </td>
+          <td> { history["tableName"] } </td>
+          <td> { history["timeSubmitted"] } </td>
+          <td> { history["status"] } </td>
           <td>
             <a className="btn btn-primary" style={{background:'white', color:'steelblue', borderColor:'steelblue'}}>
               <span className="glyphicon glyphicon-search" style={{fontWeight:'bold'}}>&nbsp;View</span>
             </a>
           </td>
-          <td> { review["timeReviewed"] } </td>
+          <td> { history["timeReviewed"] } </td>
         </tr>
       )
     })
@@ -134,8 +172,6 @@ class AdminPortal extends Component {
             </tbody>
           </table>
         </div>
-
-
       </div>
     )
   }

@@ -37579,15 +37579,46 @@ var AdminPortal = function (_Component) {
         _this2.setState({
           pendingReviews: pending,
           reviewHistory: history
-        }, function () {
-          console.log(_this2.state.pendingReviews);
-          console.log(_this2.state.reviewHistory);
         });
+      });
+    }
+  }, {
+    key: 'approveRequest',
+    value: function approveRequest(review) {
+      // Update user contribution:
+      //  1. change status to approved
+      //  2. update review time to current datetime
+      review["status"] = "Approved";
+      review["timeReviewed"] = new Date();
+
+      var id = review["_id"];
+      var url = '/api/usercontribution/' + id;
+
+      _superagent2.default.put(url).send(review).set('Accept', 'application/json').end(function (err, response) {
+        if (err) {
+          console.log(err);
+          console.log(response);
+          return;
+        }
+
+        alert("You approved user contribution " + id + "!");
+      });
+
+      // Send content to corresponding data schema
+      _superagent2.default.post(review["action"]).send(JSON.parse(review["content"])).set('Accept', 'application/json').end(function (err, response) {
+        if (err) {
+          console.log("ERROR: " + err);
+          return;
+        }
+
+        alert("Data has been posted!");
       });
     }
   }, {
     key: 'render',
     value: function render() {
+      var _this3 = this;
+
       var pendingReviews = this.state.pendingReviews.map(function (review, i) {
         return _react2.default.createElement(
           'tr',
@@ -37638,7 +37669,8 @@ var AdminPortal = function (_Component) {
             null,
             _react2.default.createElement(
               'a',
-              { className: 'btn btn-primary', style: { background: 'white', color: 'green', borderColor: 'green' } },
+              { className: 'btn btn-primary', style: { background: 'white', color: 'green', borderColor: 'green' },
+                onClick: _this3.approveRequest.bind(_this3, review) },
               _react2.default.createElement(
                 'span',
                 { className: 'glyphicon glyphicon-ok', style: { fontWeight: 'bold' } },
@@ -37670,28 +37702,28 @@ var AdminPortal = function (_Component) {
             'td',
             null,
             ' ',
-            review["authorID"],
+            history["authorID"],
             ' '
           ),
           _react2.default.createElement(
             'td',
             null,
             ' ',
-            review["tableName"],
+            history["tableName"],
             ' '
           ),
           _react2.default.createElement(
             'td',
             null,
             ' ',
-            review["timeSubmitted"],
+            history["timeSubmitted"],
             ' '
           ),
           _react2.default.createElement(
             'td',
             null,
             ' ',
-            review["status"],
+            history["status"],
             ' '
           ),
           _react2.default.createElement(
@@ -37711,7 +37743,7 @@ var AdminPortal = function (_Component) {
             'td',
             null,
             ' ',
-            review["timeReviewed"],
+            history["timeReviewed"],
             ' '
           )
         );
@@ -38149,12 +38181,14 @@ var ConsentForm = function (_Component) {
 			if (this.state.formId != '') {
 				// update form
 				var url = '/api/consentform/' + this.state.formId;
+				console.log(url);
 				_superagent2.default.put(url).send(data).set('Accept', 'application/json').end(function (err, response) {
 					if (err) {
 						console.log(err);
 						return;
 					}
 
+					console.log(response);
 					alert("Your update is saved!");
 					_this8.props.history.push('/profile');
 				});
@@ -41129,8 +41163,11 @@ var Review = function (_Component) {
 				"action": this.props.collection.action,
 				"content": JSON.stringify(this.state.formData),
 				"tableName": this.props.collection.schema,
-				"status": "Pending"
+				"status": "Pending",
+				"timeSubmitted": new Date()
 			};
+
+			console.log(data);
 
 			_superagent2.default.post('/api/usercontribution').send(data).set('Accept', 'application/json').end(function (err, response) {
 				if (err) {

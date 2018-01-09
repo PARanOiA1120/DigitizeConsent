@@ -7,7 +7,7 @@ var UserContributionSchema = new mongoose.Schema({
   tableName: String,
   content: String,
   status: String,
-	timeSubmitted: { type: Date, default: Date.now },
+	timeSubmitted: Date,
 	timeReviewed: {type: Date, default: null}
 })
 

@@ -207,6 +207,7 @@ class ConsentForm extends Component {
 		if(this.state.formId != ''){
 			// update form
 			var url = '/api/consentform/' + this.state.formId
+			console.log(url)
 			superagent
 				.put(url)
 				.send(data)
@@ -217,6 +218,7 @@ class ConsentForm extends Component {
 						return
 					}
 
+					console.log(response)
 					alert("Your update is saved!")
 					this.props.history.push('/profile')
 				})

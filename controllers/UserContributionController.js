@@ -33,7 +33,7 @@ module.exports = {
 	},
 
 	update: function(id, params, callback){
-		UserContribution.findByIdAndUpdate(id, params, {new:true}, function(err, usercontribution){
+		UserContribution.findByIdAndUpdate(id, { $set: params}, {new:true}, function(err, usercontribution){
 			if(err){
 				callback(err, null)
 				return
