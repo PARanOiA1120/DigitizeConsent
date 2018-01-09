@@ -44,10 +44,8 @@ class AdminPortal extends Component {
     //  2. update review time to current datetime
     review["status"] = "Approved"
     review["timeReviewed"] = new Date()
-
     var id = review["_id"]
     var url = '/api/usercontribution/' + id
-
     superagent
       .put(url)
       .send(review)
@@ -62,19 +60,43 @@ class AdminPortal extends Component {
         alert("You approved user contribution " + id + "!")
       })
 
-      // Send content to corresponding data schema
-      superagent
-        .post(review["action"])
-        .send(JSON.parse(review["content"]))
-        .set('Accept', 'application/json')
-        .end((err, response) => {
-          if(err){
-            console.log("ERROR: " + err);
-            return
-          }
+    // Send content to corresponding data schema
+    superagent
+      .post(review["action"])
+      .send(JSON.parse(review["content"]))
+      .set('Accept', 'application/json')
+      .end((err, response) => {
+        if(err){
+          console.log("ERROR: " + err);
+          return
+        }
 
-          alert("Data has been posted!")
-        })
+        alert("Data has been posted!")
+      })
+  }
+
+  rejectRequest(review) {
+    // Update user contribution:
+    //  1. change status to rejected
+    //  2. update review time to current datetime
+    review["status"] = "Rejected"
+    review["timeReviewed"] = new Date()
+    var id = review["_id"]
+    var url = '/api/usercontribution/' + id
+    
+    superagent
+      .put(url)
+      .send(review)
+      .set('Accept', 'application/json')
+      .end((err, response) => {
+        if(err){
+          console.log(err)
+          console.log(response)
+          return
+        }
+
+        alert("You have rejected user contribution " + id + "!")
+      })
   }
 
 
@@ -98,7 +120,8 @@ class AdminPortal extends Component {
             </a>
           </td>
           <td>
-            <a className="btn btn-primary" style={{background:'white', color:'darkred', borderColor:'darkred'}}>
+            <a className="btn btn-primary" style={{background:'white', color:'darkred', borderColor:'darkred'}}
+              onClick={ this.rejectRequest.bind(this, review) } >
               <span className="glyphicon glyphicon-remove" style={{fontWeight:'bold'}}>&nbsp;Reject</span>
             </a>
           </td>

@@ -37590,10 +37590,8 @@ var AdminPortal = function (_Component) {
       //  2. update review time to current datetime
       review["status"] = "Approved";
       review["timeReviewed"] = new Date();
-
       var id = review["_id"];
       var url = '/api/usercontribution/' + id;
-
       _superagent2.default.put(url).send(review).set('Accept', 'application/json').end(function (err, response) {
         if (err) {
           console.log(err);
@@ -37612,6 +37610,27 @@ var AdminPortal = function (_Component) {
         }
 
         alert("Data has been posted!");
+      });
+    }
+  }, {
+    key: 'rejectRequest',
+    value: function rejectRequest(review) {
+      // Update user contribution:
+      //  1. change status to rejected
+      //  2. update review time to current datetime
+      review["status"] = "Rejected";
+      review["timeReviewed"] = new Date();
+      var id = review["_id"];
+      var url = '/api/usercontribution/' + id;
+
+      _superagent2.default.put(url).send(review).set('Accept', 'application/json').end(function (err, response) {
+        if (err) {
+          console.log(err);
+          console.log(response);
+          return;
+        }
+
+        alert("You have rejected user contribution " + id + "!");
       });
     }
   }, {
@@ -37683,7 +37702,8 @@ var AdminPortal = function (_Component) {
             null,
             _react2.default.createElement(
               'a',
-              { className: 'btn btn-primary', style: { background: 'white', color: 'darkred', borderColor: 'darkred' } },
+              { className: 'btn btn-primary', style: { background: 'white', color: 'darkred', borderColor: 'darkred' },
+                onClick: _this3.rejectRequest.bind(_this3, review) },
               _react2.default.createElement(
                 'span',
                 { className: 'glyphicon glyphicon-remove', style: { fontWeight: 'bold' } },
