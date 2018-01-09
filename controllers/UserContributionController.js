@@ -16,6 +16,7 @@ module.exports = {
 		UserContribution.findById(id, function(err, usercontribution){
 			if(err){
 				callback(err, null)
+				console.log(err)
 				return
 			}
 			callback(null, usercontribution)

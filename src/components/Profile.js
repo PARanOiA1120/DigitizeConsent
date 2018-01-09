@@ -62,6 +62,22 @@ class Profile extends Component {
       })
   }
 
+  deleteContribution(id) {
+    var url = '/api/usercontribution/' + id
+
+    superagent
+      .delete(url)
+      .query(null)
+      .set('Accept', 'application/json')
+      .end((err, response) => {
+        if(err){
+          console.log("ERROR: " + err);
+          return
+        }
+        window.location.reload();
+      })
+  }
+
 
   render() {
 		const formStyle = styles.form;
@@ -106,7 +122,7 @@ class Profile extends Component {
             </a>
           </td>
           <td>
-            <a className="btn btn-primary" 
+            <a className="btn btn-primary" onClick={ this.deleteContribution.bind(this, contribution["_id"]) }
               style={{background:'white', color:'darkred', borderColor:'darkred'}}>
               <span className="glyphicon glyphicon-remove" style={{fontWeight:'bold'}}>&nbsp;Delete</span>
             </a>

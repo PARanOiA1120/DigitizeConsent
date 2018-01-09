@@ -37604,10 +37604,10 @@ var AdminPortal = function (_Component) {
 
       // Send content to corresponding data schema
       _superagent2.default.post(review["action"]).send(JSON.parse(review["content"])).set('Accept', 'application/json').end(function (err, response) {
-        if (err) {
-          console.log("ERROR: " + err);
-          return;
-        }
+        // if(err){
+        //   console.log("ERROR: " + err);
+        //   return
+        // }
 
         alert("Data has been posted!");
       });
@@ -37624,11 +37624,11 @@ var AdminPortal = function (_Component) {
       var url = '/api/usercontribution/' + id;
 
       _superagent2.default.put(url).send(review).set('Accept', 'application/json').end(function (err, response) {
-        if (err) {
-          console.log(err);
-          console.log(response);
-          return;
-        }
+        // if(err){
+        //   console.log(err)
+        //   console.log(response)
+        //   return
+        // }
 
         alert("You have rejected user contribution " + id + "!");
       });
@@ -40772,6 +40772,19 @@ var Profile = function (_Component) {
       });
     }
   }, {
+    key: 'deleteContribution',
+    value: function deleteContribution(id) {
+      var url = '/api/usercontribution/' + id;
+
+      _superagent2.default.delete(url).query(null).set('Accept', 'application/json').end(function (err, response) {
+        if (err) {
+          console.log("ERROR: " + err);
+          return;
+        }
+        window.location.reload();
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this3 = this;
@@ -40883,7 +40896,7 @@ var Profile = function (_Component) {
             null,
             _react2.default.createElement(
               'a',
-              { className: 'btn btn-primary',
+              { className: 'btn btn-primary', onClick: _this3.deleteContribution.bind(_this3, contribution["_id"]),
                 style: { background: 'white', color: 'darkred', borderColor: 'darkred' } },
               _react2.default.createElement(
                 'span',

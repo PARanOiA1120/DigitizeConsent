@@ -66,10 +66,10 @@ class AdminPortal extends Component {
       .send(JSON.parse(review["content"]))
       .set('Accept', 'application/json')
       .end((err, response) => {
-        if(err){
-          console.log("ERROR: " + err);
-          return
-        }
+        // if(err){
+        //   console.log("ERROR: " + err);
+        //   return
+        // }
 
         alert("Data has been posted!")
       })
@@ -83,17 +83,17 @@ class AdminPortal extends Component {
     review["timeReviewed"] = new Date()
     var id = review["_id"]
     var url = '/api/usercontribution/' + id
-    
+
     superagent
       .put(url)
       .send(review)
       .set('Accept', 'application/json')
       .end((err, response) => {
-        if(err){
-          console.log(err)
-          console.log(response)
-          return
-        }
+        // if(err){
+        //   console.log(err)
+        //   console.log(response)
+        //   return
+        // }
 
         alert("You have rejected user contribution " + id + "!")
       })
