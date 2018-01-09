@@ -34,11 +34,58 @@ class AdminPortal extends Component {
         this.setState({
           pendingReviews: pending,
           reviewHistory: history
+        }, () => {
+          console.log(this.state.pendingReviews);
+          console.log(this.state.reviewHistory);
         })
       })
   }
 
   render() {
+    const pendingReviews = this.state.pendingReviews.map((review, i) => {
+      return (
+        <tr key={i}>
+          <td> { review["authorID"] } </td>
+          <td> { review["tableName"] } </td>
+          <td> { review["timeSubmitted"] } </td>
+          <td> { review["status"] } </td>
+          <td>
+            <a className="btn btn-primary" style={{background:'white', color:'steelblue', borderColor:'steelblue'}}>
+              <span className="glyphicon glyphicon-search" style={{fontWeight:'bold'}}>&nbsp;View</span>
+            </a>
+          </td>
+          <td>
+            <a className="btn btn-primary" style={{background:'white', color:'green', borderColor:'green'}}>
+              <span className="glyphicon glyphicon-ok" style={{fontWeight:'bold'}}>&nbsp;Approve</span>
+            </a>
+          </td>
+          <td>
+            <a className="btn btn-primary" style={{background:'white', color:'darkred', borderColor:'darkred'}}>
+              <span className="glyphicon glyphicon-remove" style={{fontWeight:'bold'}}>&nbsp;Reject</span>
+            </a>
+          </td>
+        </tr>
+      )
+    })
+
+    const reviewHistory = this.state.reviewHistory.map((history, i) => {
+      return (
+        <tr key={i}>
+          <td> { review["authorID"] } </td>
+          <td> { review["tableName"] } </td>
+          <td> { review["timeSubmitted"] } </td>
+          <td> { review["status"] } </td>
+          <td>
+            <a className="btn btn-primary" style={{background:'white', color:'steelblue', borderColor:'steelblue'}}>
+              <span className="glyphicon glyphicon-search" style={{fontWeight:'bold'}}>&nbsp;View</span>
+            </a>
+          </td>
+          <td> { review["timeReviewed"] } </td>
+        </tr>
+      )
+    })
+
+
     return (
       <div style={{width: 85+'%', marginLeft:'auto', marginRight:'auto', marginTop: 40}}>
         <h3>User Contributions</h3>
@@ -62,6 +109,7 @@ class AdminPortal extends Component {
               </tr>
             </thead>
             <tbody>
+              { pendingReviews }
             </tbody>
           </table>
         </div>
@@ -82,6 +130,7 @@ class AdminPortal extends Component {
               </tr>
             </thead>
             <tbody>
+              { reviewHistory }
             </tbody>
           </table>
         </div>
