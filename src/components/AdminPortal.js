@@ -6,36 +6,42 @@ class AdminPortal extends Component {
     super()
     this.state = {
       pendingReviews: [],
-      reviewHistory: []
+      reviewHistory: [],
+      content: ""
     }
   }
 
   componentDidMount() {
-    superagent
-      .get('/api/usercontribution')
-      .set('Accept', 'application/json')
-      .end((err, response) => {
-        if(err){
-          console.log("ERROR: " + err);
-          return
-        }
-
-        var contributions = JSON.parse(response.text).results
-        var pending = []
-        var history = []
-        contributions.forEach(function(contribution){
-    			if(contribution["status"] == "Pending"){
-            pending.push(contribution)
-          } else {
-            history.push(contribution)
+    // var userEmail = localStorage.getItem("profile").email
+    // console.log(localStorage.getItem("profile"))
+    //
+    // if( userEmail == "formmulaa@gmail.com" ){
+      superagent
+        .get('/api/usercontribution')
+        .set('Accept', 'application/json')
+        .end((err, response) => {
+          if(err){
+            console.log("ERROR: " + err);
+            return
           }
-    		})
 
-        this.setState({
-          pendingReviews: pending,
-          reviewHistory: history
+          var contributions = JSON.parse(response.text).results
+          var pending = []
+          var history = []
+          contributions.forEach(function(contribution){
+            if(contribution["status"] == "Pending"){
+              pending.push(contribution)
+            } else {
+              history.push(contribution)
+            }
+          })
+
+          this.setState({
+            pendingReviews: pending,
+            reviewHistory: history,
+          })
         })
-      })
+    // }
   }
 
   approveRequest(review) {
@@ -66,10 +72,10 @@ class AdminPortal extends Component {
       .send(JSON.parse(review["content"]))
       .set('Accept', 'application/json')
       .end((err, response) => {
-        // if(err){
-        //   console.log("ERROR: " + err);
-        //   return
-        // }
+        if(err){
+          console.log("ERROR: " + err);
+          return
+        }
 
         alert("Data has been posted!")
       })
@@ -89,14 +95,42 @@ class AdminPortal extends Component {
       .send(review)
       .set('Accept', 'application/json')
       .end((err, response) => {
-        // if(err){
-        //   console.log(err)
-        //   console.log(response)
-        //   return
-        // }
+        if(err){
+          console.log(err)
+          console.log(response)
+          return
+        }
 
         alert("You have rejected user contribution " + id + "!")
       })
+  }
+
+  showContent(id) {
+    console.log(id)
+    var url = '/api/usercontribution/' + id
+
+    superagent
+      .get(url)
+      .set('Accept', 'application/json')
+      .end((err, response) => {
+        if(err){
+          console.log("ERROR: " + err);
+          return
+        }
+
+        console.log(response.body.result)
+        this.setState({
+          content: JSON.parse(response.body.result.content)
+        }, () => {
+          $(window).scrollTop($('#content').offset().top);
+        })
+      })
+  }
+
+  hideContent() {
+    this.setState({
+      content: ""
+    })
   }
 
 
@@ -109,7 +143,8 @@ class AdminPortal extends Component {
           <td> { review["timeSubmitted"] } </td>
           <td> { review["status"] } </td>
           <td>
-            <a className="btn btn-primary" style={{background:'white', color:'steelblue', borderColor:'steelblue'}}>
+            <a className="btn btn-primary" onClick={ this.showContent.bind(this, review["_id"]) }
+              style={{background:'white', color:'steelblue', borderColor:'steelblue'}}>
               <span className="glyphicon glyphicon-search" style={{fontWeight:'bold'}}>&nbsp;View</span>
             </a>
           </td>
@@ -137,7 +172,8 @@ class AdminPortal extends Component {
           <td> { history["timeSubmitted"] } </td>
           <td> { history["status"] } </td>
           <td>
-            <a className="btn btn-primary" style={{background:'white', color:'steelblue', borderColor:'steelblue'}}>
+            <a className="btn btn-primary" onClick={ this.showContent.bind(this, history["_id"]) }
+              style={{background:'white', color:'steelblue', borderColor:'steelblue'}}>
               <span className="glyphicon glyphicon-search" style={{fontWeight:'bold'}}>&nbsp;View</span>
             </a>
           </td>
@@ -175,6 +211,15 @@ class AdminPortal extends Component {
           </table>
         </div>
 
+        { this.state.content != "" &&
+          <div className="detail" id="content">
+            <h5 style={{color: "steelblue"}}>Detail</h5>
+            <textarea readOnly className="form-control" style={{width: 55 + '%'}}
+              value={JSON.stringify(this.state.content, undefined, 4)} rows="10"></textarea>
+            <br />
+            <button className="btn btn-primary" onClick={this.hideContent.bind(this)}>OK</button>
+          </div>
+        }
 
         <div className="history" style={{float:'left', width:100+'%', marginTop: 45}}>
           <h4>Review History</h4>

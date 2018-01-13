@@ -37549,7 +37549,8 @@ var AdminPortal = function (_Component) {
 
     _this.state = {
       pendingReviews: [],
-      reviewHistory: []
+      reviewHistory: [],
+      content: ""
     };
     return _this;
   }
@@ -37559,6 +37560,10 @@ var AdminPortal = function (_Component) {
     value: function componentDidMount() {
       var _this2 = this;
 
+      // var userEmail = localStorage.getItem("profile").email
+      // console.log(localStorage.getItem("profile"))
+      //
+      // if( userEmail == "formmulaa@gmail.com" ){
       _superagent2.default.get('/api/usercontribution').set('Accept', 'application/json').end(function (err, response) {
         if (err) {
           console.log("ERROR: " + err);
@@ -37581,6 +37586,7 @@ var AdminPortal = function (_Component) {
           reviewHistory: history
         });
       });
+      // }
     }
   }, {
     key: 'approveRequest',
@@ -37604,10 +37610,10 @@ var AdminPortal = function (_Component) {
 
       // Send content to corresponding data schema
       _superagent2.default.post(review["action"]).send(JSON.parse(review["content"])).set('Accept', 'application/json').end(function (err, response) {
-        // if(err){
-        //   console.log("ERROR: " + err);
-        //   return
-        // }
+        if (err) {
+          console.log("ERROR: " + err);
+          return;
+        }
 
         alert("Data has been posted!");
       });
@@ -37624,19 +37630,48 @@ var AdminPortal = function (_Component) {
       var url = '/api/usercontribution/' + id;
 
       _superagent2.default.put(url).send(review).set('Accept', 'application/json').end(function (err, response) {
-        // if(err){
-        //   console.log(err)
-        //   console.log(response)
-        //   return
-        // }
+        if (err) {
+          console.log(err);
+          console.log(response);
+          return;
+        }
 
         alert("You have rejected user contribution " + id + "!");
       });
     }
   }, {
+    key: 'showContent',
+    value: function showContent(id) {
+      var _this3 = this;
+
+      console.log(id);
+      var url = '/api/usercontribution/' + id;
+
+      _superagent2.default.get(url).set('Accept', 'application/json').end(function (err, response) {
+        if (err) {
+          console.log("ERROR: " + err);
+          return;
+        }
+
+        console.log(response.body.result);
+        _this3.setState({
+          content: JSON.parse(response.body.result.content)
+        }, function () {
+          $(window).scrollTop($('#content').offset().top);
+        });
+      });
+    }
+  }, {
+    key: 'hideContent',
+    value: function hideContent() {
+      this.setState({
+        content: ""
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
 
       var pendingReviews = this.state.pendingReviews.map(function (review, i) {
         return _react2.default.createElement(
@@ -37675,7 +37710,8 @@ var AdminPortal = function (_Component) {
             null,
             _react2.default.createElement(
               'a',
-              { className: 'btn btn-primary', style: { background: 'white', color: 'steelblue', borderColor: 'steelblue' } },
+              { className: 'btn btn-primary', onClick: _this4.showContent.bind(_this4, review["_id"]),
+                style: { background: 'white', color: 'steelblue', borderColor: 'steelblue' } },
               _react2.default.createElement(
                 'span',
                 { className: 'glyphicon glyphicon-search', style: { fontWeight: 'bold' } },
@@ -37689,7 +37725,7 @@ var AdminPortal = function (_Component) {
             _react2.default.createElement(
               'a',
               { className: 'btn btn-primary', style: { background: 'white', color: 'green', borderColor: 'green' },
-                onClick: _this3.approveRequest.bind(_this3, review) },
+                onClick: _this4.approveRequest.bind(_this4, review) },
               _react2.default.createElement(
                 'span',
                 { className: 'glyphicon glyphicon-ok', style: { fontWeight: 'bold' } },
@@ -37703,7 +37739,7 @@ var AdminPortal = function (_Component) {
             _react2.default.createElement(
               'a',
               { className: 'btn btn-primary', style: { background: 'white', color: 'darkred', borderColor: 'darkred' },
-                onClick: _this3.rejectRequest.bind(_this3, review) },
+                onClick: _this4.rejectRequest.bind(_this4, review) },
               _react2.default.createElement(
                 'span',
                 { className: 'glyphicon glyphicon-remove', style: { fontWeight: 'bold' } },
@@ -37751,7 +37787,8 @@ var AdminPortal = function (_Component) {
             null,
             _react2.default.createElement(
               'a',
-              { className: 'btn btn-primary', style: { background: 'white', color: 'steelblue', borderColor: 'steelblue' } },
+              { className: 'btn btn-primary', onClick: _this4.showContent.bind(_this4, history["_id"]),
+                style: { background: 'white', color: 'steelblue', borderColor: 'steelblue' } },
               _react2.default.createElement(
                 'span',
                 { className: 'glyphicon glyphicon-search', style: { fontWeight: 'bold' } },
@@ -37840,6 +37877,23 @@ var AdminPortal = function (_Component) {
               null,
               pendingReviews
             )
+          )
+        ),
+        this.state.content != "" && _react2.default.createElement(
+          'div',
+          { className: 'detail', id: 'content' },
+          _react2.default.createElement(
+            'h5',
+            { style: { color: "steelblue" } },
+            'Detail'
+          ),
+          _react2.default.createElement('textarea', { readOnly: true, className: 'form-control', style: { width: 55 + '%' },
+            value: JSON.stringify(this.state.content, undefined, 4), rows: '10' }),
+          _react2.default.createElement('br', null),
+          _react2.default.createElement(
+            'button',
+            { className: 'btn btn-primary', onClick: this.hideContent.bind(this) },
+            'OK'
           )
         ),
         _react2.default.createElement(
